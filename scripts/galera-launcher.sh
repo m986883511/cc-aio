@@ -10,7 +10,7 @@ HOSTS_FILE=/etc/cs/hosts
 
 function check_to_recover() {
     # Check if we hold the management vip
-    mgt_vip=$(grep ^mgt_vip /etc/cs/pve_tui.conf | awk -F'=' '{print $2}' | xargs)
+    mgt_vip=$(grep ^mgt_vip /etc/cs/pvetui.conf | awk -F'=' '{print $2}' | xargs)
     if [ -z $mgt_vip ];then
         echo "Can get management vip"
         exit -1

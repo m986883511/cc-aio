@@ -17,7 +17,6 @@ def execute_command(cmd: str, shell=True, encoding="utf-8", timeout=None, return
     except subprocess.TimeoutExpired as te:
         err_msg = f"timeout={timeout}, cmd='{cmd}'"
         logging.error(f"execute command timed out, {err_msg}")
-        #yjk, 返回值是 bool ？  wc: 0才是正常的 非0就是执行失败
         return -1, err_msg
     except subprocess.CalledProcessError as e:
         err_msg = f"cmd='{cmd}', err={e.output.decode(encoding, errors='ignore').strip()}"
@@ -84,7 +83,7 @@ def crudini_set_config_on_host(ini_path: str, section:str, key: str, value: str)
 def execute_ssh_command_via_id_rsa(command:str, key_path: str, host_or_ip: str, user='root', ssh_timeout=5) -> (bool):
     cmd = f'ssh -o PreferredAuthentications=publickey -o ConnectTimeout={ssh_timeout} -i {key_path} {user}@{host_or_ip} {command}'
     return_code, content = execute_command(cmd)
-    #yjk，返回值是两个？  wc: 两个，让函数的调用者自己分析报错还是继续
+
     return return_code, content
 
 

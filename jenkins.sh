@@ -1,7 +1,4 @@
 #!/bin/bash -x
-# by: wang.chao
-# date: 2023-5-8
-
 
 WORK_DIR=`dirname $0`
 cd $WORK_DIR

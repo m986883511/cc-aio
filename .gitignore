@@ -58,4 +58,4 @@ ansible/*.retry
 .DS_Store
 .vimrc
 
-pve_admin/demo
+hostadmin/demo
