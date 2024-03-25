@@ -1,7 +1,7 @@
 pipeline {
     /* agent any */
     agent {
-        label "kolla_amd64"
+        label "host088"
     }
     options {
         timestamps()
