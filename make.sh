@@ -25,20 +25,8 @@ SMALL_NUMBER=$BRANCH_FLAG
 PBR_VERSION=$BIG_NUMBER.$SMALL_NUMBER.$BUILD_NUMBER
 export PBR_VERSION
 
-function activate_conda_env() {
-  echo "enter function name: ${FUNCNAME[0]}"
-  local conda_env_name="$1"
-  source ~/.bashrc
-  completed $? "source ~/.bashrc"
-  eval "$(conda shell.bash hook)"
-  completed $? "conda shell.bash hook"
-  conda activate "$conda_env_name"
-  completed $? "activate conda $conda_env_name env"
-}
-
 git log --pretty=format:"%h %ad %s" --date=short -30 > ChangeLog
 openssl enc -aes-256-cbc -salt -in ChangeLog -out doc/ChangeLog -pass pass:astute -md sha256
 
 rm -rf dist
-activate_conda_env astute
 python setup.py sdist
