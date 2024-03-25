@@ -153,7 +153,7 @@ class BaseConsoleView:
         self._task_end_time = time.perf_counter()
         use_time = int(self._task_end_time - self._task_start_time)
         end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        time_string = f'\nAstute-Cloud Deploy run end, end at {end_time}, use {use_time} seconds\n'
+        time_string = f'\n{CONF.pvetui_title} run end, end at {end_time}, use {use_time} seconds\n'
         self.received_output(time_string)
         if self.alarm:
             ui.top_loop.remove_alarm(self.alarm)
@@ -183,7 +183,7 @@ class BaseConsoleView:
         if not cmd:
             err_msg = f'get cmd failed, index={self.current_cmd_index}, cmd_list={self.need_run_cmd_list}'
             raise Exception(cmd)
-        self.received_output(f'\nNow Astute-Cloud Deploy Run: {cmd}\n')
+        self.received_output(f'\nNow {CONF.pvetui_title} Run: {cmd}\n')
         self.proc = subprocess.Popen(cmd, stdout=write_fd, close_fds=True, shell=True)
 
     def show(self):

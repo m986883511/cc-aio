@@ -99,7 +99,7 @@ def main():
         ("buttn", "black", "dark cyan"),
         ("buttnf", "white", "dark blue", "bold"),
     ]
-    menu_top = menu('Astute-Cloud Deploy v4.0', [
+    menu_top = menu(CONF.pvetui_title, [
         sub_menu('安装基础环境', [
             menu_button('编辑节点列表', base_env.SelectNodeView),
             menu_button('选择节点并安装', base_env.InstallBaseEnvView),

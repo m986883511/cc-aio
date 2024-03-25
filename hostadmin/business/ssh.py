@@ -71,7 +71,7 @@ class SshEndPoint(object):
         assert flag == 0, f'scp {host}:{src_dir} {dst_dir} to failed, err={content}'
         return flag, content
 
-    def execute_on_multi_hosts(self, ctxt, host_type, command):
+    def execute_on_all_hosts(self, ctxt, command):
         import click
         flag = 0 if os.path.exists(self.ACD_CONF_PATH) else 1
         execute.completed(flag, f'check {self.ACD_CONF_PATH} exist')

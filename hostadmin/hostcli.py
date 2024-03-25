@@ -471,25 +471,14 @@ def scp_remote_host_dir_to_current_host(remote_host, src_dir, dst_dir):
 
 
 @ssh.command()
-@click.option('--compute', is_flag=True, default=False)
-@click.option('--control', is_flag=True, default=False)
 @click.argument('command', type=click.STRING)
-def execute_on_multi_hosts(compute, control, command):
+def execute_on_all_hosts(command):
     """
-    在哪种类型的主机上执行命令，命令有空格的话记得引号包裹
+    在所有关联的主机上执行相同的命令
     
-    例如: hostcli ssh execute-on-multi-hosts 'date'
+    例如: hostcli ssh execute-on-all-hosts 'date'
     """
-    if compute and control:
-        host_type = 'all_type'
-    else:
-        if compute:
-            host_type = 'compute'
-        elif control:
-            host_type = 'control'
-        else:
-            host_type = 'all_type'
-    business.SshEndPoint().execute_on_multi_hosts(ctxt={}, host_type=host_type, command=command)
+    business.SshEndPoint().execute_on_all_hosts(ctxt={}, command=command)
 
 
 def main():

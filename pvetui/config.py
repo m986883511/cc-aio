@@ -11,6 +11,7 @@ PVE_TUI_CONF_PATH = '/etc/cs/pvetui.conf'
 
 default_opts = [
     cfg.StrOpt('return_last_string', default='返回上一层|ESC', help="conf_path"),
+    cfg.StrOpt('pvetui_title', default='PVE TUI v1.0', help="pve tui title"),
     cfg.IntOpt('console_max_item_number', default=20, help="console_max_item_number"),
 ]
 
