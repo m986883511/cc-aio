@@ -34,7 +34,8 @@ package_new_name=$package_base_name-$PBR_VERSION.tar.gz
 /bin/cp dist/$package_name $package_new_name
 
 IDENTITY=root@192.168.1.4
-FILEDIR=/mnt/4t/jenkins/production-pve/$JOB_NAME
+FILEDIR=/smb/4t/jenkins/production-pve/$JOB_NAME
+echo "FILEDIR is $FILEDIR"
 md5sum $package_new_name > $package_new_name.md5
 ssh $IDENTITY mkdir -p $FILEDIR/$BUILD_NUMBER
 scp $package_new_name $package_new_name.md5 $IDENTITY:$FILEDIR/$BUILD_NUMBER/
