@@ -14,33 +14,7 @@ jobs:
     interpreter: !ShellInterpreter
       shell: bash
       commands: |
-        set -e
-        set -o pipefail
-
-        echo "pwd is $(pwd)"
-        echo "ls is $(ls)"
-
-        buildVersion=@build_version@
-        projectDir=`pwd`
-        echo "buildVersion is $buildVersion"
-    useTTY: true
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  - !CommandStep
-    name: make
-    runInContainer: false
-    interpreter: !DefaultInterpreter
-      commands: |
-        chmod +x make.sh
-        ./make.sh
-    useTTY: true
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  - !CommandStep
-    name: upload
-    runInContainer: false
-    interpreter: !DefaultInterpreter
-      commands: |
-        chmod +x jenkins.sh
-        ./jenkins.sh
+        curl http://192.168.1.88:8080/multibranch-webhook-trigger/invoke?token=pvetui
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
