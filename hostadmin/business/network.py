@@ -64,13 +64,51 @@ class NetworkEndPoint(object):
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
         self.custom_udev_file_path = '/etc/udev/rules.d/10-net-my.rules'
         self.available_usages = func.get_class_var_values(Usage)
+        self.sysctl_conf_path = '/etc/sysctl.conf'
 
     def check_network_connection(self, ctxt, host):
         cmd = f'ping -t 1 -c 1 {host}'
         flag, content = execute.execute_command(cmd)
         execute.completed(flag, f'check network connection to {host}', content)
         return flag==0
-    
+
+    def open_pve_ipv6_support(self, ctxt):
+        """
+        cat /proc/sys/net/ipv6/conf/vmbr0/accept_ra  
+        1  
+        cat /proc/sys/net/ipv6/conf/vmbr0/autoconf  
+        1  
+        查看已开启ipv6转发
+        cat /proc/sys/net/ipv6/conf/vmbr0/forwarding
+        1
+        需要将accept_ra值改成2才能自动配置SLAAC ipv6地址 
+        
+        /etc/sysctl.conf  
+        net.ipv6.conf.all.accept_ra=2  
+        net.ipv6.conf.default.accept_ra=2  
+        net.ipv6.conf.vmbr0.accept_ra=2  
+        net.ipv6.conf.all.autoconf=1  
+        net.ipv6.conf.default.autoconf=1  
+        net.ipv6.conf.vmbr0.autoconf=1"""
+        flag, content = execute.execute_command('echo 1 > /proc/sys/net/ipv6/conf/vmbr0/accept_ra')
+        execute.completed(flag, f'open ipv6 accept_ra', content)
+        flag, content = execute.execute_command('echo 1 > /proc/sys/net/ipv6/conf/vmbr0/autoconf')
+        execute.completed(flag, f'open ipv6 autoconf', content)
+        flag, content = execute.execute_command('echo 1 > /proc/sys/net/ipv6/conf/vmbr0/forwarding')
+        execute.completed(flag, f'open ipv6 forwarding', content)
+        flag, content = execute.crudini_set_config(self.sysctl_conf_path, "", 'net.ipv6.conf.all.accept_ra', 2)
+        execute.completed(flag, f'set net.ipv6.conf.all.accept_ra', content)
+        flag, content = execute.crudini_set_config(self.sysctl_conf_path, "", 'net.ipv6.conf.default.accept_ra', 2)
+        execute.completed(flag, f'set net.ipv6.conf.default.accept_ra', content)
+        flag, content = execute.crudini_set_config(self.sysctl_conf_path, "", 'net.ipv6.conf.vmbr0.accept_ra', 2)
+        execute.completed(flag, f'set net.ipv6.conf.vmbr0.accept_ra', content)
+        flag, content = execute.crudini_set_config(self.sysctl_conf_path, "", 'net.ipv6.conf.all.autoconf', 1)
+        execute.completed(flag, f'set net.ipv6.conf.all.autoconf', content)
+        flag, content = execute.crudini_set_config(self.sysctl_conf_path, "", 'net.ipv6.conf.default.autoconf', 1)
+        execute.completed(flag, f'set net.ipv6.conf.default.autoconf', content)
+        flag, content = execute.crudini_set_config(self.sysctl_conf_path, "", 'net.ipv6.conf.vmbr0.autoconf', 1)
+        execute.completed(flag, f'set net.ipv6.conf.vmbr0.autoconf', content)
+
     def check_kolla_interface_exist(self, ctxt, host):
         flag, content = execute.execute_command(f"nmcli device show {Bond.vm}")
         if flag == 0:

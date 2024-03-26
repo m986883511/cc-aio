@@ -310,6 +310,12 @@ def check_network_connection(host):
 
 
 @network.command()
+def open_pve_ipv6_support():
+    business.NetworkEndPoint().open_pve_ipv6_support(ctxt={})
+    click.secho('open_pve_ipv6_support success, may need reboot!', fg='green')
+
+
+@network.command()
 @click.option('--output_dict', is_flag=True, default=False)
 def get_all_physical_nics(output_dict):
     output_dict = 'dict' if output_dict else 'list'
