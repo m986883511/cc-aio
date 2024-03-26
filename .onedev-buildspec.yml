@@ -9,18 +9,14 @@ jobs:
     withSubmodules: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
-    name: nn
+    name: command
     runInContainer: false
     interpreter: !ShellInterpreter
       shell: bash
       commands: |
-        ls
+        echo "pwd is $pwd"
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  triggers:
-  - !TagCreateTrigger {}
-  - !PullRequestMergeTrigger {}
-  - !BranchUpdateTrigger {}
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
