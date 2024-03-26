@@ -2,12 +2,6 @@ version: 30
 jobs:
 - name: ci
   steps:
-  - !CheckoutStep
-    name: clone
-    cloneCredential: !DefaultCredential {}
-    withLfs: false
-    withSubmodules: false
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
     name: command
     runInContainer: false
