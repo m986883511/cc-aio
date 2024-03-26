@@ -15,8 +15,12 @@ jobs:
       shell: bash
       commands: |
         echo "pwd is $(pwd)"
+        echo "ls is $(ls)"
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !TagCreateTrigger {}
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
