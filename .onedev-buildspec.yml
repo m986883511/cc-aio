@@ -1,9 +1,9 @@
 version: 30
 jobs:
-- name: one
+- name: ci
   steps:
   - !CheckoutStep
-    name: bb
+    name: clone
     cloneCredential: !DefaultCredential {}
     withLfs: false
     withSubmodules: false
@@ -16,6 +16,24 @@ jobs:
       commands: |
         echo "pwd is $(pwd)"
         echo "ls is $(ls)"
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: make
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands: |
+        chmod +x make.sh
+        ./make.sh
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: upload
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands: |
+        chmod +x jenkins.sh
+        ./jenkins.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
