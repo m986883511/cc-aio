@@ -30,3 +30,4 @@ openssl enc -aes-256-cbc -salt -in ChangeLog -out doc/ChangeLog -pass pass:passw
 
 rm -rf dist
 python setup.py sdist
+
