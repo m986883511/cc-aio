@@ -14,8 +14,15 @@ jobs:
     interpreter: !ShellInterpreter
       shell: bash
       commands: |
+        set -e
+        set -o pipefail
+
         echo "pwd is $(pwd)"
         echo "ls is $(ls)"
+
+        buildVersion=@build_version@
+        projectDir=`pwd`
+        echo "buildVersion is $buildVersion"
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
