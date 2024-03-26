@@ -20,6 +20,7 @@ jobs:
   triggers:
   - !TagCreateTrigger {}
   - !PullRequestMergeTrigger {}
+  - !BranchUpdateTrigger {}
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
