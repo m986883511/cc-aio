@@ -1,0 +1,10 @@
+# pvetui-flag
+deb https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free
+deb-src https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free
+deb https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free
+deb-src https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free
+deb https://mirrors.ustc.edu.cn/debian/ bookworm-backports main contrib non-free
+deb-src https://mirrors.ustc.edu.cn/debian/ bookworm-backports main contrib non-free
+
+deb https://mirrors.ustc.edu.cn/debian-security/ stable-security main contrib non-free
+deb-src https://mirrors.ustc.edu.cn/debian-security/ stable-security main contrib non-free

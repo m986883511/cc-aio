@@ -68,8 +68,11 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
 
 
 def get_pip_install_truseted_host():
-    cmd = 'crudini --get /root/.config/pip/pip.conf install trusted-host'
-    flag, content = execute.execute_command(cmd)
+    flag, content = execute.crudini_get_config(
+        '/root/.config/pip/pip.conf', 
+        'install', 
+        'trusted-host',
+        check_file_exist=False)
     if flag == 0:
         if content not in ['localhost', '127.0.0.1']:
             print(f'please goto {content} run acd, current node no config history!')
@@ -77,10 +80,10 @@ def get_pip_install_truseted_host():
 
 
 def run_depend_tasks():
-    func.set_simple_log('/var/log/astute/pvetui.log')
+    func.set_simple_log('/var/log/cs/pvetui.log')
     if len(sys.argv) != 1:
         utils.custom_cmd(sys.argv)
-    get_pip_install_truseted_host()
+    # get_pip_install_truseted_host()
     func.create_conf_file(PVE_TUI_CONF_PATH)
     CONF(default_config_files = [PVE_TUI_CONF_PATH])
 

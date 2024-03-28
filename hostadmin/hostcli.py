@@ -13,13 +13,22 @@ LOG = logging.getLogger(__name__)
 @click.group()
 def cli():
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log('/var/log/astute/hostcli.log')
+    func.set_simple_log('/var/log/cs/hostcli.log')
     LOG.info('--------- command start ---------')
 
 
 @cli.group()
 def host():
     pass
+
+
+@host.command()
+def set_apt_source_use_ustc():
+    """
+    让某个pve使用清华源, 并关闭企业订阅源
+    """
+    business.HostEndPoint().set_apt_source_use_ustc(ctxt={})
+    click.secho(f'set pve apt sources.list use ustc', fg='green')
 
 
 @host.command()
@@ -313,6 +322,13 @@ def check_network_connection(host):
 def open_pve_ipv6_support():
     business.NetworkEndPoint().open_pve_ipv6_support(ctxt={})
     click.secho('open_pve_ipv6_support success, may need reboot!', fg='green')
+
+
+@network.command()
+@click.argument('new_ip', type=click.STRING)
+def change_single_pve_node_ip(new_ip):
+    business.NetworkEndPoint().change_single_pve_node_ip(ctxt={}, new_ip=new_ip)
+    click.secho('change pve node ip to {new_ip} success!', fg='green')
 
 
 @network.command()

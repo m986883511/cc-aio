@@ -20,6 +20,7 @@ class HostEndPoint(object):
         self.pci_device_set_vfio_driver_file_path = '/etc/modprobe.d/vfio-pci.conf'
         self.module_load_vfio_pci_file_path = '/etc/modules-load.d/vfio-pci.conf'
         self.modprobe_blacklist_file_path = '/etc/modprobe.d/blacklist.conf'
+        self.apt_source_list_path = '/etc/apt/sources.list'
 
     def get_machine_code(self, ctxt):
         return_code, content = execute.execute_command(f'atlicense -m')
@@ -56,6 +57,28 @@ class HostEndPoint(object):
         file.write_file_content(chrony_path, chrony_conf_content, mode='w')
         flag, content = execute.execute_command('systemctl restart chronyd', shell=False, timeout=10)
         execute.completed(flag, 'restart chronyd', content)
+
+    def set_apt_source_use_ustc(self, ctxt):
+        flag, content = execute.execute_command(f'cat {self.apt_source_list_path} |grep pvetui-flag')
+        if flag == 0:
+            execute.completed(0, 'already set ustc sources')
+        else:
+            flag, content = execute.execute_command(f'\cp {self.apt_source_list_path} /etc/apt/sources.list.bak.pvetui')
+            execute.completed(flag, 'backup origin sources.list', content)
+            flag, content = execute.execute_command(f'\cp {FilesDir.Host.ustc_apt_sources} /etc/apt/sources.list')
+            execute.completed(flag, 'cp ustc sources.list', content)
+        # close enterprise
+        cmd = "sed -i 's|^deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list"
+        flag, content = execute.execute_command(cmd)
+        execute.completed(flag, 'close pve enterprise source', content)
+        cmd = "sed -i 's|^deb|#deb|' /etc/apt/sources.list.d/ceph.list"
+        flag, content = execute.execute_command(cmd)
+        execute.completed(flag, 'close pve ceph source', content)
+        cmd = 'echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list'
+        flag = execute.execute_command_in_popen(cmd)
+        execute.completed(flag, 'add ustc subscription', content)
+        flag = execute.execute_command_in_popen(f'apt update')
+        execute.completed(flag, 'apt update')
 
     def reboot(self, ctxt):
         LOG.info('reboot server..')

@@ -52,6 +52,19 @@ def get_user_config_dir(user_config_dir_name):
     return user_config_dir
 
 
+def get_url_ip_port(url):
+    item_list = get_string_split_list(url, split_flag='/')
+    item_list2 = get_string_split_list(url, split_flag='//')
+    if len(item_list2) != 2:
+        raise Exception(f'invalid url={url}')
+    ip_port_and_string = item_list2[1]
+    for item in item_list:
+        if ip_port_and_string.startswith(item):
+            return item
+    else:
+        raise Exception(f'invalid url={url}')
+
+
 def get_python_path():
     return sys.executable
 
@@ -157,9 +170,7 @@ def get_hostname_222_ip(hostname=None):
         return f'192.222.1.{n}'
 
 
-def get_222_ip_hostname(ip: str):
-    if not ip.startswith('192.222.1.'):
-        return
+def get_ip_hostname_use_end_number(ip: str):
     ip_endwith = get_string_split_list(ip, split_flag='.')[-1]
     ip_endwith = int(ip_endwith)
     hostname = f'host{ip_endwith:03d}'

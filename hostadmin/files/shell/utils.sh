@@ -34,7 +34,7 @@ JM_VERSION_DIR="$OPT_ASTUTE_DIR/jmversion"
 ACD_CONFIG_PATH="/etc/cs/pvetui.conf"
 CURRENT_NODE_222_IP=
 CONDA_BIN_PATH="/root/miniconda3/condabin/conda"
-LOG_PATH="/var/log/astute/shell.log"
+LOG_PATH="/var/log/cs/shell.log"
 
 
 function echo_log() {

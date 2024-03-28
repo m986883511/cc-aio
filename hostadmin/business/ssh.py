@@ -18,7 +18,7 @@ class SshEndPoint(object):
     def __init__(self):
         self.SSH_TIMEOUT=2
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
-        self.ACD_CONF_PATH = '/etc/cs/pvetui.conf'
+        self.PVETUI_CONF_PATH = '/etc/cs/pvetui.conf'
         self.default_root_password = CONF.ssh.root_pwd
 
     def check_ssh_passwordless(self, ctxt, host):
@@ -73,20 +73,18 @@ class SshEndPoint(object):
 
     def execute_on_all_hosts(self, ctxt, command):
         import click
-        flag = 0 if os.path.exists(self.ACD_CONF_PATH) else 1
-        execute.completed(flag, f'check {self.ACD_CONF_PATH} exist')
-        value = file.ini_file_to_dict(self.ACD_CONF_PATH)
+        flag = 0 if os.path.exists(self.PVETUI_CONF_PATH) else 1
+        execute.completed(flag, f'check {self.PVETUI_CONF_PATH} exist')
+        value = file.ini_file_to_dict(self.PVETUI_CONF_PATH)
         flag = 0 if isinstance(value, dict) else 1
         execute.completed(flag, f'check ini_file_to_dict return value', f'value type is {type(value)}')
 
         def get_host_list():
             hosts = []
-            _host_type = ['control', 'compute'] if host_type == 'all_type' else [host_type]
-            for tt in _host_type:
-                nodes = func.get_dict_dict_value(value, 'openstack', f'{tt}_nodes') or ''
-                nodes = nodes.replace(',', ' ').split()
-                nodes = [i for i in nodes if i]
-                hosts.extend(nodes)
+            nodes = func.get_dict_dict_value(value, 'base_env', f'installed_nodes') or ''
+            nodes = nodes.replace(',', ' ').split()
+            nodes = [i for i in nodes if i]
+            hosts.extend(nodes)
             hosts = list(set(hosts))
             hosts.sort()
             return hosts
