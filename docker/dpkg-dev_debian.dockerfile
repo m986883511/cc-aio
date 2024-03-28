@@ -13,5 +13,5 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ stable-security main contri
 > /etc/apt/sources.list
 RUN apt update
 RUN apt install dpkg-dev -y
-RUN echo 'dpkg-scanpackages /tmp/apt/ /dev/null | gzip> /tmp/apt/Packages.gz' > /generate_apt_source.sh
+RUN echo 'dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz' > /generate_apt_source.sh
 # docker build -f dpkg-dev_debian.dockerfile -t debian:dpkg-dev --network host .
