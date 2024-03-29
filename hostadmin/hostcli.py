@@ -125,7 +125,7 @@ def set_pci_device_use_vfio(main_vendor, reset=False, no_check=False):
     value = business.HostEndPoint().set_pci_device_use_vfio(ctxt={}, vendor=main_vendor, reset=reset, no_check=no_check)
     click.secho(value, fg='green')
     click.secho(f'if {main_vendor} driver is use is not vfio, you need reboot to take effect', fg='red')
-    click.secho(f"you can use 'hostcli host get-support-pci-devices' to check it", fg='green')
+    click.secho(f"you can use 'cs-hostcli host get-support-pci-devices' to check it", fg='green')
 
 # ------------------------------------------------------------------------- #
 

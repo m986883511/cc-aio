@@ -23,15 +23,15 @@ class SetNtpTask:
 
     def check_network_connection(self):
         for node in self.nodes_but_not_openstack_node:
-            flag, content = execute.execute_command(f'hostcli network check-network-connection {node}')
+            flag, content = execute.execute_command(f'cs-hostcli network check-network-connection {node}')
             execute.completed(flag, f'check {node} network connection', content)
-            flag, content = execute.execute_command(f'hostcli ssh check-ssh-passwordless {node}')
+            flag, content = execute.execute_command(f'cs-hostcli ssh check-ssh-passwordless {node}')
             execute.completed(flag, f'check {node} ssh passwordless', content)
         self.print_and_log_info(f'check nodes_but_not_openstack_node network connection ok')
 
     def set_ntp(self):
         for node in self.nodes_but_not_openstack_node:
-            flag, content = execute.execute_command(f'hostcli ssh ssh-run-on-remote {node} "hostcli host set-ntp-server {self.other_node_ntp_server_ip}"')
+            flag, content = execute.execute_command(f'cs-hostcli ssh ssh-run-on-remote {node} "cs-hostcli host set-ntp-server {self.other_node_ntp_server_ip}"')
             execute.completed(flag, f'set {node} ntp_server={self.other_node_ntp_server_ip}', content)
         self.print_and_log_info(f'set nodes_but_not_openstack_node network ntp ok')
 

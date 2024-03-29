@@ -27,9 +27,9 @@ class DeleteOsdConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_del_osd_view))
-        self.need_run_cmd_list.append(f'hostcli network check-network-connection {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'hostcli ssh check-ssh-passwordless {self.selected_hostname}')
-        cmd = f'hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "hostcli disk remove-osds {self.selected_osd_name_string}"'
+        self.need_run_cmd_list.append(f'cs-hostcli network check-network-connection {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
+        cmd = f'cs-hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "cs-hostcli disk remove-osds {self.selected_osd_name_string}"'
         self.need_run_cmd_list.append(cmd)
         self.start_alarm()
         ui.top_layer.open_box(body)

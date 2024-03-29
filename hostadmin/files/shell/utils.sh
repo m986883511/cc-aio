@@ -614,14 +614,14 @@ function restart_ceph_about_container(){
     control_nodes="${control_nodes//,/ }"
     for node in $control_nodes; do
         echo "restart $node"
-        hostcli ssh ssh-run-on-remote $node "hostcli ceph restart-ceph-about-container"
+        hostcli ssh ssh-run-on-remote $node "cs-hostcli ceph restart-ceph-about-container"
         completed $? "restart $node ceph about container"
     done
     completed 0 "restart all control_nodes"
     pure_compute_nodes="${pure_compute_nodes//,/ }"
     for node in $pure_compute_nodes; do
         echo "restart $node"
-        hostcli ssh ssh-run-on-remote $node "hostcli ceph restart-ceph-about-container"
+        hostcli ssh ssh-run-on-remote $node "cs-hostcli ceph restart-ceph-about-container"
         completed $? "restart $node ceph about container"
     done
     completed 0 "restart all pure_compute_nodes"

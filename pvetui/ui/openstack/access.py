@@ -31,7 +31,7 @@ class AccessCephConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_add_osd_view))
-        self.need_run_cmd_list.append(f'hostcli kolla access-ceph {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli kolla access-ceph {self.selected_hostname}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

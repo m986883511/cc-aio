@@ -45,19 +45,19 @@ class AddOsdConsoleView(base_view.BaseConsoleView):
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_add_osd_view))
         ceph_cluster_nodes = self.get_ceph_cluster_nodes()
-        self.need_run_cmd_list.append(f'hostcli network check-network-connection {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'hostcli ssh check-ssh-passwordless {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'hostcli ceph check-ceph-node-network {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli network check-network-connection {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli ceph check-ceph-node-network {self.selected_hostname}')
         if self.selected_hostname not in ceph_cluster_nodes:
             current_hostname = func.get_current_node_hostname()
-            self.need_run_cmd_list.append(f'hostcli ssh ssh-run-on-remote {self.selected_hostname} "hostcli ceph set-ceph-registry-url {current_hostname}"')
-            self.need_run_cmd_list.append(f'hostcli ssh ssh-run-on-remote {self.selected_hostname} "hostcli ceph pull-ceph-image"')
-            self.need_run_cmd_list.append(f'hostcli ssh scp-dir-to-remote-host {self.selected_hostname} /etc/ceph /etc')
+            self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cs-hostcli ceph set-ceph-registry-url {current_hostname}"')
+            self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cs-hostcli ceph pull-ceph-image"')
+            self.need_run_cmd_list.append(f'cs-hostcli ssh scp-dir-to-remote-host {self.selected_hostname} /etc/ceph /etc')
             ceph_public_ip = f'192.222.13.{int(self.selected_hostname[4:])}'
             self.need_run_cmd_list.append(f"ceph orch host add {self.selected_hostname} {ceph_public_ip}")
         cache_disk = self.get_cache_disk_config_string()
         allow_hdd_as_osd_string = f'--allow_hdd_as_osd' if CONF.ceph.allow_hdd_as_osd else ''
-        cmd = f'hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "hostcli disk add-osds {allow_hdd_as_osd_string} {self.osd_disks} \'{cache_disk}\'"'
+        cmd = f'cs-hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "cs-hostcli disk add-osds {allow_hdd_as_osd_string} {self.osd_disks} \'{cache_disk}\'"'
         self.need_run_cmd_list.append(cmd)
         self.start_alarm()
         ui.top_layer.open_box(body)

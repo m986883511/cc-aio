@@ -28,12 +28,12 @@ class AddComputeConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_add_osd_view))
-        self.need_run_cmd_list.append(f'hostcli network check-network-connection {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'hostcli ssh check-ssh-passwordless {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'hostcli network check-kolla-interface-exist {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'hostcli kolla add-compute-node {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli network check-network-connection {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli network check-kolla-interface-exist {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli kolla add-compute-node {self.selected_hostname}')
         if os.path.exists(self.ceph_config_dir):
-            self.need_run_cmd_list.append(f'hostcli ssh rsync-dir-to-remote-host {self.selected_hostname} {self.ceph_config_dir}')
+            self.need_run_cmd_list.append(f'cs-hostcli ssh rsync-dir-to-remote-host {self.selected_hostname} {self.ceph_config_dir}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

@@ -67,7 +67,7 @@ class UpdateOpenstackConfigView(base_view.BaseConfigView):
         cmd2 = f'eval "$(conda shell.bash hook)" && source {self.kolla_rc_path} && kolla-ansible genconfig -i {self.ansible_hosts} --tags nova'
         self.commands = [self.kolla_generate_cmd, cmd2]
         for node in self.compute_nodes:
-            self.commands.append(f'hostcli ssh ssh-run-on-remote {node} "docker restart nova_compute"')
+            self.commands.append(f'cs-hostcli ssh ssh-run-on-remote {node} "docker restart nova_compute"')
         UpdateOpenstackConfigConsole(self, button)
 
     def update_vlan(self, button):

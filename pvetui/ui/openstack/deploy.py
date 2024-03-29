@@ -38,14 +38,14 @@ class OpenstackDeployConsole(base_view.BaseConsoleView):
             self.need_run_cmd_list.append(f'echo "please save openstack config first!"')
             self.need_run_cmd_list.append(f'exit 1')
         for hostname in self.all_nodes:
-            self.need_run_cmd_list.append(f'hostcli network check-network-connection {hostname}')
-            self.need_run_cmd_list.append(f'hostcli ssh check-ssh-passwordless {hostname}')
-            self.need_run_cmd_list.append(f'hostcli network check-kolla-interface-exist {hostname}')
-        self.need_run_cmd_list.append(f'hostcli kolla install-kolla-ansible')
+            self.need_run_cmd_list.append(f'cs-hostcli network check-network-connection {hostname}')
+            self.need_run_cmd_list.append(f'cs-hostcli ssh check-ssh-passwordless {hostname}')
+            self.need_run_cmd_list.append(f'cs-hostcli network check-kolla-interface-exist {hostname}')
+        self.need_run_cmd_list.append(f'cs-hostcli kolla install-kolla-ansible')
         for hostname in self.all_nodes:
             if hostname != self.current_hostname:
-                self.need_run_cmd_list.append(f'hostcli ssh rsync-dir-to-remote-host {hostname} {self.default_version_path} --progress')
-                self.need_run_cmd_list.append(f'hostcli ssh ssh-run-on-remote-via-popen {hostname} "hostcli kolla install-kolla-ansible"')
-        self.need_run_cmd_list.append(f'hostcli kolla deploy')
+                self.need_run_cmd_list.append(f'cs-hostcli ssh rsync-dir-to-remote-host {hostname} {self.default_version_path} --progress')
+                self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-run-on-remote-via-popen {hostname} "cs-hostcli kolla install-kolla-ansible"')
+        self.need_run_cmd_list.append(f'cs-hostcli kolla deploy')
         self.start_alarm()
         ui.top_layer.open_box(body)
