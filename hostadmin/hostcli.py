@@ -328,7 +328,7 @@ def open_pve_ipv6_support():
 @click.argument('new_ip', type=click.STRING)
 def change_single_pve_node_ip(new_ip):
     business.NetworkEndPoint().change_single_pve_node_ip(ctxt={}, new_ip=new_ip)
-    click.secho('change pve node ip to {new_ip} success!', fg='green')
+    click.secho(f'change pve node ip to {new_ip} success!', fg='green')
 
 
 @network.command()

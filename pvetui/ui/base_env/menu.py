@@ -41,7 +41,7 @@ class SelectNodeView(base_view.BaseConfigView):
         installed_env_nodes = func.get_string_split_list(CONF.base_env.installed_nodes, split_flag=',')
         installed_env_nodes = [i for i in installed_env_nodes if i in hostnames]
         CONF.base_env.installed_nodes = ','.join(installed_env_nodes)
-        group, keys = 'base_env', ['all_nodes', 'all_nodes_edit_str', 'installed_nodes']
+        group, keys = 'base_env', ['all_nodes', 'all_nodes_edit_str', 'installed_nodes', 'root_min_space']
         self.save_CONF_group_keys(group, keys)
         ui.return_last(button)
 

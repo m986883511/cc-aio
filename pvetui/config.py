@@ -40,6 +40,7 @@ network_opts = [
 ]
 
 base_env_opts = [
+    cfg.IntOpt('root_min_space', default=20, help="root_min_space"),
     cfg.StrOpt('all_nodes', default='', help="all_nodes"),
     cfg.StrOpt('all_nodes_edit_str', default='', help="all_nodes_edit_str"),
     cfg.StrOpt('installed_nodes', default='', help="installed_nodes"),

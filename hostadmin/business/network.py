@@ -118,10 +118,10 @@ class NetworkEndPoint(object):
         # sed -i -e 's/node009/node011/g' /etc/postfix/main.cf
         """
         current_hostnanme = func.get_current_node_hostname()
-        new_hostname = func.get_ip_hostname_use_end_number()
-        flag, content = execute.execute_command("sed -i '/{current_hostnanme}/d' /etc/hosts")
+        new_hostname = func.get_ip_hostname_use_end_number(new_ip)
+        flag, content = execute.execute_command(f"sed -i '/{current_hostnanme}/d' /etc/hosts")
         execute.completed(flag, f'delete old {current_hostnanme} in /etc/hosts', content)
-        flag, content = execute.execute_command("echo {new_hostname} >> /etc/hostname")
+        flag, content = execute.execute_command(f"echo {new_hostname} >> /etc/hostname")
         execute.completed(flag, f"set new hostname as {new_hostname}")
         flag, content = execute.crudini_set_config('/etc/postfix/main.cf', "", 'myhostname', f'{new_hostname}.com')
         execute.completed(flag, f'update myhostname to email', content)

@@ -49,10 +49,13 @@ if [ -v SSH_CONNECTION ]; then
 fi
 # set -u
 
-function check_root_space_bigger_than_100(){
+function check_root_space_bigger_than(){
     echo "enter function name: ${FUNCNAME[0]}"
     local total_root_space
     local total_root_space_g
+    local root_min_space
+    root_min_space=$(crudini --get $PVETUI_CONFIG_PATH base_env root_min_space)
+    completed $? "get $PVETUI_CONFIG_PATH configed root_min_space"
     total_root_space=$(df -h / | awk 'NR==2 {print $2}')
     completed $? "get root space"
     total_root_space_g=$(python3 -c "$(cat << EOF
@@ -69,33 +72,28 @@ print(int(size))
 EOF
 )")
     echo "root space is $total_root_space_g"
-    if [ "$total_root_space_g" -gt 100 ]; then
-        echo "root space bigger than 100GB"
+    if [ "$total_root_space_g" -gt $root_min_space ]; then
+        echo "root space bigger than ${root_min_space}GB"
     else
-        completed 1 "check root space bigger than 100GB"
+        completed 1 "check root space bigger than ${root_min_space}GB"
     fi
 }
 
 function main(){
-    check_root_space_bigger_than_100
-    check_current_node_222_ip
-    set_hostname_use_node_222_ip $CURRENT_NODE_222_IP
+    check_root_space_bigger_than
+    get_pve_ip
+    set_pve_node_ip_and_hostname $PVE_IP_ADDRESS
     write_etc_hosts
     echo_log "REPO_SERVER_IP is $REPO_SERVER_IP"
-    create_local_file_repo
-    install_bcache_tools $REPO_SERVER_IP
-    install_ceph_base_env
-    install_openstack_base_env
+    install_pve_base_env
     change_ssh_strict_host_no
     create_pip_conf $REPO_SERVER_IP
-    install_base_python_package
-    install_atlicense $REPO_SERVER_IP
-    install_phoenix $REPO_SERVER_IP
-    write_kolla_registry_ip_to_etc_hosts $REPO_SERVER_IP
+    install_base_python_packages
+
     pip install pbr
     completed $? "install pbr python package"
-    pip install --use-deprecated=legacy-resolver --upgrade astute
-    completed $? "install astute python package"
+    pip install --use-deprecated=legacy-resolver --upgrade cs-pve
+    completed $? "install cs-pve python package"
     start_hostrpc_server
 }
 

@@ -28,10 +28,10 @@ class InstallBaseEnvConsoleView(base_view.BaseConsoleView):
         self.need_run_cmd_list.append(f'cs-hostcli network check-network-connection {self.selected_hostname}')
         self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-passwordless-to-host {self.selected_hostname}')
         self.need_run_cmd_list.append(f'cs-hostcli host install-base-env --host {self.selected_hostname}')
-        if self.selected_hostname not in CONF.base_env.installed_nodes:
-            other_node_ntp_server_config = get_other_nodes_ntp_server_config()
-            other_node_ntp_server_ip = other_node_ntp_server_config['ntp_server_ip']
-            self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cs-hostcli host set-ntp-server {other_node_ntp_server_ip}"')
+        # if self.selected_hostname not in CONF.base_env.installed_nodes:
+        #     other_node_ntp_server_config = get_other_nodes_ntp_server_config()
+        #     other_node_ntp_server_ip = other_node_ntp_server_config['ntp_server_ip']
+        #     self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cs-hostcli host set-ntp-server {other_node_ntp_server_ip}"')
         self.start_alarm()
         ui.top_layer.open_box(body)
     

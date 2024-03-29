@@ -6,7 +6,7 @@ YUM_OFFLINE_REPO_NAME=local.repo
 REPO_SERVER_PORT=7080
 OPT_ASTUTE_DIR="/opt/astute"
 REPO_SERVER_NAME="repo-server"
-HOSTRPC_SERVER_NAME="hostrpc"
+HOSTRPC_SERVER_NAME="cs-hostrpc"
 REPO_SERVER_SYSTEMD_FILE=/usr/lib/systemd/system/$REPO_SERVER_NAME.service
 HOSTRPC_SERVER_SYSTEMD_FILE=/usr/lib/systemd/system/$HOSTRPC_SERVER_NAME.service
 REPO_SERVER_DIR="$OPT_ASTUTE_DIR/presetup/repo"
@@ -16,7 +16,8 @@ PIP_PACKAGES_DIR_PREFIX="$REPO_SERVER_DIR/pip"
 BASE_BASE_RPM="which tar wget systemd sshpass newt python3 rsync pciutils"
 CEPH_BASE_RPM="podman lvm2 cephadm chrony ceph-common smartmontools jq gdisk $BASE_BASE_RPM"
 OPENSTACK_BASE_RPM="docker python3-pip nfs-utils $BASE_BASE_RPM"
-BASE_PIP_PACKAGE="docker crudini PyMySQL"
+PVE_BASE_DEBS="samba samba-common python3-pip wireguard sshpass crudini git net-tools"
+BASE_PIP_PACKAGES=""
 INVENTORY_HOSTS_PATH="/etc/cs/hosts"
 # 
 SYS_ARCH=$(uname -m)
@@ -31,8 +32,8 @@ PLAIN=''
 
 JM_IP_PRIFIX="192.222.1."
 JM_VERSION_DIR="$OPT_ASTUTE_DIR/jmversion"
-ACD_CONFIG_PATH="/etc/cs/pvetui.conf"
-CURRENT_NODE_222_IP=
+PVETUI_CONFIG_PATH="/etc/cs/pvetui.conf"
+PVE_IP_ADDRESS=
 CONDA_BIN_PATH="/root/miniconda3/condabin/conda"
 LOG_PATH="/var/log/cs/shell.log"
 
@@ -108,13 +109,13 @@ EOF
 
 function start_hostrpc_server() {
     echo_log "enter function name: ${FUNCNAME[0]}"
-    command -v hostrpc
+    command -v cs-hostrpc
     completed $? "check command hostrpc exist"
 
     if [ ! -f $HOSTRPC_SERVER_SYSTEMD_FILE ]; then
         cat > $HOSTRPC_SERVER_SYSTEMD_FILE << EOF
 [Unit]
-Description=astute hostrpc
+Description=cs hostrpc
 After=network-online.target
 Wants=network-online.target
 
@@ -123,7 +124,7 @@ User=root
 Group=root
 
 WorkingDirectory=/root
-ExecStart=hostrpc
+ExecStart=cs-hostrpc
 KillSignal=SIGINT
 
 [Install]
@@ -171,51 +172,10 @@ function install_ceph_base_env() {
     completed $? "install ceph base packages"
 }
 
-function install_bcache_tools() {
-    echo_log "enter function name: ${FUNCNAME[0]}"
-    yum install make gcc -y
-    local http_server_ip=$1
-    local url1="http://$http_server_ip:$REPO_SERVER_PORT/files/bcache-tools.tar.gz"
-    local url2="http://$http_server_ip:$REPO_SERVER_PORT/files/bcachectl.tar.gz"
-
-    if modprobe -n -v "bcache" &> /dev/null; then
-        /sbin/modprobe bcache
-
-        rm -rf /tmp/bcache*
-        completed $? "delete old /tmp/bcache*"
-        wget $url1 -P /tmp
-        completed $? "download bcache-tools"
-        tar zxvf "/tmp/bcache-tools.tar.gz" -C "/tmp"
-        (cd "/tmp/bcache-tools" && make install)
-        completed $? "install bcache-tools"
-
-        wget $url2 -P /tmp
-        completed $? "download bcache-tools"
-        tar zxvf "/tmp/bcachectl.tar.gz" -C "/usr/bin/"
-        completed $? "install bcachectl"
-        chmod +x /usr/bin/bcachectl
-        completed $? "chmod +x /usr/bin/bcachectl"
-    fi
-}
-
-function install_atlicense() {
-  echo_log "enter function name: ${FUNCNAME[0]}"
-  local http_server_ip=$1
-  local url="http://$http_server_ip:$REPO_SERVER_PORT/files/atlicense_$(uname -m)"
-  wget $url -O /usr/bin/atlicense
-  completed $? "download atlicense to /usr/bin"
-  chmod +x /usr/bin/atlicense
-  completed $? "install atlicense"
-}
-
-function install_phoenix() {
-  echo_log "enter function name: ${FUNCNAME[0]}"
-  local http_server_ip=$1
-  local url="http://$http_server_ip:$REPO_SERVER_PORT/files/"
-  wget -r -np -nd --accept="phoenix*.bin" $url -P /tmp
-  completed $? "download phoenix.bin to /tmp"
-  bash /tmp/phoenix*.bin
-  completed $? "install phoenix"
+function install_pve_base_env() {
+    local base_debs=$PVE_BASE_DEBS
+    apt install -y $base_debs
+    completed $? "install pve base packages"
 }
 
 function scp_dir_to_remote_host(){
@@ -262,24 +222,6 @@ function change_ssh_strict_host_no() {
     completed $? "change ssh StrictHostKeyCheckin no"
 }
 
-function create_local_file_repo(){
-    local release_id=$(get_os_release_id)
-    mkdir -p $YUM_REPO_BACKUP_DIR
-    mv $YUM_REPO_DIR/*.repo $YUM_REPO_BACKUP_DIR
-    completed $? "backup yum repo"
-
-    cat > $YUM_REPO_DIR/$YUM_OFFLINE_REPO_NAME << EOF
-[presetup_repo]
-baseurl = http://$REPO_SERVER_IP:$REPO_SERVER_PORT/yum/$release_id
-gpgcheck = 0
-name = presetup_repo
-priority = 2
-EOF
-    completed $? "create local yum repo file"
-    yum makecache
-    completed $? "yum makecache"
-}
-
 function get_cpu_arch() {
   if [ $SYS_ARCH = "aarch64" ]; then
     echo "arm64"
@@ -300,8 +242,8 @@ function number_to_hostname(){
 function ip_to_hostname(){
     local ip_address=$1
     if [ "$ip_address" = localhost ]; then
-        check_current_node_222_ip
-        ip_address=$CURRENT_NODE_222_IP
+
+        ip_address=$PVE_IP_ADDRESS
     fi
     local last_octet=$(echo "$ip_address" | awk -F'.' '{print $NF}')
     echo $(number_to_hostname $last_octet)
@@ -309,8 +251,12 @@ function ip_to_hostname(){
 
 function write_etc_hosts(){
     local hosts_file="/etc/hosts"
-    for i in {1..240}; do
-        ip="192.222.1.$i"
+    for i in {1..200}; do
+        ip_prifix=$(echo "$PVE_IP_ADDRESS" | awk -F. '{print $1"."$2"."$3"."}')
+        if [ -z "$ip_prifix" ]; then
+            completed 1 "get ip_prifix"
+        fi
+        ip="${ip_prifix}${i}"
         host="host$(printf "%03d" $i)"
         if grep -q -E "($ip|$host)\s" "$hosts_file"; then
             /bin/true
@@ -321,38 +267,26 @@ function write_etc_hosts(){
     done
 }
 
-function install_base_python_package(){
-    pip3 install $BASE_PIP_PACKAGE
-    completed $? "pip3 install $BASE_PIP_PACKAGE"
-}
-
-function get_current_node_222_ip(){
-    CURRENT_NODE_222_IP=''
-    local node_ip=$(ip a | grep -oE 'inet [0-9.]+/' | grep -oE '192\.222\.1\.[0-9]+')
-    if [ -z  "$node_ip" ]; then
-        echo_log "not find ip like 192.222.1.xx"
-    fi
-    local ips=($node_ip)
-    if [  ${#ips[@]} -eq 1 ]; then
-        CURRENT_NODE_222_IP=${ips[0]}
-        echo_log "find ${ips[0]} ip like 192.222.1.xx"
-    elif [  ${#ips[@]} -gt 1 ]; then
-        CURRENT_NODE_222_IP=$(cat /etc/hosts | grep $(hostname)| awk '{print $1}' | head -n 1)
+function install_base_python_packages(){
+    if [ -z $BASE_PIP_PACKAGES ];then
+        echo "no need install base_python_package"
+    else
+        pip3 install $BASE_PIP_PACKAGES
+        completed $? "pip3 install $BASE_PIP_PACKAGES"
     fi
 }
 
-function check_current_node_222_ip(){
-    get_current_node_222_ip
-    if [ -z "$CURRENT_NODE_222_IP" ]; then
-        completed 1 "check current node have ip like 192.222.1.xx"
+function get_pve_ip(){
+    PVE_IP_ADDRESS=$(grep -w "$(hostname)" /etc/hosts | awk '{print $1}')
+    if [ -z "$PVE_IP_ADDRESS" ]; then
+        completed 1 "get PVE_IP_ADDRESS"
     fi
 }
 
-function set_hostname_use_node_222_ip(){
+function set_pve_node_ip_and_hostname(){
     local node_ip=$1
-    local hostname_s=$(ip_to_hostname $node_ip)
-    hostnamectl set-hostname $hostname_s
-    completed $? "set $node_ip hostname to $hostname_s"
+    cs-hostcli network change-single-pve-node-ip $node_ip
+    completed $? "set $node_ip"
 }
 
 function check_kolla_ansible_version_exist(){
@@ -516,26 +450,6 @@ function execute_kolla_add_nodes(){
     completed $? "kolla-add-nodes"
 }
 
-function write_kolla_registry_ip_to_etc_hosts(){
-    if [ -z "$1" ]; then
-        completed 1 "write_kolla_registry_ip_to_etc_hosts, param1 not exist"
-    fi
-    local ip=$1
-    local url_port='astute-tec.com:4001'
-    local url=$(echo $url_port|awk -F':' '{print $1}')
-    local hosts_file=/etc/hosts
-
-    sed -i "/$url/d" /etc/hosts
-    echo "$ip $url" >> /etc/hosts
-
-    if grep -q -E "($ip|$url)\s" "$hosts_file"; then
-        /bin/true
-    else
-        echo_log "write: $ip $url to /etc/hosts"
-        echo "$ip $url" >> "$hosts_file"
-    fi
-}
-
 function gen_openstack_ceph_config(){
     echo "enter function name: ${FUNCNAME[0]}"
     local conda_env_name="astute"
@@ -606,9 +520,9 @@ function restart_ceph_about_container(){
     echo "enter function name: ${FUNCNAME[0]}"
     local control_nodes
     local pure_compute_nodes
-    control_nodes=$(crudini --get $ACD_CONFIG_PATH openstack control_nodes)
+    control_nodes=$(crudini --get $PVETUI_CONFIG_PATH openstack control_nodes)
     completed $? "read openstack control_nodes"
-    pure_compute_nodes=$(crudini --get $ACD_CONFIG_PATH openstack pure_compute_nodes)
+    pure_compute_nodes=$(crudini --get $PVETUI_CONFIG_PATH openstack pure_compute_nodes)
     completed $? "read openstack pure_compute_nodes"
 
     control_nodes="${control_nodes//,/ }"

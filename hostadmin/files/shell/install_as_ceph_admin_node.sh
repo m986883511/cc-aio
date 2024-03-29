@@ -79,7 +79,7 @@ function config_ceph_cluster(){
 
 function main(){
     local current_node_installed_ceph
-    current_node_installed_ceph=$(crudini --get $ACD_CONFIG_PATH ceph current_node_installed_ceph)
+    current_node_installed_ceph=$(crudini --get $PVETUI_CONFIG_PATH ceph current_node_installed_ceph)
     if [ $? == 0 ]; then
         if [ "$current_node_installed_ceph" = "true" ] || [ "$current_node_installed_ceph" = "True" ]; then
             echo "already installed ceph"
@@ -92,7 +92,7 @@ function main(){
     wait_current_node_install_ceph_completed
     scp_etc_conf_to_master_node
 
-    crudini --set $ACD_CONFIG_PATH ceph current_node_installed_ceph true
+    crudini --set $PVETUI_CONFIG_PATH ceph current_node_installed_ceph true
     completed $? "set current_node_installed_ceph as true"
 }
 
