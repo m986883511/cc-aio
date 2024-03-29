@@ -119,7 +119,7 @@ def completed(flag, dec, err=None, raise_flag=True):
         msg = f'{dec} success'
         LOG.info(msg)
         if os.environ.get('IN_CLICK'):
-            import click # 不要在astute_utils模块中公开引入任何第三方包
+            import click # 不要在cs_utils模块中公开引入任何第三方包
             click.secho(msg, fg='green')
         else:
             print(msg)
@@ -129,7 +129,7 @@ def completed(flag, dec, err=None, raise_flag=True):
             msg = f'{msg}, err: {err}'
         LOG.error(msg)
         if os.environ.get('IN_CLICK'):
-            import click # 不要在astute_utils模块中公开引入任何第三方包
+            import click # 不要在cs_utils模块中公开引入任何第三方包
             click.secho(msg, fg='red')
             if raise_flag:
                 raise click.ClickException("")

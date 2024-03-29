@@ -15,7 +15,7 @@ class OpenstackDeployConsole(base_view.BaseConsoleView):
         super().__init__(origin_view)
         self.all_nodes = self.get_all_nodes()
         self.current_hostname = func.get_current_node_hostname()
-        self.default_version_path = '/opt/astute/jmversion'
+        self.default_version_path = '/opt/cs/jmversion'
         self.show()
 
     def get_all_nodes(self):

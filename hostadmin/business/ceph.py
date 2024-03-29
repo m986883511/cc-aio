@@ -18,7 +18,7 @@ LOG = logging.getLogger(__name__)
 
 class CephEndPoint(object):
     def __init__(self):
-        self.version_path = '/opt/astute/jmversion'
+        self.version_path = '/opt/cs/jmversion'
         self.architecture = linux.get_architecture()
 
         self.initial_dashboard_password = 'password'

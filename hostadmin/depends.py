@@ -39,7 +39,7 @@ def chmod_ssh_key_path():
 
 
 def chmod_scripts_path():
-    path = '/usr/local/astute/scripts'
+    path = '/usr/local/cs/scripts'
     if not os.path.exists(path):
         LOG.error(f'{path} not exist')
         return

@@ -7,7 +7,7 @@ import urwid
 
 from cs_utils import func, execute
 from pvetui import ui, utils
-from pvetui.ui import ceph, network, base_env, openstack
+from pvetui.ui import ceph, network, base_env, openstack, pve
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
 
 
@@ -110,23 +110,24 @@ def main():
             urwid.Button(CONF.return_last_string, ui.return_last, align='center')
         ]),
         menu_button('配置物理网络', network.NetworkNodeMenu),
-        sub_menu('安装Ceph分布式存储', [
-            menu_button('编辑默认配置', ceph.CephClusterConfigView),
-            menu_button('部署Ceph集群', ceph.DeployCephConsoleView),
-            menu_button('添加OSD', ceph.OsdAddNodeMenu),
-            menu_button('移除OSD', ceph.OsdDelNodeMenu),
-            urwid.Divider(),
-            menu_button(CONF.return_last_string, ui.return_last),
-        ]),
-        sub_menu('安装OpenStack云计算平台', [
-            menu_button('编辑默认配置', openstack.OpenstackClusterConfigView),
-            menu_button('部署OpenStack集群', openstack.OpenstackDeployConsole),
-            menu_button('更新OpenStack配置', openstack.UpdateOpenstackConfigView),
-            menu_button('添加计算节点', openstack.AddComputeNodeMenu),
-            menu_button('对接Ceph分布式存储', openstack.AccessCephNodeMenu),
-            urwid.Divider(),
-            menu_button(CONF.return_last_string, ui.return_last),
-        ]),
+        menu_button('安装ALL-IN-ONE', pve.PveAllInOneView),
+        # sub_menu('安装Ceph分布式存储', [
+        #     menu_button('编辑默认配置', ceph.CephClusterConfigView),
+        #     menu_button('部署Ceph集群', ceph.DeployCephConsoleView),
+        #     menu_button('添加OSD', ceph.OsdAddNodeMenu),
+        #     menu_button('移除OSD', ceph.OsdDelNodeMenu),
+        #     urwid.Divider(),
+        #     menu_button(CONF.return_last_string, ui.return_last),
+        # ]),
+        # sub_menu('安装OpenStack云计算平台', [
+        #     menu_button('编辑默认配置', openstack.OpenstackClusterConfigView),
+        #     menu_button('部署OpenStack集群', openstack.OpenstackDeployConsole),
+        #     menu_button('更新OpenStack配置', openstack.UpdateOpenstackConfigView),
+        #     menu_button('添加计算节点', openstack.AddComputeNodeMenu),
+        #     menu_button('对接Ceph分布式存储', openstack.AccessCephNodeMenu),
+        #     urwid.Divider(),
+        #     menu_button(CONF.return_last_string, ui.return_last),
+        # ]),
         urwid.Divider(),
         menu_button('退出', ui.exit_program),
     ])

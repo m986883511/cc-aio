@@ -6,8 +6,8 @@ from pvetui.config import CONF, PVE_TUI_CONF_PATH
 
 LOG = logging.getLogger(__name__)
 
-def get_astute_version():
-    flag, content = execute.execute_command('pip show astute')
+def get_cs_pve_version():
+    flag, content = execute.execute_command('pip show cs-pve')
     if flag == 0:
         content_list = func.get_string_split_list(content, split_flag='\n')
         for i in content_list:
@@ -16,12 +16,12 @@ def get_astute_version():
                 return version
 
 
-def install_new_master_astute_package(auto_install_flag=False):
-    version = get_astute_version()
+def install_new_master_cs_pve_package(auto_install_flag=False):
+    version = get_cs_pve_version()
     branch='.'.join(version.split('.')[0:2])
     branch = 'master' if branch == '4.999' else 'v' + branch
-    url = f'http://192.222.1.150:8082/fileserver/jenkins/jenkins1/production-zed/zed-astute/{branch}/latest'
-    file_url = func.get_http_server_one_file_download_url(url, startswith='astute', endswith=".tar.gz")
+    url = f'http://192.168.1.4:5244/d/4t/fileserver/jenkins/production-pve/pvetui/{branch}/latest'
+    file_url = func.get_http_server_one_file_download_url(url, startswith='cs-pve', endswith=".tar.gz")
     file_name = func.get_string_split_list(file_url, split_flag='/')[-1]
     print(f'current version is {version}, are you sure install {file_name}?')
     if auto_install_flag:
@@ -30,16 +30,16 @@ def install_new_master_astute_package(auto_install_flag=False):
         name = input("if need install, please input yes: ")
     if name == 'yes':
         flag = execute.execute_command_in_popen(f'pip install {file_url}')
-        execute.completed(flag, 'install astute package')
+        execute.completed(flag, 'install cs-pve package')
         flag = execute.execute_command_in_popen(f'systemctl restart hostrpc')
         execute.completed(flag, 'restart hostrpc')
     else:
         print(f'input is {name}, install canceled')
 
 
-def show_astute_commit_msg():
-    file_path = '/usr/local/astute/doc/ChangeLog'
-    cmd = f'openssl enc -d -aes-256-cbc -in {file_path} -pass pass:astute -md sha256'
+def show_cs_pve_commit_msg():
+    file_path = '/usr/local/cs/doc/ChangeLog'
+    cmd = f'openssl enc -d -aes-256-cbc -in {file_path} -pass pass:password -md sha256'
     if os.path.exists(file_path):
         flag = execute.execute_command_in_popen(cmd)
         print('')
@@ -51,15 +51,15 @@ def show_astute_commit_msg():
 def custom_cmd(sys_argv: list):
     cmd = sys_argv[1]
     if cmd == '--version':
-        version = get_astute_version()
+        version = get_cs_pve_version()
         print(version)
         exit()
     elif cmd == '--update':
         auto_install_flag = '-y' in sys_argv[1:]
-        install_new_master_astute_package(auto_install_flag)
+        install_new_master_cs_pve_package(auto_install_flag)
         exit()
     elif cmd == '--commit':
-        show_astute_commit_msg()
+        show_cs_pve_commit_msg()
         exit()
 
 

@@ -77,7 +77,7 @@ class UpdateOpenstackConfigView(base_view.BaseConfigView):
 
     def update_ntp(self, button):
         cmd2 = f'eval "$(conda shell.bash hook)" && source {self.kolla_rc_path} && kolla-ansible deploy -i {self.ansible_hosts} -t common'
-        cmd3 = '/usr/bin/python /usr/local/astute/scripts/set-ntp.py'
+        cmd3 = '/usr/bin/python /usr/local/cs/scripts/set-ntp.py'
         self.commands = [self.kolla_generate_cmd, cmd2, cmd3]
         UpdateOpenstackConfigConsole(self, button)
 

@@ -46,6 +46,17 @@ base_env_opts = [
     cfg.StrOpt('installed_nodes', default='', help="installed_nodes"),
 ]
 
+samba_opts = [
+    cfg.StrOpt('default_user', default='samba', help="default_samba_user"),
+    cfg.StrOpt('default_password', default='samba', help="default_samba_password"),
+    cfg.StrOpt('default_share_path', default='/smb', help="default_share_path"),
+]
+
+alist_opts = [
+    cfg.StrOpt('default_user', default='alist', help="default_alist_user"),
+    cfg.StrOpt('default_password', default='alist', help="default_alist_password"),
+]
+
 openstack_opts = [
     cfg.StrOpt('control_nodes', default='', help="control_nodes"),
     cfg.StrOpt('pure_compute_nodes', default='', help="pure_compute_nodes"),
@@ -67,6 +78,8 @@ openstack_opts = [
 
 CONF.register_cli_opts(default_opts)
 CONF.register_cli_opts(ceph_opts, group='ceph')
+CONF.register_cli_opts(samba_opts, group='samba')
+CONF.register_cli_opts(alist_opts, group='alist')
 CONF.register_cli_opts(network_opts, group='network')
 CONF.register_cli_opts(base_env_opts, group='base_env')
 CONF.register_cli_opts(openstack_opts, group='openstack')

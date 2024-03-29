@@ -2,9 +2,10 @@
 
 # INSTALL_PATH='/opt/alist'
 VERSION='latest'
+REPO_SERVER_PORT="7080"
 
 if [ ! -n "$2" ]; then
-  INSTALL_PATH='/opt/alist'
+  INSTALL_PATH='/opt/cs/alist'
 else
   if [[ $2 == */ ]]; then
     INSTALL_PATH=${2%?}
@@ -81,11 +82,11 @@ CHECK() {
     rm -rf $INSTALL_PATH && mkdir -p $INSTALL_PATH
   fi
 }
-http://192.168.1.4:5244/4t/soft/linux/alist
+
 INSTALL() {
   # 下载 Alist 程序
   echo -e "\r\n${GREEN_COLOR}下载 Alist $VERSION ...${RES}"
-  curl -L ${GH_PROXY}http://192.168.1.4:5244/d/4t/soft/linux/alist/alist-linux-musl-$ARCH.tar.gz -o /tmp/alist.tar.gz $CURL_BAR
+  curl -L ${GH_PROXY}http://localhost:$REPO_SERVER_PORT/files/alist-linux-musl-$ARCH.tar.gz -o /tmp/alist.tar.gz $CURL_BAR
   tar zxf /tmp/alist.tar.gz -C $INSTALL_PATH/
 
   if [ -f $INSTALL_PATH/alist ]; then
@@ -191,7 +192,7 @@ UPDATE() {
     # 备份 alist 二进制文件，供下载更新失败回退
     cp $INSTALL_PATH/alist /tmp/alist.bak
     echo -e "${GREEN_COLOR}下载 Alist $VERSION ...${RES}"
-    curl -L ${GH_PROXY}http://192.168.1.4:5244/d/4t/soft/linux/alist/alist-linux-musl-$ARCH.tar.gz -o /tmp/alist.tar.gz $CURL_BAR
+    curl -L ${GH_PROXY}http://localhost:$REPO_SERVER_PORT/files/alist-linux-musl-$ARCH.tar.gz -o /tmp/alist.tar.gz $CURL_BAR
     tar zxf /tmp/alist.tar.gz -C $INSTALL_PATH/
     if [ -f $INSTALL_PATH/alist ]; then
       echo -e "${GREEN_COLOR} 下载成功 ${RES}"

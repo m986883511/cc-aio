@@ -786,14 +786,14 @@ class DiskEndPoint(object):
 
             # 此处dd清理一下数据盘，避免后续创建lv失败
             '''
-            [root@host035 astute]# vgcreate at_sdd /dev/sdd
+            [root@host035 cs]# vgcreate at_sdd /dev/sdd
               Cannot use /dev/sdd: device is partitioned
               Command requires all devices to be found.
-            [root@host035 astute]# dd if=/dev/zero of=/dev/sdd bs=4M count=1
+            [root@host035 cs]# dd if=/dev/zero of=/dev/sdd bs=4M count=1
             1+0 records in
             1+0 records out
             4194304 bytes (4.2 MB, 4.0 MiB) copied, 0.0176488 s, 238 MB/s
-            [root@host035 astute]# vgcreate at_sdd /dev/sdd
+            [root@host035 cs]# vgcreate at_sdd /dev/sdd
               Physical volume "/dev/sdd" successfully created.
               Volume group "at_sdd" successfully created
             '''
