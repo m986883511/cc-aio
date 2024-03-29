@@ -57,6 +57,21 @@ alist_opts = [
     cfg.StrOpt('default_password', default='alist', help="default_alist_password"),
 ]
 
+public_ip_opts = [
+    cfg.StrOpt('ipv4_or_ipv6', default='ipv4', help="use ipv4 or ipv6 public ip"),
+    cfg.BoolOpt('use_ddns', default=False, help="use ddns or not"),
+    cfg.StrOpt('accessKeyId', default='', help="aliyun ddns accessKeyId"),
+    cfg.StrOpt('accessSecret', default='', help="aliyun ddns accessSecret"),
+    cfg.BoolOpt('use_check_robot', default=False, help="use check public robot or not"),
+    cfg.StrOpt('feishu_webhook_uuid', default='', help="feishu webhook uuid"),
+    cfg.StrOpt('check_interval', default=5, help="check public ip every x mintues"),
+]
+
+wireguard_opts = [
+    cfg.BoolOpt('open_flag', default=False, help="open wireguard falg"),
+    cfg.StrOpt('listen_port', default='12001', help="listen_port"),
+]
+
 openstack_opts = [
     cfg.StrOpt('control_nodes', default='', help="control_nodes"),
     cfg.StrOpt('pure_compute_nodes', default='', help="pure_compute_nodes"),
@@ -80,6 +95,8 @@ CONF.register_cli_opts(default_opts)
 CONF.register_cli_opts(ceph_opts, group='ceph')
 CONF.register_cli_opts(samba_opts, group='samba')
 CONF.register_cli_opts(alist_opts, group='alist')
+CONF.register_cli_opts(public_ip_opts, group='public_ip')
+CONF.register_cli_opts(wireguard_opts, group='wireguard')
 CONF.register_cli_opts(network_opts, group='network')
 CONF.register_cli_opts(base_env_opts, group='base_env')
 CONF.register_cli_opts(openstack_opts, group='openstack')

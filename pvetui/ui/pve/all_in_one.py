@@ -7,7 +7,7 @@ from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from cs_utils import execute, func
 
-from .services import samba, alist
+from .services import samba, alist, public_ip, wireguard
 
 LOG = logging.getLogger(__name__)
 
@@ -22,14 +22,23 @@ class PveAllInOneServicesView(base_view.BaseConfigView):
                 'view': samba.SambaConfigView,
             },
             'alist':{
-                'text': 'alist (浏览器下载文件看视频)',
+                'text': 'alist (浏览器下载文件或者看视频)',
                 'view': alist.AlistConfigView,
-            }
+            },
+            'public_ip':{
+                'text': 'public_ip (运营商临时公网ip的获取方式)',
+                'view': public_ip.PublicIpConfigView,
+            },
+            'wireguard':{
+                'text': 'wireguard (内网穿透可以远程访问家里设备)',
+                'view': wireguard.WireguardConfigView,
+            },
         }
         self.show()
 
     def open_config_network_view(self, button):
         NetworkConfigView(self, button)
+        self.update_view()
 
     def update_view(self):
         self.menu_buttons = []
@@ -43,7 +52,7 @@ class PveAllInOneServicesView(base_view.BaseConfigView):
         self.update_view()
         ii = urwid.Pile(
             [
-                urwid.Text(f"选择{self.origin_layout_button_label}网络"),
+                urwid.Text(f"在{self.origin_layout_button_label}配置服务"),
                 urwid.Divider(),
                 self.pile_view,
                 urwid.Divider(),

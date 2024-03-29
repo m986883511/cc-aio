@@ -1,4 +1,5 @@
 import time
+import uuid
 import logging
 
 import urwid
@@ -14,91 +15,56 @@ LOG = logging.getLogger(__name__)
 class WireguardConfigView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
+        self.ipv4_ipv6_choose_list = []
+        self.ip_types = ['ipv4', 'ipv6']
+        self.ip_type_radio_buttons = []
         self.show()
 
     def save_config(self, button):
-        group, keys = 'wireguard', ['default_share_path', 'default_user', 'default_password']
+        group, keys = 'wireguard', ['open_flag', 'listen_port']
         self.save_CONF_group_keys(group, keys)
         ui.return_last(button)
-    
-    def default_share_path_change_button_func(self, edit_obj: urwid.Edit, current_value):
-        if not current_value:
-            edit_obj.set_caption(('header', [f"请输入路径", ("white", " "), ]))
-            CONF.wireguard.default_share_path = ''
-            return
-        if not current_value.isascii():
-            edit_obj.set_caption(('header', [f"存在不是acsii字符", ("white", " "), ]))
-        elif not os.path.isabs(current_value):
-            edit_obj.set_caption(('header', [f"不是绝对地址", ("white", " "), ]))
-        else:
-            edit_obj.set_caption('')
-            CONF.wireguard.default_share_path = current_value
 
-    def default_user_change_button_func(self, edit_obj: urwid.Edit, current_value):
-        if not current_value:
-            edit_obj.set_caption(('header', [f"请输入用户", ("white", " "), ]))
-            CONF.wireguard.default_user = ''
-            return
-        if not current_value.isascii():
-            edit_obj.set_caption(('header', [f"存在不是acsii字符", ("white", " "), ]))
-        elif len(current_value) < 2:
-            edit_obj.set_caption(('header', [f"用户名太短", ("white", " "), ]))
-        elif len(current_value) > 10:
-            edit_obj.set_caption(('header', [f"用户名太长", ("white", " "), ]))
-        else:
-            edit_obj.set_caption('')
-            CONF.wireguard.default_user = current_value
+    def open_flag_change(self, obj: urwid.CheckBox, value: bool):
+        CONF.wireguard.open_flag = value
+        self.update_view()
     
-    def default_password_change_button_func(self, edit_obj: urwid.Edit, current_value):
+    def listen_port_change(self, edit_obj: my_widget.TextEdit, current_value: str):
         if not current_value:
-            edit_obj.set_caption(('header', [f"请输入密码", ("white", " "), ]))
-            CONF.wireguard.default_password = ''
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.wireguard.listen_port = ''
             return
-        if not current_value.isascii():
-            edit_obj.set_caption(('header', [f"存在不是acsii字符", ("white", " "), ]))
-        elif len(current_value) < 4:
-            edit_obj.set_caption(('header', [f"密码太短", ("white", " "), ]))
-        elif len(current_value) > 20:
-            edit_obj.set_caption(('header', [f"密码太长", ("white", " "), ]))
+        if not current_value.isdigit():
+            edit_obj.set_caption(('header', [f"存在不是数字的字符", ("white", " "), ]))
+        elif int(current_value) < 10000:
+            edit_obj.set_caption(('header', [f"端口号不能小于10000", ("white", " "), ]))
+        elif int(current_value) > 65535:
+            edit_obj.set_caption(('header', [f"端口号不能大于65535", ("white", " "), ]))
         else:
             edit_obj.set_caption('')
-            CONF.wireguard.default_password = current_value
+            CONF.public_ip.accessSecret = current_value
+
+    def update_view(self):
+        widget_list = []
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启内网穿透:', state=CONF.wireguard.open_flag, on_state_change=self.open_flag_change), left=4, right=4, min_width=10))
+        if CONF.wireguard.open_flag:
+            widget_list.append(urwid.Padding(
+                urwid.Columns(
+                    [
+                        urwid.Text("监听端口:", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.listen_port, self.listen_port_change), "editbx", "editfc"),
+                    ]
+                ), left=8, right=10
+            ))
+        self.pile_view.widget_list = widget_list
 
     def show(self):
+        self.update_view()
         body = urwid.Pile(
             [
-                urwid.Text("编辑smaba配置", align="center"),
+                urwid.Text("编辑内网穿透配置", align="center"),
                 urwid.Divider(),
-                urwid.Padding(
-                    urwid.Padding(
-                        urwid.Columns(
-                            [
-                                urwid.Text("共享目录", align="left"),
-                                urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.default_share_path, self.default_share_path_change_button_func), "editbx", "editfc"),
-                            ]
-                        ), left=8, right=10
-                    ),
-                ),
-                urwid.Padding(
-                    urwid.Padding(
-                        urwid.Columns(
-                            [
-                                urwid.Text("samba服务用户", align="left"),
-                                urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.default_user, self.default_user_change_button_func), "editbx", "editfc"),
-                            ]
-                        ), left=8, right=10
-                    ),
-                ),
-                urwid.Padding(
-                    urwid.Padding(
-                        urwid.Columns(
-                            [
-                                urwid.Text("samba服务密码", align="left"),
-                                urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.default_password, self.default_password_change_button_func), "editbx", "editfc"),
-                            ]
-                        ), left=8, right=10
-                    ),
-                ),
+                self.pile_view,
                 self.note_text,
                 urwid.Columns(
                     [

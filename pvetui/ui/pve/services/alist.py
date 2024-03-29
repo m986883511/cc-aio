@@ -27,7 +27,7 @@ class AlistConfigView(base_view.BaseConfigView):
             CONF.alist.default_user = ''
             return
         if not current_value.isascii():
-            edit_obj.set_caption(('header', [f"存在不是acsii字符", ("white", " "), ]))
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
         elif len(current_value) < 2:
             edit_obj.set_caption(('header', [f"用户名太短", ("white", " "), ]))
         elif len(current_value) > 10:
@@ -42,7 +42,7 @@ class AlistConfigView(base_view.BaseConfigView):
             CONF.alist.default_password = ''
             return
         if not current_value.isascii():
-            edit_obj.set_caption(('header', [f"存在不是acsii字符", ("white", " "), ]))
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
         elif len(current_value) < 4:
             edit_obj.set_caption(('header', [f"密码太短", ("white", " "), ]))
         elif len(current_value) > 20:
