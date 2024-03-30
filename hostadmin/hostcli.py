@@ -336,6 +336,31 @@ def create_alist_service(admin_password):
     business.ServiceEndPoint().create_alist_service(ctxt={}, admin_password=admin_password)
     click.secho(f'create alist service success', fg='green')
 
+
+@service.command()
+@click.argument('text', type=click.STRING)
+def show_text_qrencode(text):
+    """
+    显示字符串的二维码
+
+    text: 要二维码编码的字符串
+    """
+    business.ServiceEndPoint().show_text_qrencode(ctxt={}, text=text)
+    click.secho(f'show {text} qrencode success', fg='green')
+
+
+@service.command()
+@click.argument('bind_port', default=8888, type=click.INT)
+def create_block_simple_api_service(bind_port):
+    """
+    创建只响应一次接口的阻塞API服务
+
+    bind_port: 绑定的端口 默认为8888
+    """
+    business.ServiceEndPoint().create_block_simple_api_service(ctxt={}, bind_port=bind_port)
+    click.secho(f'test simple api service success', fg='green')
+
+
 # ------------------------------------------------------------------------- #
 
 @cli.group()

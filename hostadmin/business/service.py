@@ -1,8 +1,12 @@
 import os
 import re
 import json
+import time
 import logging
 import traceback
+import urllib
+import socket
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from oslo_config import cfg
 
@@ -13,8 +17,31 @@ CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
-class ServiceEndPoint(object):
+class HTTPServerV6(HTTPServer):
+    address_family = socket.AF_INET6
 
+
+class TestPublicIpHttpHandler(BaseHTTPRequestHandler):
+    def _response(self, path, args):
+        code=200
+        value = '访问成功! 测试成功! 服务立即退出!\n'*10
+        self.send_response(code)
+        self.send_header('Content-type', 'text/json; charset=utf-8')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(value.encode())
+        exit(0)
+    
+    def do_GET(self):
+        path, args=urllib.parse.splitquery(self.path)
+        self._response(path, args)
+
+    def do_POST(self):
+        args = self.rfile.read(int(self.headers['content-length'])).decode("utf-8")
+        self._response(self.path, args)
+
+
+class ServiceEndPoint(object):
     def __init__(self):
         self.support_pci_types = ['gpu', 'vgpu', 'other']
         self.pci_device_set_vfio_driver_file_path = '/etc/modprobe.d/vfio-pci.conf'
@@ -87,3 +114,18 @@ class ServiceEndPoint(object):
     def get_hostname(self, ctxt):
         hostname = func.get_current_node_hostname()
         return hostname
+
+    def create_block_simple_api_service(self, ctxt, bind_port):
+        start_time= time.perf_counter()
+        httpd = HTTPServerV6(('::', bind_port), TestPublicIpHttpHandler)
+        httpd.serve_forever()
+        end_time = time.perf_counter()
+        if end_time - start_time < 1:
+            execute.completed(1, f"run too short! create block simple api service")
+
+    def show_text_qrencode(self, ctxt, text):
+        flag = execute.execute_command_in_popen(f'apt install qrencode -y')
+        execute.completed(flag, f"apt install qrencode")
+        flag = execute.execute_command_in_popen(f'qrencode -t ansiutf8 -l L {text}')
+        execute.completed(flag, f"show qrencode")
+        

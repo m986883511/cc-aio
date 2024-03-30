@@ -219,7 +219,7 @@ class NetworkEndPoint(object):
     
     def _get_original_manage_ip_mask(self):
         hostname = func.get_current_node_hostname()
-        node_222_ip = func.get_hostname_222_ip(hostname)
+        node_222_ip = func.get_hostname_map_ip(hostname)
         nic_detail = self._get_nic_detail(Bond.mgt)
         for ip in nic_detail['ipv4']:
             temp_ip = ip.get('ip') or ''
@@ -317,7 +317,7 @@ class NetworkEndPoint(object):
                 value['usage'].append(Usage.mgt)
                 default_gateway = self._get_default_gateway(Bond.mgt_con)
                 value['default_gateway'] = default_gateway
-                node_222_ip = func.get_hostname_222_ip(func.get_current_node_hostname())
+                node_222_ip = func.get_hostname_map_ip(func.get_current_node_hostname())
                 for ip in value['ip']:
                     if not ip.startswith(node_222_ip):
                         value['usage'].append(Usage.access)

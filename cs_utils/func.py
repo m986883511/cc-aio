@@ -5,6 +5,7 @@ import inspect
 import logging
 import urllib.request
 import re
+import requests 
 
 LOG = logging.getLogger(__name__)
 
@@ -153,21 +154,11 @@ class FixedSizeList:
         return ''.join(self.items)
 
 
-def get_hostname_222_ip(hostname=None):
+def get_hostname_map_ip(hostname=None):
     hostname = hostname or get_current_node_hostname()
-    if '192.222.1.' in hostname:
-        return hostname
-    else:
-        # assert len(hostname)==7, f'hostname={hostname} length is not 7'
-        # assert 'host' in hostname, f'hostname={hostname} not format like hostxxx'
-        # hostname_number = hostname[4:]
-        # assert hostname_number.isdigit(), f'hostname={hostname} last 3 works is not digit, it is {hostname_number}'
-        # ip = f'192.222.1.{int(hostname_number)}'
-        # return ip
-        assert re.match(r'host\d{3}$', hostname)
-        n = int(hostname[4:])
-        assert 1 <= n and n <= 240
-        return f'192.222.1.{n}'
+    ipv4 = socket.gethostbyname(hostname)
+    assert ipv4, f"get {hostname} map ip failed"
+    return ipv4
 
 
 def get_ip_hostname_use_end_number(ip: str):
@@ -314,3 +305,12 @@ def get_http_server_one_file_download_url(url, startswith:str, endswith:str):
         raise Exception(f"find multi files like {startswith}*{endswith} in {url}")
     file_url = f'{url}/{files[0]}'
     return file_url
+
+
+def get_public_ip(timeout=10):
+    try:
+        public_ip = requests.get('https://checkip.amazonaws.com', timeout=timeout).text.strip()
+    except Exception as e:
+        LOG.info(f'get public_ip failed, err={str(e)}')
+    else:
+        return public_ip

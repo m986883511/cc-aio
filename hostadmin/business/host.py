@@ -312,6 +312,6 @@ class HostEndPoint(object):
             flag, content = execute.execute_command(cmd, shell=True)
             execute.completed(flag, f'scp {FilesDir.Shell.shell_dir} to {host}', content)
             cmd = 'bash /tmp/shell/install_base_env.sh'
-            ssh_use_which_ip = func.get_hostname_222_ip(current_hostname)
+            ssh_use_which_ip = func.get_hostname_map_ip(current_hostname)
             flag = execute.execute_ssh_command_via_id_rsa_in_popen(cmd, FilesDir.SSH.id_rsa, host, ssh_use_which_ip=ssh_use_which_ip)
             execute.completed(flag, f'install base env on {host}')

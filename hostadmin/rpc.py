@@ -39,7 +39,7 @@ def rpc_server():
     all_support_funcs = get_all_support_funcs()
     support_func_names = list(all_support_funcs.keys())
     LOG.info(f"support_func_names={support_func_names}")
-    ip_222 = func.get_hostname_222_ip(current_hostname)
+    ip_222 = func.get_hostname_map_ip(current_hostname)
     s = SimpleJSONRPCServer((ip_222, CONF.json_rpc_server_port))
     s.register_function(do_work, 'do_work')
     LOG.info(f"Run hostadmin RPC service, listen on http://{ip_222}:{CONF.json_rpc_server_port}")
@@ -56,7 +56,7 @@ def rpc_client(func_name, hostname=None, **kwargs):
     kwargs['ctxt'] = kwargs.get('ctxt') or {}
     kwargs['func_name'] = func_name
     LOG.info(f'rpc run func={func_name} on hostname={hostname} kwargs={kwargs}')
-    ip_222 = func.get_hostname_222_ip(hostname)
+    ip_222 = func.get_hostname_map_ip(hostname)
     rpc_server_url = f'http://{ip_222}:{CONF.json_rpc_server_port}'
     LOG.info(f'rpc_server_url={rpc_server_url}')
     try:

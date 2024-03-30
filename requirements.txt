@@ -2,4 +2,4 @@ jsonrpclib==0.2.1
 oslo.config==9.3.0
 click==8.1.7
 urwid==2.4.2
-requests==2.27.1
+requests==2.28.1

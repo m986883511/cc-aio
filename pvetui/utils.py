@@ -73,7 +73,7 @@ def get_other_nodes_ntp_server_config():
     control_nodes_ntp_server = CONF.openstack.control_nodes_ntp_server
     mgt_vip = CONF.openstack.mgt_vip
     if len(control_nodes) <= 1:
-        other_node_ntp_server_ip = func.get_hostname_222_ip()
+        other_node_ntp_server_ip = func.get_hostname_map_ip()
     else:
         other_node_ntp_server_ip = mgt_vip
     nodes_but_not_openstack_node = []

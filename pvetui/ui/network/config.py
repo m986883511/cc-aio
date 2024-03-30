@@ -160,7 +160,7 @@ class NetworkConfigView(base_view.BaseConfigView):
             access_default_gateway = ''
             for network in hostcli_netowrk_list:
                 if self.selected_usage in network.get('usage') or []:
-                    manage_ip = func.get_hostname_222_ip(self.selected_hostname)
+                    manage_ip = func.get_hostname_map_ip(self.selected_hostname)
                     for ip in network.get('ip') or []:
                         if not ip.startswith(manage_ip):
                             access_ip_mask = ip

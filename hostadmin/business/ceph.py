@@ -171,7 +171,7 @@ class CephEndPoint(object):
                 execute.completed(1, f"not have {name} in '{cmd}'")
     
     def check_ceph_node_network(self, ctxt, ceph_node_hostname):
-        ip = func.get_hostname_222_ip(ceph_node_hostname)
+        ip = func.get_hostname_map_ip(ceph_node_hostname)
         ip_endwith = func.get_string_split_list(ip, split_flag='.')[-1]
         public_ip = f'192.222.13.{ip_endwith}'
         cluster_ip = f'192.222.12.{ip_endwith}'
@@ -242,7 +242,7 @@ class CephEndPoint(object):
         cmd = f'sed -i "/{ceph_default_registry_host}/d" /etc/hosts'
         flag, content = execute.execute_command(cmd)
         assert flag == 0, f"delete old ceph_default_registry_host failed"
-        host_222_ip = func.get_hostname_222_ip(host)
+        host_222_ip = func.get_hostname_map_ip(host)
         cmd = f'echo "{host_222_ip} {ceph_default_registry_host}" >> /etc/hosts'
         flag, content = execute.execute_command(cmd)
         assert flag == 0, f"write new ceph_default_registry_host failed"

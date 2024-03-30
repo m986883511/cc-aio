@@ -12,16 +12,50 @@ from cs_utils import execute, func
 LOG = logging.getLogger(__name__)
 
 
+class PublicIpTestConsoleView(base_view.BaseConsoleView):
+    def __init__(self, origin_view: base_view.BaseConfigView):
+        super().__init__(origin_view)
+        self.public_ip_simple_http_server_url = self.get_test_http_server_url()
+        self.show()
+    
+    def get_test_http_server_url(self):
+        if CONF.public_ip.ipv4_or_ipv6 == 'ipv4':
+            url = f'http://{self.origin_view.public_ipv4}:{CONF.public_ip.simple_http_server_port}'
+        else:
+            url = '123'
+        return url
+    
+    def task_success_callback(self):
+        self.received_output('\n 你刚刚使用手机的流量, 访问到了你家里的局域网! 所以!!!')
+        self.received_output('\n 恭喜! 你的环境可以使用wireguard搭建虚拟专用网络! 在外面就像回家一下!'*3 + '\n')
+
+    def show(self):
+        start_install_alist_view = [
+            urwid.Text(f'开始测试公网IP是否可用', align='center'), 
+            urwid.Divider(), 
+            self.output_widget,
+            self.result_button,
+        ]
+        body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
+        self.need_run_cmd_list.append(f'cs-hostcli service show-text-qrencode {self.public_ip_simple_http_server_url}')
+        self.need_run_cmd_list.append(f'echo -e 请关闭手机无线网, 使用相机扫码打开网址, 能打开网址说明公网IP测试成功!')
+        self.need_run_cmd_list.append(f'cs-hostcli service create-block-simple-api-service {CONF.public_ip.simple_http_server_port}')
+        self.start_alarm()
+        ui.top_layer.open_box(body)
+
+
 class PublicIpConfigView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
         self.ipv4_ipv6_choose_list = []
         self.ip_types = ['ipv4', 'ipv6']
         self.ip_type_radio_buttons = []
+        self.public_ipv4 = ''
+        self.public_ipv6 = ''
         self.show()
 
     def save_config(self, button):
-        group, keys = 'public_ip', ['ipv4_or_ipv6', 'use_ddns', 'accessKeyId', 'accessSecret']
+        group, keys = 'public_ip', ['ipv4_or_ipv6', 'use_ddns', 'accessKeyId', 'accessSecret', 'simple_http_server_port']
         self.save_CONF_group_keys(group, keys)
         ui.return_last(button)
     
@@ -106,8 +140,32 @@ class PublicIpConfigView(base_view.BaseConfigView):
             *self.ip_type_radio_buttons
         ])
         widget_list.append(ip_type_column)
+        if CONF.public_ip.ipv4_or_ipv6 == 'ipv4':
+            if self.public_ipv4:
+                public_ip = self.public_ipv4
+            else:
+                public_ip = func.get_public_ip(timeout=3)
+                if public_ip:
+                    self.public_ipv4 = public_ip
+                else:
+                    public_ip = "获取公网ipv4地址失败! 你真的联网了吗?"
+            widget_list.append(urwid.Padding(urwid.Text(f"公网IPv4地址为: {public_ip}", align="left"), left=8, right=4, min_width=10))
+            pve_ip = func.get_hostname_map_ip()
+            widget_list.append(urwid.Padding(urwid.Text(f"PVE的内网IPv4为: {pve_ip}", align="left"), left=8, right=4, min_width=10))
+        else:
+            if self.public_ipv6:
+                public_ip = self.public_ipv6
+            else:
+                public_ip = func.get_public_ip(timeout=3)
+                if public_ip:
+                    self.public_ipv6 = public_ip
+                else:
+                    public_ip = "获取公网ipv6地址失败! 你的光猫开IPv6了吗?"
+            widget_list.append(urwid.Padding(urwid.Text(f"PVE的公网IPv6为: {public_ip}", align="left"), left=8, right=4, min_width=10))
+        if (CONF.public_ip.ipv4_or_ipv6 == 'ipv4' and self.public_ipv4) or (CONF.public_ip.ipv4_or_ipv6 == 'ipv6' and self.public_ipv6):
+            widget_list.append(urwid.Padding(urwid.Button("运行自建的API服务来测试公网IP是否可用", self.start_public_ip_test, align="left", wrap='clip'), align="left", left=8, right=1),)
+        widget_list.append(urwid.Divider())
         widget_list.append(urwid.Padding(urwid.CheckBox('是否使用阿里云ddns:', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), left=4, right=4, min_width=10))
-        
         if CONF.public_ip.use_ddns:
             widget_list.append(urwid.Padding(
                 urwid.Columns(
@@ -125,7 +183,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                     ]
                 ), left=8, right=10
             ))
-        
+        widget_list.append(urwid.Divider())
         widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人:', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
         if CONF.public_ip.use_check_robot:
             widget_list.append(urwid.Padding(
@@ -145,6 +203,9 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 ), left=8, right=10
             ))
         self.pile_view.widget_list = widget_list
+
+    def start_public_ip_test(self, button):
+        PublicIpTestConsoleView(self)
 
     def show(self):
         self.update_view()

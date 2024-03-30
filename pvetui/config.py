@@ -64,6 +64,7 @@ public_ip_opts = [
     cfg.BoolOpt('use_check_robot', default=False, help="use check public robot or not"),
     cfg.StrOpt('feishu_webhook_uuid', default='', help="feishu webhook uuid"),
     cfg.IntOpt('check_interval', default=5, help="check public ip every x mintues"),
+    cfg.IntOpt('simple_http_server_port', default=8888, help="simple_http_server_port"),
 ]
 
 wireguard_opts = [
@@ -86,7 +87,7 @@ openstack_opts = [
     cfg.StrOpt('enable_cinder_backend_nfs', default='no', help="enable_cinder_backend_nfs"),
     cfg.StrOpt('ceph_admin_node', default='', help="ceph_admin_node"),
     cfg.BoolOpt('rsync_config_to_other_control_nodes', default=True, help='rsync_config_to_other_control_nodes'),
-    cfg.StrOpt('control_nodes_ntp_server', default=func.get_hostname_222_ip(), help='control_nodes_ntp_server'),
+    cfg.StrOpt('control_nodes_ntp_server', default=func.get_hostname_map_ip(), help='control_nodes_ntp_server'),
     cfg.StrOpt('enable_cinder', default='yes', help='enable_cinder'),
 ]
 
