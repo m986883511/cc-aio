@@ -12,8 +12,9 @@ from .services import samba, alist, public_ip, wireguard
 LOG = logging.getLogger(__name__)
 
 class PveAllInOneServicesView(base_view.BaseConfigView):
-    def __init__(self, origin_view: base_view.BaseConfigView, button):
+    def __init__(self, origin_view: base_view.BaseConfigView, button: urwid.Button):
         self.origin_view = origin_view
+        self.selected_hostname = button.label
         super().__init__(button)
         self.menu_buttons = []
         self.services_dict = {
@@ -35,10 +36,6 @@ class PveAllInOneServicesView(base_view.BaseConfigView):
             },
         }
         self.show()
-
-    def open_config_network_view(self, button):
-        NetworkConfigView(self, button)
-        self.update_view()
 
     def update_view(self):
         self.menu_buttons = []
@@ -64,7 +61,7 @@ class PveAllInOneServicesView(base_view.BaseConfigView):
 
 
 class PveAllInOneView(base_view.BaseConfigView):
-    def __init__(self, button):
+    def __init__(self, button: urwid.Button):
         super().__init__(button)
         self.need_install_env_buttons = []
         self.installed_env_hosts = []

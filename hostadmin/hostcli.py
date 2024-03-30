@@ -306,6 +306,39 @@ def delete_ceph_cluster():
 # ------------------------------------------------------------------------- #
 
 @cli.group()
+def service():
+    pass
+
+
+@service.command()
+@click.argument('share_path', default='/smb', type=click.STRING)
+@click.argument('samba_user_password', default='samba', type=click.STRING)
+def create_samba_service(share_path, samba_user_password):
+    """
+    创建samba文件共享服务 (windows共享网络盘)
+
+    share_path: 共享路径, 默认是/smb
+
+    samba_user_password: samba用户的密码, 默认是samba
+    """
+    business.ServiceEndPoint().create_samba_service(ctxt={}, share_path=share_path, samba_user_password=samba_user_password)
+    click.secho(f'create samba service success', fg='green')
+
+
+@service.command()
+@click.argument('admin_password', default='password', type=click.STRING)
+def create_alist_service(admin_password):
+    """
+    创建alist服务 (浏览器下载文件看视频)
+
+    admin_password: 浏览器登陆时admin的密码
+    """
+    business.ServiceEndPoint().create_alist_service(ctxt={}, admin_password=admin_password)
+    click.secho(f'create alist service success', fg='green')
+
+# ------------------------------------------------------------------------- #
+
+@cli.group()
 def network():
     pass
 

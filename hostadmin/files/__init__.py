@@ -22,6 +22,7 @@ class FilesDir:
     class Host:
         pci_device_id = os.path.join(hostadmin_host_dir, 'pci-device-id.ini')
         chrony_conf = os.path.join(hostadmin_host_dir, 'chrony.conf')
+        smb_conf = os.path.join(hostadmin_host_dir, 'smb.conf')
         ustc_apt_sources = os.path.join(hostadmin_host_dir, 'ustc-sources.list')
     
     class Shell:

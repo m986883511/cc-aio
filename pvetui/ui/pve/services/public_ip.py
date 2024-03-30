@@ -82,7 +82,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
     def check_interval_change(self, edit_obj: urwid.Edit, current_value: str):
         if not current_value:
             edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
-            CONF.public_ip.accessSecret = ''
+            CONF.public_ip.check_interval = ''
             return
         if not current_value.isdigit():
             edit_obj.set_caption(('header', [f"存在不是数字的字符", ("white", " "), ]))
@@ -92,7 +92,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
             edit_obj.set_caption(('header', [f"输入数字不能大于60", ("white", " "), ]))
         else:
             edit_obj.set_caption('')
-            CONF.public_ip.accessSecret = current_value
+            CONF.public_ip.check_interval = current_value
 
     def update_view(self):
         widget_list = []

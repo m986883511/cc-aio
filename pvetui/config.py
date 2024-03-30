@@ -47,14 +47,13 @@ base_env_opts = [
 ]
 
 samba_opts = [
-    cfg.StrOpt('default_user', default='samba', help="default_samba_user"),
-    cfg.StrOpt('default_password', default='samba', help="default_samba_password"),
+    cfg.StrOpt('samba_default_user', default='samba', help="samba_default_user"),
+    cfg.StrOpt('samba_default_password', default='samba', help="samba_default_password"),
     cfg.StrOpt('default_share_path', default='/smb', help="default_share_path"),
 ]
 
 alist_opts = [
-    cfg.StrOpt('default_user', default='alist', help="default_alist_user"),
-    cfg.StrOpt('default_password', default='alist', help="default_alist_password"),
+    cfg.StrOpt('default_admin_password', default='password', help="default_admin_password"),
 ]
 
 public_ip_opts = [
@@ -64,7 +63,7 @@ public_ip_opts = [
     cfg.StrOpt('accessSecret', default='', help="aliyun ddns accessSecret"),
     cfg.BoolOpt('use_check_robot', default=False, help="use check public robot or not"),
     cfg.StrOpt('feishu_webhook_uuid', default='', help="feishu webhook uuid"),
-    cfg.StrOpt('check_interval', default=5, help="check public ip every x mintues"),
+    cfg.IntOpt('check_interval', default=5, help="check public ip every x mintues"),
 ]
 
 wireguard_opts = [
