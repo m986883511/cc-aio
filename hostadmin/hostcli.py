@@ -312,6 +312,18 @@ def service():
 
 @service.command()
 @click.argument('start_or_stop', type=click.STRING)
+def start_or_stop_aliyun_ddns(start_or_stop):
+    """
+    启动还是停止阿里云DDNS服务
+
+    start_or_stop: 只能是start或者stop
+    """
+    business.ServiceEndPoint().start_or_stop_aliyun_ddns(ctxt={}, start_or_stop=start_or_stop)
+    click.secho(f'{start_or_stop} listen_publialiyun_ddnsc_ip_change_rebot success', fg='green')
+
+
+@service.command()
+@click.argument('start_or_stop', type=click.STRING)
 def start_or_stop_listen_public_ip_change_rebot(start_or_stop):
     """
     启动还是停止公网ip变更通知机器人

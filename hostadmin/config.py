@@ -9,6 +9,7 @@ CONF = cfg.CONF
 # if in kolla container, KOLLA_BASE_ARCH is x86_64 or aarch64
 MOUNT_HOST = '/host' if os.getenv('KOLLA_BASE_ARCH') else ""
 HOSTRPC_CONF_PATH = '/etc/cs/hostrpc.conf'
+CS_SCRIPTS_DIR = '/usr/local/cs/scripts'
 
 core_opts = [
     cfg.StrOpt('state_path',

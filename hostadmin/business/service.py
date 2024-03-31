@@ -12,8 +12,8 @@ from oslo_config import cfg
 
 from cs_utils import execute, func, file
 from hostadmin.files import FilesDir
+from hostadmin.config import CS_SCRIPTS_DIR, CONF
 
-CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
@@ -50,6 +50,7 @@ class ServiceEndPoint(object):
         self.apt_source_list_path = '/etc/apt/sources.list'
         self.public_ip_save_path = "/tmp/public_ip.txt"
         self.report_public_ip_script_name = 'report_public_ip_if_changed_robot.sh'
+        self.aliyun_ddns_script = 'aliyun-ddns.py'
 
     def install_alist(self, ctxt):
         return_code, content = execute.execute_command(f'atlicense -m')
@@ -153,5 +154,29 @@ class ServiceEndPoint(object):
                 flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
                 execute.completed(flag, 'systemctl restart cron', content)
 
-    def delete_listen_public_ip_change_rebot(self, ctxt):
-        pass
+    def start_or_stop_aliyun_ddns(self, ctxt, start_or_stop):
+        flag = start_or_stop in ['start', 'stop']
+        execute.completed(not flag, f"check input param ipv4_or_ipv6")
+        if start_or_stop == 'start':
+            from crontab import CronTab
+            my_cron = CronTab(user='root')
+            path = os.path.join(CS_SCRIPTS_DIR, self.aliyun_ddns_script)
+            command = f'python3 {path}'
+            exist_task = False
+            for job in my_cron:
+                if job.command == command:
+                    exist_task = True
+            if not exist_task:
+                job = my_cron.new(command=command)
+                job.minute.every(1)
+                my_cron.write()
+        else:
+            flag, content = execute.execute_command(f"crontab -l")
+            execute.completed(flag, 'crontab -l', content)
+            LOG.error(content)
+            if self.aliyun_ddns_script in content:
+                cmd = f'crontab -l | grep -v {self.aliyun_ddns_script} | crontab -r'
+                flag, content = execute.execute_command(cmd)
+                execute.completed(flag, f'delete cron={self.aliyun_ddns_script}', content)
+                flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
+                execute.completed(flag, 'systemctl restart cron', content)

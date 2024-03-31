@@ -57,9 +57,8 @@ class PublicIpConfigConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
-        if CONF.public_ip.use_ddns:
-            pass
-        
+        start_or_stop = 'start' if CONF.public_ip.use_ddns else 'stop'
+        self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-aliyun-ddns {start_or_stop}')
         start_or_stop = 'start' if CONF.public_ip.use_check_robot else 'stop'
         self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-listen-public-ip-change-rebot {start_or_stop}')
         self.start_alarm()
@@ -77,7 +76,10 @@ class PublicIpConfigView(base_view.BaseConfigView):
         self.show()
 
     def save_config(self, button):
-        group, keys = 'public_ip', ['ipv4_or_ipv6', 'use_ddns', 'use_check_robot', 'accessKeyId', 'accessSecret', 'simple_http_server_port', 'feishu_webhook_uuid']
+        group, keys = 'public_ip', [
+            'ipv4_or_ipv6', 'use_ddns', 'use_check_robot', 'accessKeyId', 'accessKeySecret', 'rr',
+            'simple_http_server_port', 'feishu_webhook_uuid', 'regionId', 'domain', 'public_ip_txt_path'
+        ]
         self.save_CONF_group_keys(group, keys)
         # ui.return_last(button)
         PublicIpConfigConsoleView(self)
@@ -109,13 +111,46 @@ class PublicIpConfigView(base_view.BaseConfigView):
     def access_secret_change(self, edit_obj: urwid.Edit, current_value: str):
         if not current_value:
             edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
-            CONF.public_ip.accessSecret = ''
+            CONF.public_ip.accessKeySecret = ''
             return
         if not current_value.isascii():
             edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
         else:
             edit_obj.set_caption('')
-            CONF.public_ip.accessSecret = current_value
+            CONF.public_ip.accessKeySecret = current_value
+    
+    def domain_change(self, edit_obj: urwid.Edit, current_value: str):
+        if not current_value:
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.public_ip.domain = ''
+            return
+        if not current_value.isascii():
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
+        else:
+            edit_obj.set_caption('')
+            CONF.public_ip.domain = current_value
+
+    def rr_change(self, edit_obj: urwid.Edit, current_value: str):
+        if not current_value:
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.public_ip.rr = ''
+            return
+        if not current_value.isascii():
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
+        else:
+            edit_obj.set_caption('')
+            CONF.public_ip.rr = current_value
+
+    def region_id_change(self, edit_obj: urwid.Edit, current_value: str):
+        if not current_value:
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.public_ip.regionId = ''
+            return
+        if not current_value.isascii():
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
+        else:
+            edit_obj.set_caption('')
+            CONF.public_ip.regionId = current_value
     
     def feishu_webhook_uuid_change(self, edit_obj: urwid.Edit, current_value: str):
         def is_valid_uuid(text):
@@ -125,8 +160,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
             except ValueError:
                 return False
         if not current_value:
-            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
-            CONF.public_ip.accessSecret = ''
+            CONF.public_ip.feishu_webhook_uuid = ''
             return
         if not current_value.isascii():
             edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
@@ -134,7 +168,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
             edit_obj.set_caption(('header', [f"输入的还不是uuid", ("white", " "), ]))
         else:
             edit_obj.set_caption('')
-            CONF.public_ip.accessSecret = current_value
+            CONF.public_ip.feishu_webhook_uuid = current_value
 
     def update_view(self):
         widget_list = []
@@ -173,8 +207,43 @@ class PublicIpConfigView(base_view.BaseConfigView):
         if (CONF.public_ip.ipv4_or_ipv6 == 'ipv4' and self.public_ipv4) or (CONF.public_ip.ipv4_or_ipv6 == 'ipv6' and self.public_ipv6):
             widget_list.append(urwid.Padding(urwid.Button("运行自建的API服务来测试公网IP是否可用", self.start_public_ip_test, align="left", wrap='clip'), align="left", left=8, right=1),)
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否使用阿里云ddns:', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人(每分钟查一次):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
+        if CONF.public_ip.use_check_robot:
+            widget_list.append(urwid.Padding(
+                urwid.Columns(
+                    [
+                        urwid.Text("飞书WebHook UUID:", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.feishu_webhook_uuid, self.feishu_webhook_uuid_change), "editbx", "editfc"),
+                    ]
+                ), left=8, right=10
+            ))
+        widget_list.append(urwid.Divider())
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否使用阿里云ddns (依赖变更通知机器人):', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), left=4, right=4, min_width=10))
         if CONF.public_ip.use_ddns:
+            widget_list.append(urwid.Padding(
+                urwid.Columns(
+                    [
+                        urwid.Text("域名rr (域名前缀, 就像www):", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.rr, self.rr_change), "editbx", "editfc"),
+                    ]
+                ), left=8, right=10
+            ))
+            widget_list.append(urwid.Padding(
+                urwid.Columns(
+                    [
+                        urwid.Text("域名domain (没有前缀, 就像baidu.com):", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.domain, self.domain_change), "editbx", "editfc"),
+                    ]
+                ), left=8, right=10
+            ))
+            widget_list.append(urwid.Padding(
+                urwid.Columns(
+                    [
+                        urwid.Text("域名regionId (看帮助文档查一下):", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.regionId, self.region_id_change), "editbx", "editfc"),
+                    ]
+                ), left=8, right=10
+            ))
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
@@ -186,19 +255,8 @@ class PublicIpConfigView(base_view.BaseConfigView):
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
-                        urwid.Text("域名accessSecret:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.accessSecret, self.access_secret_change), "editbx", "editfc"),
-                    ]
-                ), left=8, right=10
-            ))
-        widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人(每分钟查一次):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
-        if CONF.public_ip.use_check_robot:
-            widget_list.append(urwid.Padding(
-                urwid.Columns(
-                    [
-                        urwid.Text("飞书WebHook UUID:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.feishu_webhook_uuid, self.feishu_webhook_uuid_change), "editbx", "editfc"),
+                        urwid.Text("域名accessKeySecret:", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.accessKeySecret, self.access_secret_change), "editbx", "editfc"),
                     ]
                 ), left=8, right=10
             ))

@@ -59,11 +59,15 @@ alist_opts = [
 public_ip_opts = [
     cfg.StrOpt('ipv4_or_ipv6', default='ipv4', help="use ipv4 or ipv6 public ip"),
     cfg.BoolOpt('use_ddns', default=False, help="use ddns or not"),
-    cfg.StrOpt('accessKeyId', default='', help="aliyun ddns accessKeyId"),
-    cfg.StrOpt('accessSecret', default='', help="aliyun ddns accessSecret"),
+    cfg.StrOpt('accessKeyId', default='', help="aliyun accessKeyId"),
+    cfg.StrOpt('accessKeySecret', default='', help="aliyun accessKeySecret"),
     cfg.BoolOpt('use_check_robot', default=False, help="use check public robot or not"),
     cfg.StrOpt('feishu_webhook_uuid', default='', help="feishu webhook uuid"),
     cfg.IntOpt('simple_http_server_port', default=8888, help="simple_http_server_port"),
+    cfg.StrOpt('regionId', default="", help="regionId"),
+    cfg.StrOpt('domain', default="", help="yuming url"),
+    cfg.StrOpt('rr', default="www", help="yuming rr"),
+    cfg.StrOpt('public_ip_txt_path', default="/tmp/public_ip.txt", help="public_ip_txt_path"),
 ]
 
 wireguard_opts = [

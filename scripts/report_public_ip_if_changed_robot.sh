@@ -1,5 +1,4 @@
 #!/bin/bash
-PUBLIC_IP_SAVED_PATH="/tmp/public_ip.txt"
 AUTHOR_NAME="cs"
 WHO_AM_I="$(hostname)"
 RUN_AS_SOURCE_FLAG=
@@ -31,6 +30,11 @@ function completed() {
     fi
 }
 
+PUBLIC_IP_SAVED_PATH=$(crudini --get $PVETUI_CONF_PATH public_ip public_ip_txt_path)
+completed $? 'read public_ip public_ip_txt_path'
+if [ -z "$PUBLIC_IP_SAVED_PATH" ];then
+    PUBLIC_IP_SAVED_PATH="/tmp/public_ip.txt"
+fi
 FEISHU_WEBHOOK_UUID=$(crudini --get $PVETUI_CONF_PATH public_ip feishu_webhook_uuid)
 completed $? 'read public_ip feishu_webhook_uuid'
 IPV4_OR_IPV6=$(crudini --get $PVETUI_CONF_PATH public_ip ipv4_or_ipv6)
@@ -81,9 +85,13 @@ function set_crontab(){
 
 function send_change_public_ip(){
     echo "enter function name: ${FUNCNAME[0]}"
-    text="I am $WHO_AM_I, public ip changed to $PUBLIC_IP"
-    curl -X POST -H "Content-Type: application/json" -d '{"msg_type": "text", "content": {"text": "'"$text"'"}}' "$FEISHU_WEBHOOK"
-    completed $? "send public_ip=$PUBLIC_IP to webhook"
+    if [ -z "$FEISHU_WEBHOOK_UUID" ];then
+        completed $? "not config feishu webhook, skip send"
+    else
+        text="I am $WHO_AM_I, public ip changed to $PUBLIC_IP"
+        curl -X POST -H "Content-Type: application/json" -d '{"msg_type": "text", "content": {"text": "'"$text"'"}}' "$FEISHU_WEBHOOK"
+        completed $? "send public_ip=$PUBLIC_IP to webhook"
+    fi
 }
 
 function get_public_ip(){

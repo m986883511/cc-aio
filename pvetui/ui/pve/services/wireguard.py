@@ -28,7 +28,7 @@ class WireguardConfigView(base_view.BaseConfigView):
     def open_flag_change(self, obj: urwid.CheckBox, value: bool):
         CONF.wireguard.open_flag = value
         self.update_view()
-    
+
     def listen_port_change(self, edit_obj: my_widget.TextEdit, current_value: str):
         if not current_value:
             edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
@@ -42,7 +42,7 @@ class WireguardConfigView(base_view.BaseConfigView):
             edit_obj.set_caption(('header', [f"端口号不能大于65535", ("white", " "), ]))
         else:
             edit_obj.set_caption('')
-            CONF.public_ip.accessSecret = current_value
+            CONF.public_ip.accessKeySecret = current_value
 
     def update_view(self):
         widget_list = []
