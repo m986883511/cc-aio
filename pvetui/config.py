@@ -63,7 +63,6 @@ public_ip_opts = [
     cfg.StrOpt('accessSecret', default='', help="aliyun ddns accessSecret"),
     cfg.BoolOpt('use_check_robot', default=False, help="use check public robot or not"),
     cfg.StrOpt('feishu_webhook_uuid', default='', help="feishu webhook uuid"),
-    cfg.IntOpt('check_interval', default=5, help="check public ip every x mintues"),
     cfg.IntOpt('simple_http_server_port', default=8888, help="simple_http_server_port"),
 ]
 

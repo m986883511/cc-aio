@@ -48,6 +48,8 @@ class ServiceEndPoint(object):
         self.module_load_vfio_pci_file_path = '/etc/modules-load.d/vfio-pci.conf'
         self.modprobe_blacklist_file_path = '/etc/modprobe.d/blacklist.conf'
         self.apt_source_list_path = '/etc/apt/sources.list'
+        self.public_ip_save_path = "/tmp/public_ip.txt"
+        self.report_public_ip_script_name = 'report_public_ip_if_changed_robot.sh'
 
     def install_alist(self, ctxt):
         return_code, content = execute.execute_command(f'atlicense -m')
@@ -128,4 +130,28 @@ class ServiceEndPoint(object):
         execute.completed(flag, f"apt install qrencode")
         flag = execute.execute_command_in_popen(f'qrencode -t ansiutf8 -l L {text}')
         execute.completed(flag, f"show qrencode")
-        
+
+    def start_or_stop_listen_public_ip_change_rebot(self, ctxt, start_or_stop):
+        flag = start_or_stop in ['start', 'stop']
+        execute.completed(not flag, f"check input param ipv4_or_ipv6")
+        if start_or_stop == 'start':
+            flag, content = execute.execute_command(f"rm -f /tmp/public_ip.txt")
+            if flag == 0:
+                execute.completed(flag, f"delete old record")
+            flag = execute.execute_command_in_popen(f'bash /usr/local/cs/scripts/report_public_ip_if_changed_robot.sh')
+            execute.completed(flag, f"start listen_public_ip_change_rebot")
+            flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
+            execute.completed(flag, 'systemctl restart cron', content)
+        else:
+            flag, content = execute.execute_command(f"crontab -l")
+            execute.completed(flag, 'crontab -l', content)
+            LOG.error(content)
+            if self.report_public_ip_script_name in content:
+                cmd = f'crontab -l | grep -v {self.report_public_ip_script_name} | crontab -r'
+                flag, content = execute.execute_command(cmd)
+                execute.completed(flag, f'delete cron={self.report_public_ip_script_name}', content)
+                flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
+                execute.completed(flag, 'systemctl restart cron', content)
+
+    def delete_listen_public_ip_change_rebot(self, ctxt):
+        pass

@@ -1,9 +1,7 @@
 #!/bin/bash
 PUBLIC_IP_SAVED_PATH="/tmp/public_ip.txt"
-# WETCHAT_WEBHOOK="https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=8e3e4d48-0bc0-4b78-ab56-c36825bc8e9b"
-FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/f54a776d-436f-4be1-8e08-f7ce25fde25b"
-
-WHO_AM_I="陈永胜家"
+AUTHOR_NAME="cs"
+WHO_AM_I="$(hostname)"
 RUN_AS_SOURCE_FLAG=
 PUBLIC_IP=""
 PUBLIC_IP_READ_CONTENT=""
@@ -11,9 +9,12 @@ CURRENT_SCRIPT_DIR=
 CURRENT_SCRIPT_NAME=
 CURRENT_SCRIPT_PATH=
 DEST_SCRIPT_DIR="/usr/local/bin"
-DEST_SCRIPT_NAME="report_public_ip_if_changed_every_minute.sh"
-LOG_PATH="/var/log/$DEST_SCRIPT_NAME.log"
+DEST_SCRIPT_NAME="report_public_ip_if_changed_robot.sh"
+LOG_DIR="/var/log/$AUTHOR_NAME"
+mdkir -p $LOG_DIR
+LOG_PATH="$LOG_DIR/$DEST_SCRIPT_NAME.log"
 DEST_SCRIPT_PATH="$DEST_SCRIPT_DIR/$DEST_SCRIPT_NAME"
+PVETUI_CONF_PATH="/etc/$AUTHOR_NAME/pvetui.conf"
 
 function completed() {
     if [[ $1 -eq 0 ]]; then
@@ -30,7 +31,13 @@ function completed() {
     fi
 }
 
-function get_public_ip(){
+FEISHU_WEBHOOK_UUID=$(crudini --get $PVETUI_CONF_PATH public_ip feishu_webhook_uuid)
+completed $? 'read public_ip feishu_webhook_uuid'
+IPV4_OR_IPV6=$(crudini --get $PVETUI_CONF_PATH public_ip ipv4_or_ipv6)
+completed $? 'read public_ip ipv4_or_ipv6'
+FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/$FEISHU_WEBHOOK_UUID"
+
+function get_public_ipv4(){
     echo "enter function name: ${FUNCNAME[0]}"
     result=$(curl cip.cc|grep ^IP)
     completed $? "curl cip.cc"
@@ -77,6 +84,14 @@ function send_change_public_ip(){
     text="I am $WHO_AM_I, public ip changed to $PUBLIC_IP"
     curl -X POST -H "Content-Type: application/json" -d '{"msg_type": "text", "content": {"text": "'"$text"'"}}' "$FEISHU_WEBHOOK"
     completed $? "send public_ip=$PUBLIC_IP to webhook"
+}
+
+function get_public_ip(){
+    if [ "$IPV4_OR_IPV6" = "ipv4"  ];then
+        get_public_ipv4
+    else
+        get_public_ipv6
+    fi
 }
 
 function check_public_changed(){

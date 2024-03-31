@@ -307,10 +307,33 @@ def get_http_server_one_file_download_url(url, startswith:str, endswith:str):
     return file_url
 
 
-def get_public_ip(timeout=10):
+def get_public_ipv4(timeout=10):
     try:
         public_ip = requests.get('https://checkip.amazonaws.com', timeout=timeout).text.strip()
     except Exception as e:
         LOG.info(f'get public_ip failed, err={str(e)}')
     else:
         return public_ip
+
+
+def get_public_ipv6_from_list(ips):
+    """240e 电信   2408 联通   2409 移动"""
+    public_flags = ['240e', '2408', '2409']
+    for ip in ips:
+        if not ip:
+            continue
+        for flag in public_flags:
+            if ip.startswith(flag):
+                return ip
+
+
+def get_current_node_public_ipv6():
+    host_ipv6=[]
+    ips=socket.getaddrinfo(socket.gethostname(),80)
+    for ip in ips:
+        if ip[4][0].startswith('240'):
+            host_ipv6.append(ip[4][0])
+    if len(host_ipv6) > 1:
+        LOG.warning(f'get multi public ip, ips={host_ipv6}')
+    if host_ipv6:
+        return host_ipv6[0]

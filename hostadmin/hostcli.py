@@ -311,6 +311,18 @@ def service():
 
 
 @service.command()
+@click.argument('start_or_stop', type=click.STRING)
+def start_or_stop_listen_public_ip_change_rebot(start_or_stop):
+    """
+    启动还是停止公网ip变更通知机器人
+
+    start_or_stop: 只能是start或者stop
+    """
+    business.ServiceEndPoint().start_or_stop_listen_public_ip_change_rebot(ctxt={}, start_or_stop=start_or_stop)
+    click.secho(f'{start_or_stop} listen_public_ip_change_rebot success', fg='green')
+
+
+@service.command()
 @click.argument('share_path', default='/smb', type=click.STRING)
 @click.argument('samba_user_password', default='samba', type=click.STRING)
 def create_samba_service(share_path, samba_user_password):
@@ -366,6 +378,12 @@ def create_block_simple_api_service(bind_port):
 @cli.group()
 def network():
     pass
+
+
+@network.command()
+def get_pve_main_bridge_nics():
+    value = business.NetworkEndPoint().get_pve_main_bridge_nics(ctxt={})
+    click.secho(value, fg='green')
 
 
 @network.command()

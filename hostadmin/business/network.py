@@ -268,6 +268,11 @@ class NetworkEndPoint(object):
         LOG.info(f'clear usage {usage} success')
         return self.get_all_physical_nics(ctxt=ctxt)
 
+    def get_pve_main_bridge_nics(self, ctxt, format='list'):
+        # flag, content = execute.execute_command('cat /etc/network/interfaces')
+        # execute.completed(flag, f'cat /etc/network/interfaces', content)
+        return self._get_nic_detail('vmbr0')
+
     def get_all_physical_nics(self, ctxt, format='list'):
         LOG.info('get_all_physical_nics')
         assert format in ['list', 'dict'], f'format={format} is not support'

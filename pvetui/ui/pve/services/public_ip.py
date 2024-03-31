@@ -44,6 +44,28 @@ class PublicIpTestConsoleView(base_view.BaseConsoleView):
         ui.top_layer.open_box(body)
 
 
+class PublicIpConfigConsoleView(base_view.BaseConsoleView):
+    def __init__(self, origin_view: base_view.BaseConfigView):
+        super().__init__(origin_view)
+        self.show()
+
+    def show(self):
+        start_install_alist_view = [
+            urwid.Text(f'配置public_ip相关服务', align='center'), 
+            urwid.Divider(), 
+            self.output_widget,
+            self.result_button,
+        ]
+        body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
+        if CONF.public_ip.use_ddns:
+            pass
+        
+        start_or_stop = 'start' if CONF.public_ip.use_check_robot else 'stop'
+        self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-listen-public-ip-change-rebot {start_or_stop}')
+        self.start_alarm()
+        ui.top_layer.open_box(body)
+
+
 class PublicIpConfigView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
@@ -55,9 +77,10 @@ class PublicIpConfigView(base_view.BaseConfigView):
         self.show()
 
     def save_config(self, button):
-        group, keys = 'public_ip', ['ipv4_or_ipv6', 'use_ddns', 'accessKeyId', 'accessSecret', 'simple_http_server_port']
+        group, keys = 'public_ip', ['ipv4_or_ipv6', 'use_ddns', 'use_check_robot', 'accessKeyId', 'accessSecret', 'simple_http_server_port', 'feishu_webhook_uuid']
         self.save_CONF_group_keys(group, keys)
-        ui.return_last(button)
+        # ui.return_last(button)
+        PublicIpConfigConsoleView(self)
     
     def ipv4_or_ipv6_button_change(self, obj: urwid.RadioButton, value: bool):
         if obj.label == 'ipv6':
@@ -112,21 +135,6 @@ class PublicIpConfigView(base_view.BaseConfigView):
         else:
             edit_obj.set_caption('')
             CONF.public_ip.accessSecret = current_value
-    
-    def check_interval_change(self, edit_obj: urwid.Edit, current_value: str):
-        if not current_value:
-            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
-            CONF.public_ip.check_interval = ''
-            return
-        if not current_value.isdigit():
-            edit_obj.set_caption(('header', [f"存在不是数字的字符", ("white", " "), ]))
-        elif int(current_value) < 1:
-            edit_obj.set_caption(('header', [f"输入数字不能小于1", ("white", " "), ]))
-        elif int(current_value) > 60:
-            edit_obj.set_caption(('header', [f"输入数字不能大于60", ("white", " "), ]))
-        else:
-            edit_obj.set_caption('')
-            CONF.public_ip.check_interval = current_value
 
     def update_view(self):
         widget_list = []
@@ -144,7 +152,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
             if self.public_ipv4:
                 public_ip = self.public_ipv4
             else:
-                public_ip = func.get_public_ip(timeout=3)
+                public_ip = func.get_public_ipv4(timeout=3)
                 if public_ip:
                     self.public_ipv4 = public_ip
                 else:
@@ -156,7 +164,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
             if self.public_ipv6:
                 public_ip = self.public_ipv6
             else:
-                public_ip = func.get_public_ip(timeout=3)
+                public_ip = func.get_current_node_public_ipv6()
                 if public_ip:
                     self.public_ipv6 = public_ip
                 else:
@@ -184,21 +192,13 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 ), left=8, right=10
             ))
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人:', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人(每分钟查一次):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
         if CONF.public_ip.use_check_robot:
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
                         urwid.Text("飞书WebHook UUID:", align="left"),
                         urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.feishu_webhook_uuid, self.feishu_webhook_uuid_change), "editbx", "editfc"),
-                    ]
-                ), left=8, right=10
-            ))
-            widget_list.append(urwid.Padding(
-                urwid.Columns(
-                    [
-                        urwid.Text("检查频率(分钟):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.check_interval, self.check_interval_change), "editbx", "editfc"),
                     ]
                 ), left=8, right=10
             ))
