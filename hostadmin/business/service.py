@@ -57,6 +57,7 @@ class ServiceEndPoint(object):
         self.wireguard_script_path = os.path.join(CS_SCRIPTS_DIR, self.wireguard_script)
         self.wireguard_params_path = '/etc/wireguard/params'
         self.pvetui_conf_path = '/etc/cs/pvetui.conf'
+        self.create_local_alist_storage_py = 'create-local-alist-storage.py'
 
     def install_alist(self, ctxt):
         return_code, content = execute.execute_command(f'atlicense -m')
@@ -115,6 +116,9 @@ class ServiceEndPoint(object):
         execute.completed(flag, f"install alist")
         flag = execute.execute_command_in_popen(f'cd /opt/cs/alist && ./alist admin set {admin_password}')
         execute.completed(flag, f"modify alist admin password")
+        path = os.path.join(CS_SCRIPTS_DIR, self.create_local_alist_storage_py)
+        flag = execute.execute_command_in_popen(f'python3 {path}', shell=False, timeout=10)
+        execute.completed(flag, 'create-local-alist-storage', content)
         flag, content = execute.execute_command('systemctl restart alist', shell=False, timeout=10)
         execute.completed(flag, 'restart alist service', content)
         flag, content = execute.execute_command('systemctl enable alist', shell=False, timeout=10)
