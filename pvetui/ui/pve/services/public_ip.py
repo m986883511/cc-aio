@@ -57,10 +57,10 @@ class PublicIpConfigConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
-        start_or_stop = 'start' if CONF.public_ip.use_ddns else 'stop'
-        self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-aliyun-ddns {start_or_stop}')
         start_or_stop = 'start' if CONF.public_ip.use_check_robot else 'stop'
         self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-listen-public-ip-change-rebot {start_or_stop}')
+        start_or_stop = 'start' if CONF.public_ip.use_ddns else 'stop'
+        self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-aliyun-ddns {start_or_stop}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

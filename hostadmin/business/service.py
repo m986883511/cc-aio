@@ -9,6 +9,7 @@ import socket
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from oslo_config import cfg
+from crontab import CronTab
 
 from cs_utils import execute, func, file
 from hostadmin.files import FilesDir
@@ -146,6 +147,13 @@ class ServiceEndPoint(object):
     def start_or_stop_listen_public_ip_change_rebot(self, ctxt, start_or_stop):
         flag = start_or_stop in ['start', 'stop']
         execute.completed(not flag, f"check input param ipv4_or_ipv6")
+        my_cron = CronTab(user='root')
+        exist_task = False
+        exist_job = None
+        for job in my_cron:
+            if self.report_public_ip_script_name in job.command:
+                exist_job = job
+                exist_task = True
         if start_or_stop == 'start':
             flag, content = execute.execute_command(f"rm -f /tmp/public_ip.txt")
             if flag == 0:
@@ -155,41 +163,37 @@ class ServiceEndPoint(object):
             flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
             execute.completed(flag, 'systemctl restart cron', content)
         else:
-            flag, content = execute.execute_command(f"crontab -l")
-            execute.completed(flag, 'crontab -l', content)
-            LOG.error(content)
-            if self.report_public_ip_script_name in content:
-                cmd = f'crontab -l | grep -v {self.report_public_ip_script_name} | crontab -r'
-                flag, content = execute.execute_command(cmd)
-                execute.completed(flag, f'delete cron={self.report_public_ip_script_name}', content)
-                flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
-                execute.completed(flag, 'systemctl restart cron', content)
+            if exist_job:
+                my_cron.remove(exist_job)
+                my_cron.write()
+                execute.completed(0, 'remove listen_public_ip_robot task')
+            else:
+                execute.completed(0, 'already no listen_public_ip_robot task, stop')
 
     def start_or_stop_aliyun_ddns(self, ctxt, start_or_stop):
         flag = start_or_stop in ['start', 'stop']
         execute.completed(not flag, f"check input param ipv4_or_ipv6")
+        my_cron = CronTab(user='root')
+        path = os.path.join(CS_SCRIPTS_DIR, self.aliyun_ddns_script)
+        command = f'python3 {path}'
+        exist_task = False
+        exist_job = None
+        for job in my_cron:
+            if job.command == command:
+                exist_job = job
+                exist_task = True
         if start_or_stop == 'start':
-            from crontab import CronTab
-            my_cron = CronTab(user='root')
-            path = os.path.join(CS_SCRIPTS_DIR, self.aliyun_ddns_script)
-            command = f'python3 {path}'
-            exist_task = False
-            for job in my_cron:
-                if job.command == command:
-                    exist_task = True
             if not exist_task:
                 job = my_cron.new(command=command)
                 job.minute.every(1)
                 my_cron.write()
         else:
-            flag, content = execute.execute_command(f"crontab -l")
-            execute.completed(flag, 'crontab -l', content)
-            if self.aliyun_ddns_script in content:
-                cmd = f'crontab -l | grep -v {self.aliyun_ddns_script} | crontab -r'
-                flag, content = execute.execute_command(cmd)
-                execute.completed(flag, f'delete cron={self.aliyun_ddns_script}', content)
-                flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
-                execute.completed(flag, 'systemctl restart cron', content)
+            if exist_job:
+                my_cron.remove(exist_job)
+                my_cron.write()
+                execute.completed(0, 'remove ddns task')
+            else:
+                execute.completed(0, 'already no ddns task, stop')
 
     def start_or_stop_wireguard(self, ctxt, start_or_stop):
         flag = start_or_stop in ['start', 'stop']
