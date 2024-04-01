@@ -312,6 +312,40 @@ def service():
 
 @service.command()
 @click.argument('start_or_stop', type=click.STRING)
+def start_or_stop_wireguard(start_or_stop):
+    """
+    启动还是停止内网穿透服务
+
+    start_or_stop: 只能是start或者stop
+    """
+    business.ServiceEndPoint().start_or_stop_wireguard(ctxt={}, start_or_stop=start_or_stop)
+    click.secho(f'{start_or_stop} wireguard success', fg='green')
+
+
+@service.command()
+@click.argument('add_or_remove', type=click.STRING)
+@click.argument('client_name', type=click.STRING)
+def add_or_remove_wireguard_client(add_or_remove, client_name):
+    """
+    添加还是删除wireguard-client
+
+    add_or_remove: 只能是add或者remove
+    """
+    business.ServiceEndPoint().add_or_remove_wireguard_client(ctxt={}, add_or_remove=add_or_remove, client_name=client_name)
+    click.secho(f'{add_or_remove} wireguard client={client_name} success, exit.', fg='green')
+
+
+@service.command()
+def update_wireguard_service():
+    """
+    更新配置到wireguard服务
+    """
+    business.ServiceEndPoint().update_wireguard_service(ctxt={})
+    click.secho(f'update wireguard service success, exit.', fg='green')
+
+
+@service.command()
+@click.argument('start_or_stop', type=click.STRING)
 def start_or_stop_aliyun_ddns(start_or_stop):
     """
     启动还是停止阿里云DDNS服务
@@ -362,15 +396,17 @@ def create_alist_service(admin_password):
 
 
 @service.command()
-@click.argument('text', type=click.STRING)
-def show_text_qrencode(text):
+@click.option('--text', type=click.STRING)
+@click.option('--path', type=click.STRING)
+def show_qrencode(text, path):
     """
-    显示字符串的二维码
+    显示二维码
 
-    text: 要二维码编码的字符串
+    text: 要二维码显示的字符串
+    path: 要二维码显示的文件路径
     """
-    business.ServiceEndPoint().show_text_qrencode(ctxt={}, text=text)
-    click.secho(f'show {text} qrencode success', fg='green')
+    business.ServiceEndPoint().show_qrencode(ctxt={}, text=text, path=path)
+    click.secho(f'show {text}={text} path={path} qrencode success', fg='green')
 
 
 @service.command()

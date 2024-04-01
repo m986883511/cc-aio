@@ -37,7 +37,7 @@ class PublicIpTestConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
-        self.need_run_cmd_list.append(f'cs-hostcli service show-text-qrencode {self.public_ip_simple_http_server_url}')
+        self.need_run_cmd_list.append(f'cs-hostcli service show-qrencode --text {self.public_ip_simple_http_server_url}')
         self.need_run_cmd_list.append(f'echo -e 请关闭手机无线网, 使用相机扫码打开网址, 能打开网址说明公网IP测试成功!')
         self.need_run_cmd_list.append(f'cs-hostcli service create-block-simple-api-service {CONF.public_ip.simple_http_server_port}')
         self.start_alarm()
@@ -275,7 +275,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 self.note_text,
                 urwid.Columns(
                     [
-                        urwid.Padding(urwid.Button("确认并保存", self.save_config, align="center"), align="center", left=1, right=1),
+                        urwid.Padding(urwid.Button("保存并配置服务", self.save_config, align="center"), align="center", left=1, right=1),
                         urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1),
                     ]
                 ),

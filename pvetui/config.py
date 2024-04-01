@@ -72,7 +72,7 @@ public_ip_opts = [
 
 wireguard_opts = [
     cfg.BoolOpt('open_flag', default=False, help="open wireguard falg"),
-    cfg.StrOpt('listen_port', default='12001', help="listen_port"),
+    cfg.StrOpt('server_port', default='12001', help="server_port"),
 ]
 
 openstack_opts = [

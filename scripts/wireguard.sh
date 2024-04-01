@@ -92,6 +92,9 @@ function getHomeDirForClient() {
   HOME_DIR="/root"
  fi
 
+ HOME_DIR="/etc/cs/wireguard"
+ mkdir -p $HOME_DIR
+
  echo "$HOME_DIR"
 }
 
@@ -110,60 +113,22 @@ function installQuestions() {
  echo ""
 
  # Detect public IPv4 or IPv6 address and pre-fill for the user
- SERVER_PUB_IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | awk '{print $1}' | head -1)
- if [[ -z ${SERVER_PUB_IP} ]]; then
-  # Detect public IPv6 address
-  SERVER_PUB_IP=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
+ SERVER_PUB_IP=$(cat /tmp/public_ip.txt)
+ SERVER_PUB_NIC="vmbr0"
+ SERVER_WG_NIC="wg0"
+ SERVER_WG_IPV4="10.66.66.1"
+ SERVER_WG_IPV6="fd42:42:42::1"
+ SERVER_PORT=$(crudini --get /etc/cs/pvetui.conf wireguard server_port)
+ if [ -z "$SERVER_PORT" ];then
+  SERVER_PORT="12001"
  fi
- read -rp "IPv4 or IPv6 public address: " -e -i "${SERVER_PUB_IP}" SERVER_PUB_IP
-
- # Detect public interface and pre-fill for the user
- SERVER_NIC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
- until [[ ${SERVER_PUB_NIC} =~ ^[a-zA-Z0-9_]+$ ]]; do
-  read -rp "Public interface: " -e -i "${SERVER_NIC}" SERVER_PUB_NIC
- done
-
- until [[ ${SERVER_WG_NIC} =~ ^[a-zA-Z0-9_]+$ && ${#SERVER_WG_NIC} -lt 16 ]]; do
-  read -rp "WireGuard interface name: " -e -i wg0 SERVER_WG_NIC
- done
-
- until [[ ${SERVER_WG_IPV4} =~ ^([0-9]{1,3}\.){3} ]]; do
-  read -rp "Server WireGuard IPv4: " -e -i 10.66.66.1 SERVER_WG_IPV4
- done
-
- until [[ ${SERVER_WG_IPV6} =~ ^([a-f0-9]{1,4}:){3,4}: ]]; do
-  read -rp "Server WireGuard IPv6: " -e -i fd42:42:42::1 SERVER_WG_IPV6
- done
-
- # Generate random number within private ports range
- RANDOM_PORT=$(shuf -i49152-65535 -n1)
- until [[ ${SERVER_PORT} =~ ^[0-9]+$ ]] && [ "${SERVER_PORT}" -ge 1 ] && [ "${SERVER_PORT}" -le 65535 ]; do
-  read -rp "Server WireGuard port [1-65535]: " -e -i "${RANDOM_PORT}" SERVER_PORT
- done
-
- # Adguard DNS by default
- until [[ ${CLIENT_DNS_1} =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-  read -rp "First DNS resolver to use for the clients: " -e -i 1.1.1.1 CLIENT_DNS_1
- done
- until [[ ${CLIENT_DNS_2} =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-  read -rp "Second DNS resolver to use for the clients (optional): " -e -i 1.0.0.1 CLIENT_DNS_2
-  if [[ ${CLIENT_DNS_2} == "" ]]; then
-   CLIENT_DNS_2="${CLIENT_DNS_1}"
-  fi
- done
-
- until [[ ${ALLOWED_IPS} =~ ^.+$ ]]; do
-  echo -e "\nWireGuard uses a parameter called AllowedIPs to determine what is routed over the VPN."
-  read -rp "Allowed IPs list for generated clients (leave default to route everything): " -e -i '0.0.0.0/0,::/0' ALLOWED_IPS
-  if [[ ${ALLOWED_IPS} == "" ]]; then
-   ALLOWED_IPS="0.0.0.0/0,::/0"
-  fi
- done
+ CLIENT_DNS_1="1.1.1.1"
+ CLIENT_DNS_2="1.1.1.1"
+ ALLOWED_IPS="192.168.1.0/24"
 
  echo ""
  echo "Okay, that was all I needed. We are ready to setup your WireGuard server now."
  echo "You will be able to generate a client at the end of the installation."
- read -n1 -r -p "Press any key to continue..."
 }
 
 function installWireGuard() {
@@ -262,7 +227,7 @@ net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
  systemctl start "wg-quick@${SERVER_WG_NIC}"
  systemctl enable "wg-quick@${SERVER_WG_NIC}"
 
- newClient
+#  newClient
  echo -e "${GREEN}If you want to add more clients, you simply need to run this script another time!${NC}"
 
  # Check if WireGuard is running
@@ -295,17 +260,6 @@ function newClient() {
  echo ""
  echo "The client name must consist of alphanumeric character(s). It may also include underscores or dashes and can't exceed 15 chars."
 
- until [[ ${CLIENT_NAME} =~ ^[a-zA-Z0-9_-]+$ && ${CLIENT_EXISTS} == '0' && ${#CLIENT_NAME} -lt 16 ]]; do
-  read -rp "Client name: " -e CLIENT_NAME
-  CLIENT_EXISTS=$(grep -c -E "^### Client ${CLIENT_NAME}\$" "/etc/wireguard/${SERVER_WG_NIC}.conf")
-
-  if [[ ${CLIENT_EXISTS} != 0 ]]; then
-   echo ""
-   echo -e "${ORANGE}A client with the specified name was already created, please choose another name.${NC}"
-   echo ""
-  fi
- done
-
  for DOT_IP in {2..254}; do
   DOT_EXISTS=$(grep -c "${SERVER_WG_IPV4::-1}${DOT_IP}" "/etc/wireguard/${SERVER_WG_NIC}.conf")
   if [[ ${DOT_EXISTS} == '0' ]]; then
@@ -318,10 +272,19 @@ function newClient() {
   echo "The subnet configured supports only 253 clients."
   exit 1
  fi
+  if [ -z "$CLIENT_NAME" ];then
+    CLIENT_NAME="${DOT_IP}"
+  fi
+  CLIENT_EXISTS=$(grep -c -E "^### Client ${CLIENT_NAME}\$" "/etc/wireguard/${SERVER_WG_NIC}.conf")
+
+  if [[ ${CLIENT_EXISTS} != 0 ]]; then
+   echo ""
+   echo -e "${ORANGE}A client with the specified name was already created, please choose another name.${NC}"
+   echo ""
+   exit 1
+  fi
 
  BASE_IP=$(echo "$SERVER_WG_IPV4" | awk -F '.' '{ print $1"."$2"."$3 }')
- until [[ ${IPV4_EXISTS} == '0' ]]; do
-  read -rp "Client WireGuard IPv4: ${BASE_IP}." -e -i "${DOT_IP}" DOT_IP
   CLIENT_WG_IPV4="${BASE_IP}.${DOT_IP}"
   IPV4_EXISTS=$(grep -c "$CLIENT_WG_IPV4/32" "/etc/wireguard/${SERVER_WG_NIC}.conf")
 
@@ -329,12 +292,11 @@ function newClient() {
    echo ""
    echo -e "${ORANGE}A client with the specified IPv4 was already created, please choose another IPv4.${NC}"
    echo ""
+   exit 1
   fi
- done
+
 
  BASE_IP=$(echo "$SERVER_WG_IPV6" | awk -F '::' '{ print $1 }')
- until [[ ${IPV6_EXISTS} == '0' ]]; do
-  read -rp "Client WireGuard IPv6: ${BASE_IP}::" -e -i "${DOT_IP}" DOT_IP
   CLIENT_WG_IPV6="${BASE_IP}::${DOT_IP}"
   IPV6_EXISTS=$(grep -c "${CLIENT_WG_IPV6}/128" "/etc/wireguard/${SERVER_WG_NIC}.conf")
 
@@ -342,8 +304,9 @@ function newClient() {
    echo ""
    echo -e "${ORANGE}A client with the specified IPv6 was already created, please choose another IPv6.${NC}"
    echo ""
+   exit 1
   fi
- done
+
 
  # Generate key pair for the client
  CLIENT_PRIV_KEY=$(wg genkey)
@@ -405,13 +368,15 @@ function revokeClient() {
  echo ""
  echo "Select the existing client you want to revoke"
  grep -E "^### Client" "/etc/wireguard/${SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
- until [[ ${CLIENT_NUMBER} -ge 1 && ${CLIENT_NUMBER} -le ${NUMBER_OF_CLIENTS} ]]; do
-  if [[ ${CLIENT_NUMBER} == '1' ]]; then
-   read -rp "Select one client [1]: " CLIENT_NUMBER
-  else
-   read -rp "Select one client [1-${NUMBER_OF_CLIENTS}]: " CLIENT_NUMBER
+  if [ -z "$CLIENT_NUMBER"];then
+    until [[ ${CLIENT_NUMBER} -ge 1 && ${CLIENT_NUMBER} -le ${NUMBER_OF_CLIENTS} ]]; do
+      if [[ ${CLIENT_NUMBER} == '1' ]]; then
+      read -rp "Select one client [1]: " CLIENT_NUMBER
+      else
+      read -rp "Select one client [1-${NUMBER_OF_CLIENTS}]: " CLIENT_NUMBER
+      fi
+    done
   fi
- done
 
  # match the selected number to a client name
  CLIENT_NAME=$(grep -E "^### Client" "/etc/wireguard/${SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | sed -n "${CLIENT_NUMBER}"p)
@@ -431,8 +396,10 @@ function uninstallWg() {
  echo ""
  echo -e "\n${RED}WARNING: This will uninstall WireGuard and remove all the configuration files!${NC}"
  echo -e "${ORANGE}Please backup the /etc/wireguard directory if you want to keep your configuration files.\n${NC}"
- read -rp "Do you really want to remove WireGuard? [y/n]: " -e REMOVE
- REMOVE=${REMOVE:-n}
+ if [ -z "$REMOVE" ];then
+  read -rp "Do you really want to remove WireGuard? [y/n]: " -e REMOVE
+  REMOVE=${REMOVE:-n}
+ fi
  if [[ $REMOVE == 'y' ]]; then
   checkOS
 

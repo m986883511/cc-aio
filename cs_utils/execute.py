@@ -67,7 +67,7 @@ def execute_command_on_host(cmd: str, shell=True, encoding="utf-8", timeout=None
 def crudini_set_config(ini_path: str, section:str, key: str, value: str, check_file_exist=True) -> (int, str):
     if check_file_exist:
         assert os.path.exists(ini_path), f"{ini_path} is not exist"
-    cmd = f'crudini --set {ini_path} {section} {key} {value}'
+    cmd = f'crudini --set {ini_path} "{section}" "{key}" {value}'
     flag, content = execute_command(cmd, shell=True)
     return flag, content
 
@@ -75,7 +75,7 @@ def crudini_set_config(ini_path: str, section:str, key: str, value: str, check_f
 def crudini_get_config(ini_path: str, section:str, key: str, check_file_exist=True) -> (int, str):
     if check_file_exist:
         assert os.path.exists(ini_path), f"{ini_path} is not exist"
-    cmd = f'crudini --get {ini_path} {section} {key}'
+    cmd = f'crudini --get {ini_path} "{section}" "{key}"'
     flag, content = execute_command(cmd, shell=True)
     return flag, content
 
