@@ -118,7 +118,7 @@ class ServiceEndPoint(object):
         execute.completed(flag, f"modify alist admin password")
         path = os.path.join(CS_SCRIPTS_DIR, self.create_local_alist_storage_py)
         flag = execute.execute_command_in_popen(f'python3 {path}')
-        execute.completed(flag, 'create-local-alist-storage', content)
+        execute.completed(flag, 'create-local-alist-storage')
         flag, content = execute.execute_command('systemctl restart alist', shell=False, timeout=10)
         execute.completed(flag, 'restart alist service', content)
         flag, content = execute.execute_command('systemctl enable alist', shell=False, timeout=10)
