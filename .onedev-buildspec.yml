@@ -2,15 +2,32 @@ version: 30
 jobs:
 - name: ci
   steps:
+  - !CheckoutStep
+    name: checkout_code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
-    name: command
+    name: build
     runInContainer: false
     interpreter: !ShellInterpreter
       shell: bash
       commands: |
-        build_number=@build_number@
-        echo "build_number is $build_number"
-        curl http://192.168.1.88:8080/multibranch-webhook-trigger/invoke?token=pvetui
+        export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
+        echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
+        bash make.sh
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: upload
+    runInContainer: false
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
+        echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
+        bash jenkins.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
