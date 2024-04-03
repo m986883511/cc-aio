@@ -23,6 +23,15 @@ def host():
 
 
 @host.command()
+def get_cpu_model():
+    """
+    获取cpu型号
+    """
+    value = business.HostEndPoint().get_cpu_model(ctxt={})
+    click.secho(f'get cpu model, value="{value}", end and exit.', fg='green')
+
+
+@host.command()
 def set_apt_source_use_ustc():
     """
     让某个pve使用清华源, 并关闭企业订阅源
@@ -126,6 +135,19 @@ def set_pci_device_use_vfio(main_vendor, reset=False, no_check=False):
     click.secho(value, fg='green')
     click.secho(f'if {main_vendor} driver is use is not vfio, you need reboot to take effect', fg='red')
     click.secho(f"you can use 'cs-hostcli host get-support-pci-devices' to check it", fg='green')
+
+# ------------------------------------------------------------------------- #
+
+@cli.group()
+def pve():
+    pass
+
+
+@pve.command()
+def create_vbios_file():
+    """创建核显直通的vbios文件"""
+    file_path = business.PveEndPoint().create_vbios_file(ctxt={})
+    click.secho(f"create vbios file success, path={file_path}, end and exit.", fg='green')
 
 # ------------------------------------------------------------------------- #
 

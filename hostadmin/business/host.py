@@ -16,7 +16,7 @@ LOG = logging.getLogger(__name__)
 class HostEndPoint(object):
 
     def __init__(self):
-        self.support_pci_types = ['gpu', 'vgpu', 'other']
+        self.support_pci_types = ['gpu', 'vgpu', 'other', 'igd']
         self.pci_device_set_vfio_driver_file_path = '/etc/modprobe.d/vfio-pci.conf'
         self.module_load_vfio_pci_file_path = '/etc/modules-load.d/vfio-pci.conf'
         self.modprobe_blacklist_file_path = '/etc/modprobe.d/blacklist.conf'
@@ -315,3 +315,12 @@ class HostEndPoint(object):
             ssh_use_which_ip = func.get_hostname_map_ip(current_hostname)
             flag = execute.execute_ssh_command_via_id_rsa_in_popen(cmd, FilesDir.SSH.id_rsa, host, ssh_use_which_ip=ssh_use_which_ip)
             execute.completed(flag, f'install base env on {host}')
+
+    def get_cpu_model(self, ctxt):
+        """
+        Model name:                         AMD Ryzen 7 5800H with Radeon Graphics
+        """
+        flag, content = execute.execute_command(f'lscpu |grep -i "^model name:"')
+        execute.completed(flag, 'get cpu model')
+        content_list = func.get_string_split_list(content, ':')
+        return content_list[-1]
