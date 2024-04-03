@@ -92,9 +92,16 @@ class SelectNodeView(base_view.BaseConfigView):
         if not CONF.base_env.all_nodes_edit_str:
             CONF.base_env.all_nodes_edit_str = self.current_hostname[4:]
         widget_list = []
+        widget_list.append(urwid.AttrMap(my_widget.TextEdit(("white",' 节点root密码  : '), CONF.base_env.root_password, self.root_password_change_func), "editbx", "editfc"))
+        widget_list.append(urwid.Divider())
         self.env_nodes_edit_obj = my_widget.TextEdit(("white",' 请输入节点编号: '), CONF.base_env.all_nodes_edit_str, self._env_nodes_change_func)
         widget_list.append(urwid.AttrMap(self.env_nodes_edit_obj, "editbx", "editfc"))
-        widget_list.append(urwid.AttrMap(my_widget.TextEdit(("white",' root密码      : '), CONF.base_env.root_password, self.root_password_change_func), "editbx", "editfc"))
+        widget_list.extend([
+            urwid.Text(" 说明:"),
+                urwid.Text("    1. 编号范围是1-240"),
+                urwid.Text("    2. 多个编号用英文逗号分隔, 用英文中划线表述一段编号"),
+                urwid.Text("    3. 例如，001,002,003, 多个连续节点：011-020"),
+        ])
         self.pile_view.widget_list = widget_list
 
     def show(self):
@@ -102,11 +109,6 @@ class SelectNodeView(base_view.BaseConfigView):
         ii = urwid.Pile(
             [
                 urwid.Text("安装基础软件包的节点列表"),
-                urwid.Divider(),
-                urwid.Text("说明:"),
-                urwid.Text("    1. 编号范围是1-240"),
-                urwid.Text("    2. 多个编号用英文逗号分隔, 用英文中划线表述一段编号"),
-                urwid.Text("    3. 例如，001,002,003, 多个连续节点：011-020"),
                 urwid.Divider(),
                 self.pile_view,
                 urwid.Divider(),
