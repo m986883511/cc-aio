@@ -98,6 +98,8 @@ class ServiceEndPoint(object):
             execute.completed(flag, f"delete old samba service samba user")
         flag, content = execute.execute_command(f'(echo {samba_user_password}; echo {samba_user_password}) | smbpasswd -s -a samba')
         execute.completed(flag, f"create samba service user=samba")
+        flag, content = execute.execute_command(f'cp -r /opt/cs/presetup/gift/* {share_path}')
+        execute.completed(flag, f"copy chaoge gift")
         # 生效配置文件 重启smbd服务
         smb_conf_path = '/etc/samba/smb.conf'
         smb_conf_content = file.read_file_content(FilesDir.Host.smb_conf, mode='r')
