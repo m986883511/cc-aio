@@ -4,7 +4,7 @@ import logging
 
 from oslo_config import cfg
 
-from cs_utils import func
+from cs_utils import func, network
 
 CONF = cfg.CONF
 PVE_TUI_CONF_PATH = '/etc/cs/pvetui.conf'
@@ -40,6 +40,7 @@ network_opts = [
 ]
 
 base_env_opts = [
+    cfg.StrOpt('root_password', default="P@ssw0rd", help="root password"),
     cfg.IntOpt('root_min_space', default=20, help="root_min_space"),
     cfg.StrOpt('all_nodes', default='', help="all_nodes"),
     cfg.StrOpt('all_nodes_edit_str', default='', help="all_nodes_edit_str"),
@@ -72,6 +73,7 @@ public_ip_opts = [
 
 wireguard_opts = [
     cfg.BoolOpt('open_flag', default=False, help="open wireguard falg"),
+    cfg.StrOpt('subnet', default=network.get_gateway_subnet(raise_flag=False) or '192.168.1.0/24', help="subnet"),
     cfg.StrOpt('server_port', default='12001', help="server_port"),
 ]
 

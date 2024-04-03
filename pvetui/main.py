@@ -7,7 +7,7 @@ import urwid
 
 from cs_utils import func, execute
 from pvetui import ui, utils
-from pvetui.ui import ceph, network, base_env, openstack, pve
+from pvetui.ui import network, base_env, pve
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
 
 
@@ -57,8 +57,8 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
         if key == 'esc' and self.box_level > 1:
             self.original_widget = self.original_widget[0]
             self.box_level -= 1
-        # elif key == 'esc' and self.box_level == 1:
-        #     raise urwid.ExitMainLoop()
+        elif key == 'esc' and self.box_level == 1:
+            raise urwid.ExitMainLoop()
         else:
             return super().keypress(size, key)
 
@@ -119,17 +119,8 @@ def main():
         #     urwid.Divider(),
         #     menu_button(CONF.return_last_string, ui.return_last),
         # ]),
-        # sub_menu('安装OpenStack云计算平台', [
-        #     menu_button('编辑默认配置', openstack.OpenstackClusterConfigView),
-        #     menu_button('部署OpenStack集群', openstack.OpenstackDeployConsole),
-        #     menu_button('更新OpenStack配置', openstack.UpdateOpenstackConfigView),
-        #     menu_button('添加计算节点', openstack.AddComputeNodeMenu),
-        #     menu_button('对接Ceph分布式存储', openstack.AccessCephNodeMenu),
-        #     urwid.Divider(),
-        #     menu_button(CONF.return_last_string, ui.return_last),
-        # ]),
         urwid.Divider(),
-        menu_button('退出', ui.exit_program),
+        menu_button(CONF.return_last_string, ui.exit_program),
     ])
     ui.top_layer = CascadingBoxes(menu_top)
     ui.top_loop = urwid.MainLoop(ui.top_layer, palette=palette)

@@ -122,9 +122,12 @@ function installQuestions() {
  if [ -z "$SERVER_PORT" ];then
   SERVER_PORT="12001"
  fi
- CLIENT_DNS_1="1.1.1.1"
- CLIENT_DNS_2="1.1.1.1"
- ALLOWED_IPS="192.168.1.0/24"
+ CLIENT_DNS_1="223.5.5.6"
+ CLIENT_DNS_2="223.6.6.6"
+ ALLOWED_IPS=$(crudini --get /etc/cs/pvetui.conf wireguard subnet)
+ if [ -z "$ALLOWED_IPS" ];then
+   ALLOWED_IPS="192.168.1.0/24"
+ fi
 
  echo ""
  echo "Okay, that was all I needed. We are ready to setup your WireGuard server now."

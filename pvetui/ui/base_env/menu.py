@@ -41,7 +41,7 @@ class SelectNodeView(base_view.BaseConfigView):
         installed_env_nodes = func.get_string_split_list(CONF.base_env.installed_nodes, split_flag=',')
         installed_env_nodes = [i for i in installed_env_nodes if i in hostnames]
         CONF.base_env.installed_nodes = ','.join(installed_env_nodes)
-        group, keys = 'base_env', ['all_nodes', 'all_nodes_edit_str', 'installed_nodes', 'root_min_space']
+        group, keys = 'base_env', ['all_nodes', 'all_nodes_edit_str', 'installed_nodes', 'root_min_space', 'root_password']
         self.save_CONF_group_keys(group, keys)
         ui.return_last(button)
 
@@ -77,11 +77,25 @@ class SelectNodeView(base_view.BaseConfigView):
                 return
         edit_obj.set_caption(edit_obj.origin_caption)
 
+    def root_password_change_func(self, edit_obj: my_widget.TextEdit, current_value):
+        if not current_value:
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.base_env.root_password = ''
+            return
+        if not current_value.isascii():
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
+        else:
+            edit_obj.set_caption('')
+            CONF.base_env.root_password = current_value
+
     def update_view(self):
         if not CONF.base_env.all_nodes_edit_str:
             CONF.base_env.all_nodes_edit_str = self.current_hostname[4:]
-        self.env_nodes_edit_obj = my_widget.TextEdit(("white",'请输入节点编号: '), CONF.base_env.all_nodes_edit_str, self._env_nodes_change_func)
-        self.pile_view.widget_list = [urwid.AttrMap(self.env_nodes_edit_obj, "editbx", "editfc")]
+        widget_list = []
+        self.env_nodes_edit_obj = my_widget.TextEdit(("white",' 请输入节点编号: '), CONF.base_env.all_nodes_edit_str, self._env_nodes_change_func)
+        widget_list.append(urwid.AttrMap(self.env_nodes_edit_obj, "editbx", "editfc"))
+        widget_list.append(urwid.AttrMap(my_widget.TextEdit(("white",' root密码      : '), CONF.base_env.root_password, self.root_password_change_func), "editbx", "editfc"))
+        self.pile_view.widget_list = widget_list
 
     def show(self):
         self.update_view()

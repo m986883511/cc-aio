@@ -2,6 +2,7 @@ import os
 import time
 import uuid
 import logging
+import ipaddress
 
 import urwid
 
@@ -69,7 +70,7 @@ class WireguardConfigView(base_view.BaseConfigView):
         self.show()
 
     def save_config(self, button):
-        group, keys = 'wireguard', ['open_flag', 'server_port']
+        group, keys = 'wireguard', ['open_flag', 'server_port', 'subnet']
         self.save_CONF_group_keys(group, keys)
         # ui.return_last(button)
         WireguardConfigConsoleView(self)
@@ -106,6 +107,20 @@ class WireguardConfigView(base_view.BaseConfigView):
         else:
             edit_obj.set_caption('')
             CONF.wireguard.server_port = current_value
+
+    def subnet_change(self, edit_obj: my_widget.TextEdit, current_value: str):
+        if not current_value:
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.wireguard.subnet = ''
+            return
+        if not current_value.isascii():
+            edit_obj.set_caption(('header', [f"存在不是acsii的字符", ("white", " "), ]))
+        elif not func.ValidIpAddress.is_cidr(current_value, strict=False):
+            edit_obj.set_caption(('header', [f"不是cidr格式", ("white", " "), ]))
+        else:
+            edit_obj.set_caption('')
+            subnet = ipaddress.IPv4Network(current_value, strict=False)
+            CONF.wireguard.subnet = str(subnet)
 
     def get_added_clients(self):
         clients = []
@@ -144,6 +159,11 @@ class WireguardConfigView(base_view.BaseConfigView):
                 urwid.Columns([
                         urwid.Text("服务监听端口:", align="left"),
                         urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.server_port, self.server_port_change), "editbx", "editfc"),
+                ]), left=4, right=10))
+            widget_list.append(urwid.Padding(
+                urwid.Columns([
+                        urwid.Text("客户端默认允许访问的网络(cidr格式):", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.subnet, self.subnet_change), "editbx", "editfc"),
                 ]), left=4, right=10))
             widget_list.append(urwid.Divider())
             widget_list.append(urwid.Padding(
