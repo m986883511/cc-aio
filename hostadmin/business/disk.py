@@ -30,9 +30,58 @@ class DiskEndPoint(object):
         execute.completed(flag, 'get boot disk by lsblk', out)
         return out.strip()
 
-    def get_all_disk(self):
+    def get_root_disk_name(self):
+        """
+        loop0
+        sda
+        └─sda1       /smb
+        nvme0n1
+        ├─nvme0n1p1
+        ├─nvme0n1p2  /boot/efi
+        └─nvme0n1p3
+        ├─pve-swap [SWAP]
+        └─pve-root /
+        """
+        f, c = execute.execute_command('lsblk -n -o name,mountpoints')
+        c_list = func.get_string_split_list(c, split_flag='\n')
+        disk_name = ''
+        for line in c_list:
+            line_2 = func.get_string_split_list(line, split_flag=' ')
+            if len(line_2) == 1:
+                line_f1 = line_2[0]
+                if line_f1[0] not in ['├', '└']:
+                    disk_name = line_f1
+                continue
+            elif len(line_2) == 2:
+                mountpoints = line_2[-1]
+                if mountpoints == '/':
+                    return disk_name
+
+    def get_all_disk_by_id(self, disk_list):
+        def get_id(disk_name, disk_serial):
+            cmd = "ls -l /dev/disk/by-id/ |grep -v part |grep -v pve |grep -v -i lvm"
+            flag, out = execute.execute_command(cmd)
+            lines = func.get_string_split_list(out, split_flag='\n')
+            execute.completed(flag, '获取所有磁盘by-id', out)
+            for link_line in lines:
+                line_2 = func.get_string_split_list(link_line, split_flag='->')
+                if len(line_2) != 2:
+                    continue
+                the_disk_id = func.get_string_split_list(line_2[0], split_flag=' ')[-1]
+                the_disk_name = func.get_string_split_list(line_2[1], split_flag='/')[-1]
+                if disk_name == the_disk_name:
+                    if the_disk_id.endswith(disk_serial):
+                        return the_disk_id
+
+        for value_dict in disk_list:
+            if value_dict.get('type') != 'disk':
+                continue
+            name, serial = value_dict['name'], value_dict['serial']
+            value_dict['id'] = get_id(name, serial)
+
+    def get_all_disks(self, ctxt, return_root_disk=False):
         # 获取所有磁盘，-d 不含磁盘下的分区, -b size为字节单位，-o 字段，-J json格式输出
-        cmd = "lsblk -d -b -o name,model,rota,size,type -J --sort name 2>/dev/null"
+        cmd = "lsblk -d -b -o name,model,rota,size,type,serial -J --sort name 2>/dev/null"
         flag, out = execute.execute_command(cmd)
         execute.completed(flag, '获取所有磁盘', out)
         try:
@@ -40,8 +89,11 @@ class DiskEndPoint(object):
         except Exception as e:
             execute.completed(1, 'get disks by lsblk', str(e))
 
+        self.get_all_disk_by_id(disks)
         # 获取boot分区所在的磁盘
-        boot_disk = self.get_boot_disk()
+        boot_disk = self.get_root_disk_name()
+        if not boot_disk:
+            execute.completed(1, 'get root disk name')
 
         all_disks = []
         for disk in disks:
@@ -49,9 +101,11 @@ class DiskEndPoint(object):
             if disk.get('type') != 'disk':
                 continue
 
-            # 过滤boot分区所在的磁盘
             if disk.get('name') == boot_disk:
-                continue
+                disk['root_disk_flag'] = True
+                # 过滤boot分区所在的磁盘
+                if not return_root_disk:
+                    continue
 
             # 格式转换和去掉中间字段
             disk['media'] = 'HDD' if disk.get('rota') else 'SSD'
@@ -237,7 +291,7 @@ class DiskEndPoint(object):
                 cache_parts.append(osd.get('db_part'))
 
         data_disks = []
-        for disk in self.get_all_disk():
+        for disk in self.get_all_disks(ctxt=ctxt):
             # 过滤掉已经为osd做缓存服务的盘
             if is_exist_cache_parts("/dev/" + disk.get('name'), cache_parts):
                 continue
@@ -265,7 +319,7 @@ class DiskEndPoint(object):
             db_parts[osd.get('db_part')] = osd_id
             osd_data_disks[osd.get('data_disk')] = osd_id
 
-        cache_disks = self.get_all_disk()
+        cache_disks = self.get_all_disks(ctxt=ctxt)
 
         # 过滤掉机械盘，机械盘不允许做缓存盘
         cache_disks = [ disk for disk in cache_disks if disk.get('media') != 'HDD']
@@ -296,7 +350,7 @@ class DiskEndPoint(object):
 
     def list_osds(self, ctxt):
         all_disk = {}
-        for disk in self.get_all_disk():
+        for disk in self.get_all_disks(ctxt=ctxt):
             disk_name = "/dev/" + disk.get('name')
             all_disk[disk_name] = disk
 
@@ -490,7 +544,7 @@ class DiskEndPoint(object):
 
         # 获取所有磁盘信息
         all_disks = {}
-        for data_disk in self.get_all_disk():
+        for data_disk in self.get_all_disks(ctxt=ctxt):
             all_disks[data_disk.get('name')] = data_disk
 
         # 从osd信息中收集数据盘、bcache和db分区信息
@@ -897,7 +951,7 @@ class DiskEndPoint(object):
         if not disks:
             execute.completed(1, f"检查DISKS参数存在")
 
-        all_disks = [ disk.get('name') for disk in self.get_all_disk() ]
+        all_disks = [ disk.get('name') for disk in self.get_all_disks(ctxt=ctxt) ]
         for disk in disks:
             if disk == 'all':
                 continue

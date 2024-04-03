@@ -135,6 +135,15 @@ def disk():
 
 
 @disk.command()
+@click.option('--return_root_disk', is_flag=True, default=False)
+def get_all_disks(return_root_disk):
+    """get all disks"""
+    value = business.DiskEndPoint().get_all_disks(ctxt={}, return_root_disk=return_root_disk)
+    assert isinstance(value, list), f'return value should be list, but is {type(value)}'
+    value = json.dumps(value, indent=4)
+    click.secho(value, fg='green')
+
+@disk.command()
 def list_data_disks():
     """list all data disks for osd"""
     value = business.DiskEndPoint().list_data_disks(ctxt={})
