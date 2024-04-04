@@ -138,7 +138,7 @@ class NetworkConfigView(base_view.BaseConfigView):
         self.update_view()
         body = urwid.Pile(
             [
-                urwid.Text("编辑基础网络", align="center"),
+                urwid.Text(self.origin_layout_button_label, align="center"),
                 urwid.Divider(),
                 self.pile_view,
                 self.note_text,

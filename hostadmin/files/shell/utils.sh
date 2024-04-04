@@ -285,12 +285,6 @@ function get_pve_ip(){
     fi
 }
 
-function set_pve_node_ip_and_hostname(){
-    local node_ip=$1
-    cg-hostcli network change-single-pve-node-ip $node_ip
-    completed $? "set $node_ip"
-}
-
 function check_kolla_ansible_version_exist(){
     local file=$(ls $JM_VERSION_DIR|grep "kolla-deploy-.*-$(uname -m).bin")
     if [ -z "$file" ]; then

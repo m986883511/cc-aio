@@ -82,8 +82,6 @@ EOF
 function main(){
     check_root_space_bigger_than
     get_pve_ip
-    set_pve_node_ip_and_hostname $PVE_IP_ADDRESS
-    write_etc_hosts
     echo_log "REPO_SERVER_IP is $REPO_SERVER_IP"
     install_pve_base_env
     change_ssh_strict_host_no
