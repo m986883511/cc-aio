@@ -4,7 +4,7 @@ import logging
 
 from oslo_config import cfg
 
-from cg_utils import func, network
+from cg_utils import func, network, AUTHOR_NAME
 
 CONF = cfg.CONF
 PVE_TUI_CONF_PATH = f'/etc/{AUTHOR_NAME}/pvetui.conf'
