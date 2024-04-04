@@ -8,7 +8,7 @@ import urwid
 from cg_utils import func, execute, AUTHOR_NAME
 from pvetui import ui, utils
 from pvetui.ui import network, base_env, pve
-from pvetui.config import CONF, PVE_TUI_CONF_PATH
+from pvetui.config import CONF, AIO_CONF_PATH
 
 
 LOG = logging.getLogger(__name__)
@@ -84,8 +84,8 @@ def run_depend_tasks():
     if len(sys.argv) != 1:
         utils.custom_cmd(sys.argv)
     # get_pip_install_truseted_host()
-    func.create_conf_file(PVE_TUI_CONF_PATH)
-    CONF(default_config_files = [PVE_TUI_CONF_PATH])
+    func.create_conf_file(AIO_CONF_PATH)
+    CONF(default_config_files = [AIO_CONF_PATH])
 
 
 def main():
@@ -102,14 +102,14 @@ def main():
         ("buttn", "black", "dark cyan"),
         ("buttnf", "white", "dark blue", "bold"),
     ]
-    menu_top = menu(CONF.pvetui_title, [
+    menu_top = menu(CONF.tui_title, [
+        menu_button('配置物理网络', pve.NetworkConfigView),
         sub_menu('安装基础环境', [
             menu_button('编辑节点列表', base_env.SelectNodeView),
             menu_button('选择节点并安装', base_env.InstallBaseEnvView),
             urwid.Divider(),
             urwid.Button(CONF.return_last_string, ui.return_last, align='center')
         ]),
-        menu_button('配置物理网络', network.NetworkNodeMenu),
         menu_button('安装ALL-IN-ONE', pve.PveAllInOneView),
         # sub_menu('安装Ceph分布式存储', [
         #     menu_button('编辑默认配置', ceph.CephClusterConfigView),

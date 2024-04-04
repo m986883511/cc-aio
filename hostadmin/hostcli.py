@@ -149,6 +149,41 @@ def create_vbios_file():
     file_path = business.PveEndPoint().create_vbios_file(ctxt={})
     click.secho(f"create vbios file success, path={file_path}, end and exit.", fg='green')
 
+
+@pve.command()
+def repair_modify_hostname():
+    """修改主机名后的善后工作"""
+    business.PveEndPoint().repair_modify_hostname(ctxt={})
+    click.secho(f"repair_modify_hostname success, end and exit.", fg='green')
+
+
+@pve.command()
+@click.option('--ip_mask', type=click.STRING, help="cidr格式 类似192.168.1.44/24")
+@click.option('--gateway', type=click.STRING, help="默认网关 就是运营商光猫的网关")
+@click.option('--hostname', type=click.STRING, help="主机名 pve主机名修改牵扯太多 请勿轻易修改")
+@click.option('--dns', type=click.STRING, default='8.8.8.8', help="dns 默认8.8.8.8")
+def change_single_pve_node_network(ip_mask, gateway, dns, hostname):
+    """
+    修改pve节点的网络
+    
+    """
+    business.PveEndPoint().change_single_pve_node_network(ctxt={}, ip_mask=ip_mask, gateway=gateway, dns=dns, hostname=hostname)
+    s = ''
+    if ip_mask:
+        s += f'ip_mask={ip_mask}, '
+    if gateway:
+        s += f'gateway={gateway}, '
+    if dns:
+        s += f'dns={dns}, '
+    click.secho(f'change pve node network {s}success!', fg='green')
+
+
+@pve.command()
+def open_ipv6_support():
+    business.PveEndPoint().open_ipv6_support(ctxt={})
+    click.secho('open_ipv6_support success, may need reboot!', fg='green')
+
+
 # ------------------------------------------------------------------------- #
 
 @cli.group()
@@ -474,19 +509,6 @@ def check_network_connection(host):
 
 
 @network.command()
-def open_pve_ipv6_support():
-    business.NetworkEndPoint().open_pve_ipv6_support(ctxt={})
-    click.secho('open_pve_ipv6_support success, may need reboot!', fg='green')
-
-
-@network.command()
-@click.argument('new_ip', type=click.STRING)
-def change_single_pve_node_ip(new_ip):
-    business.NetworkEndPoint().change_single_pve_node_ip(ctxt={}, new_ip=new_ip)
-    click.secho(f'change pve node ip to {new_ip} success!', fg='green')
-
-
-@network.command()
 @click.option('--output_dict', is_flag=True, default=False)
 def get_all_physical_nics(output_dict):
     output_dict = 'dict' if output_dict else 'list'
@@ -495,6 +517,7 @@ def get_all_physical_nics(output_dict):
     value = json.dumps(value, indent=4)
     click.secho('-'*50)
     click.secho(value, fg='green')
+
 
 @network.command()
 @click.argument('host')

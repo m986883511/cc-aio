@@ -9,7 +9,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import linux, func, execute, file, _, AUTHOR_NAME
+from cg_utils import linux, func, execute, file, _, AUTHOR_NAME, AIO_CONF_NAME
 from hostadmin.files import FilesDir
 from hostadmin.config import CONF
 
@@ -310,7 +310,7 @@ class CephEndPoint(object):
         if os.path.isdir(self.ceph_conf_dir):
             flag, content = execute.execute_command(f'rm -rf {self.ceph_conf_dir}/*')
             execute.completed(flag, f"clear {self.ceph_conf_dir}", content)
-        cmd = f'crudini --set /etc/{AUTHOR_NAME}/pvetui.conf ceph current_node_installed_ceph false'
+        cmd = f'crudini --set /etc/{AUTHOR_NAME}/{AIO_CONF_NAME} ceph current_node_installed_ceph false'
         flag, content = execute.execute_command(cmd)
         execute.completed(0, f"set current_node_installed_ceph flag, return_code={flag}")
         cmd = "sed -i '/ ceph-/d' /root/.ssh/authorized_keys"

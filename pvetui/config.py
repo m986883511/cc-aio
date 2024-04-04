@@ -4,14 +4,14 @@ import logging
 
 from oslo_config import cfg
 
-from cg_utils import func, network, AUTHOR_NAME
+from cg_utils import func, network, AUTHOR_NAME, AIO_CONF_NAME
 
 CONF = cfg.CONF
-PVE_TUI_CONF_PATH = f'/etc/{AUTHOR_NAME}/pvetui.conf'
+AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
 
 default_opts = [
     cfg.StrOpt('return_last_string', default='返回上一层|ESC', help="conf_path"),
-    cfg.StrOpt('pvetui_title', default='PVE TUI v1.0', help="pve tui title"),
+    cfg.StrOpt('tui_title', default='CG-AIO v1.0', help="tui title"),
     cfg.IntOpt('console_max_item_number', default=20, help="console_max_item_number"),
 ]
 
@@ -37,6 +37,11 @@ network_opts = [
     cfg.IntOpt('delay_update_view_time', default=1, help="delay_update_view_time"),
     cfg.IntOpt('vmbond_vlan', default=1, help="vmbond_vlan"),
     cfg.IntOpt('extbond_vlan', default=1, help="extbond_vlan"),
+
+    cfg.StrOpt('ip_cidr', default=network.get_main_ip_address(), help="ip_cidr"),
+    cfg.StrOpt('dns', default="8.8.8.8", help="dns"),
+    cfg.StrOpt('gateway', default=network.get_default_gateway(), help="dns"),
+    cfg.StrOpt('hostname', default=func.get_current_node_hostname(), help="hostname"),
 ]
 
 base_env_opts = [

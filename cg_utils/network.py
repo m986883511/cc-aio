@@ -50,6 +50,16 @@ def get_default_gateway():
                 return value_dict['gateway']
 
 
+def get_main_ip_address():
+    flag, content = execute.crudini_get_config('/etc/os-release', '', "ID")
+    execute.completed(flag, 'read os ID')
+    if content.lower() == 'debian':
+        network_dict = analyse_debian_network_interfaces()
+        for key, value_dict in network_dict.items():
+            if 'gateway' in value_dict:
+                return value_dict['address']
+
+
 def get_gateway_subnet(raise_flag=True):
     flag, content = execute.crudini_get_config('/etc/os-release', '', "ID")
     execute.completed(flag, 'read os ID')

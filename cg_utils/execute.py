@@ -114,23 +114,33 @@ def check_ssh_can_connect_via_id_rsa(key_path: str, host_or_ip: str, user='root'
     return return_code == 0
 
 
-def completed(flag, dec, err=None, raise_flag=True):
+def completed(flag, dec, err=None, raise_flag=True, just_echo=False):
     if flag == 0:
-        msg = f'{dec} success'
+        msg = f'{dec}'
+        if not just_echo:
+            msg += f' success'
         LOG.info(msg)
         if os.environ.get('IN_CLICK'):
-            import click # 不要在cs_utils模块中公开引入任何第三方包
-            click.secho(msg, fg='green')
+            import click # 不要在cg_utils模块中公开引入任何第三方包
+            if just_echo:
+                click.secho(msg)
+            else:
+                click.secho(msg, fg='green')
         else:
             print(msg)
     else:
-        msg = f'{dec} failed'
+        msg = f'{dec}'
+        if not just_echo:
+            msg += f' failed'
         if err:
             msg = f'{msg}, err: {err}'
         LOG.error(msg)
         if os.environ.get('IN_CLICK'):
-            import click # 不要在cs_utils模块中公开引入任何第三方包
-            click.secho(msg, fg='red')
+            import click # 不要在cg_utils模块中公开引入任何第三方包
+            if just_echo:
+                click.secho(msg)
+            else:
+                click.secho(msg, fg='red')
             if raise_flag:
                 raise click.ClickException("")
         else:

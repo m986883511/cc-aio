@@ -7,7 +7,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import execute, func, file, _, AUTHOR_NAME
+from cg_utils import execute, func, file, _, AUTHOR_NAME, AIO_CONF_NAME
 from hostadmin.files import FilesDir
 from hostadmin.config import CONF
 
@@ -18,7 +18,7 @@ class SshEndPoint(object):
     def __init__(self):
         self.SSH_TIMEOUT=2
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
-        self.PVETUI_CONF_PATH = f'/etc/{AUTHOR_NAME}/pvetui.conf'
+        self.AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
         self.default_root_password = CONF.ssh.root_pwd
 
     def check_ssh_passwordless(self, ctxt, host):
@@ -73,9 +73,9 @@ class SshEndPoint(object):
 
     def execute_on_all_hosts(self, ctxt, command):
         import click
-        flag = 0 if os.path.exists(self.PVETUI_CONF_PATH) else 1
-        execute.completed(flag, f'check {self.PVETUI_CONF_PATH} exist')
-        value = file.ini_file_to_dict(self.PVETUI_CONF_PATH)
+        flag = 0 if os.path.exists(self.AIO_CONF_PATH) else 1
+        execute.completed(flag, f'check {self.AIO_CONF_PATH} exist')
+        value = file.ini_file_to_dict(self.AIO_CONF_PATH)
         flag = 0 if isinstance(value, dict) else 1
         execute.completed(flag, f'check ini_file_to_dict return value', f'value type is {type(value)}')
 

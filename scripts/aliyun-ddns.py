@@ -9,7 +9,7 @@ from aliyunsdkalidns.request.v20150109.DescribeSubDomainRecordsRequest import De
 from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import AddDomainRecordRequest
 from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import UpdateDomainRecordRequest
 
-from cg_utils import execute, func, file, AUTHOR_NAME
+from cg_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ class DynamicDNS:
    
 
 def get_public_ip_default_value(key):
-    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/pvetui.conf', section='public_ip', key=key)
+    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}', section='public_ip', key=key)
     if flag == 0 and content:
         return content
     LOG.warning(f"read default public_ip key={key} config failed, please set it!")

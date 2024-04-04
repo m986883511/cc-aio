@@ -13,7 +13,8 @@ LOG_DIR="/var/log/$AUTHOR_NAME"
 mdkir -p $LOG_DIR
 LOG_PATH="$LOG_DIR/$DEST_SCRIPT_NAME.log"
 DEST_SCRIPT_PATH="$DEST_SCRIPT_DIR/$DEST_SCRIPT_NAME"
-PVETUI_CONF_PATH="/etc/$AUTHOR_NAME/pvetui.conf"
+AIO_CONF_NAME='aio.conf'
+AIO_CONF_PATH="/etc/$AUTHOR_NAME/$AIO_CONF_NAME"
 
 function completed() {
     if [[ $1 -eq 0 ]]; then
@@ -30,14 +31,14 @@ function completed() {
     fi
 }
 
-PUBLIC_IP_SAVED_PATH=$(crudini --get $PVETUI_CONF_PATH public_ip public_ip_txt_path)
+PUBLIC_IP_SAVED_PATH=$(crudini --get $AIO_CONF_PATH public_ip public_ip_txt_path)
 completed $? 'read public_ip public_ip_txt_path'
 if [ -z "$PUBLIC_IP_SAVED_PATH" ];then
     PUBLIC_IP_SAVED_PATH="/tmp/public_ip.txt"
 fi
-FEISHU_WEBHOOK_UUID=$(crudini --get $PVETUI_CONF_PATH public_ip feishu_webhook_uuid)
+FEISHU_WEBHOOK_UUID=$(crudini --get $AIO_CONF_PATH public_ip feishu_webhook_uuid)
 completed $? 'read public_ip feishu_webhook_uuid'
-IPV4_OR_IPV6=$(crudini --get $PVETUI_CONF_PATH public_ip ipv4_or_ipv6)
+IPV4_OR_IPV6=$(crudini --get $AIO_CONF_PATH public_ip ipv4_or_ipv6)
 completed $? 'read public_ip ipv4_or_ipv6'
 FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/$FEISHU_WEBHOOK_UUID"
 

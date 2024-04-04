@@ -3,20 +3,20 @@ import json
 import logging
 import argparse
 
-from cg_utils import execute, func, file, AUTHOR_NAME
+from cg_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
 from cg_driver.alist import client
 
 LOG = logging.getLogger(__name__)
 
 def get_alist_default_value(key):
-    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/pvetui.conf', section='alist', key=key)
+    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}', section='alist', key=key)
     if flag == 0 and content:
         return content
     LOG.warning(f"read default alist key={key} config failed, please set it!")
 
 
 def get_samba_default_value(key):
-    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/pvetui.conf', section='samba', key=key)
+    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}', section='samba', key=key)
     if flag == 0 and content:
         return content
     LOG.warning(f"read default samba key={key} config failed, please set it!")

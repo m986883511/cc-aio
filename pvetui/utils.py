@@ -2,7 +2,7 @@ import os
 import logging
 
 from cg_utils import file, func, execute, AUTHOR_NAME
-from pvetui.config import CONF, PVE_TUI_CONF_PATH
+from pvetui.config import CONF, AIO_CONF_PATH
 
 LOG = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ def custom_cmd(sys_argv: list):
 
 def get_other_nodes_ntp_server_config():
     LOG.info('reload pvetui config')
-    CONF(default_config_files = [PVE_TUI_CONF_PATH])
+    CONF(default_config_files = [AIO_CONF_PATH])
     CONF.reload_config_files()
     installed_base_env_nodes = func.get_string_split_list(CONF.base_env.installed_nodes, split_flag=',')
     control_nodes = func.get_string_split_list(CONF.openstack.control_nodes, split_flag=',')

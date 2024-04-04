@@ -11,7 +11,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from oslo_config import cfg
 from crontab import CronTab
 
-from cg_utils import execute, func, file, AUTHOR_NAME
+from cg_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
 from hostadmin.files import FilesDir
 from hostadmin.config import CG_SCRIPTS_DIR, CONF
 
@@ -56,7 +56,7 @@ class ServiceEndPoint(object):
         self.wireguard_conf_path = '/etc/wireguard/wg0.conf'
         self.wireguard_script_path = os.path.join(CG_SCRIPTS_DIR, self.wireguard_script)
         self.wireguard_params_path = '/etc/wireguard/params'
-        self.pvetui_conf_path = f'/etc/{AUTHOR_NAME}/pvetui.conf'
+        self.pvetui_conf_path = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
         self.create_local_alist_storage_py = 'create-local-alist-storage.py'
 
     def install_alist(self, ctxt):

@@ -9,6 +9,7 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 AUTHOR_NAME="cg"
+AIO_CONF_NAME='aio.conf'
 
 function isRoot() {
  if [ "${EUID}" -ne 0 ]; then
@@ -120,13 +121,13 @@ function installQuestions() {
  SERVER_WG_NIC="wg0"
  SERVER_WG_IPV4="10.66.66.1"
  SERVER_WG_IPV6="fd42:42:42::1"
- SERVER_PORT=$(crudini --get /etc/$AUTHOR_NAME/pvetui.conf wireguard server_port)
+ SERVER_PORT=$(crudini --get /etc/$AUTHOR_NAME/$AIO_CONF_NAME wireguard server_port)
  if [ -z "$SERVER_PORT" ];then
   SERVER_PORT="12001"
  fi
  CLIENT_DNS_1="223.5.5.6"
  CLIENT_DNS_2="223.6.6.6"
- ALLOWED_IPS=$(crudini --get /etc/$AUTHOR_NAME/pvetui.conf wireguard subnet)
+ ALLOWED_IPS=$(crudini --get /etc/$AUTHOR_NAME/$AIO_CONF_NAME wireguard subnet)
  if [ -z "$ALLOWED_IPS" ];then
    ALLOWED_IPS="192.168.1.0/24"
  fi

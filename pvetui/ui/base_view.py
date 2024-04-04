@@ -6,7 +6,7 @@ import datetime
 import urwid
 
 from pvetui import ui
-from pvetui.config import CONF, PVE_TUI_CONF_PATH
+from pvetui.config import CONF, AIO_CONF_PATH
 from cg_utils import func, execute, AUTHOR_NAME
 
 LOG = logging.getLogger(__name__)
@@ -68,14 +68,14 @@ class BaseConfigView(KollaBaseConfig):
         for key in keys:
             value = getattr(getattr(CONF, group), key)
             LOG.info(f'crudini save group={group} key={key} value={value}')
-            flag, content = execute.use_crudini_save_CONF_to_path(PVE_TUI_CONF_PATH, group, key)
-            assert flag==0, f'update group={group} key={key} value={value} to {PVE_TUI_CONF_PATH} failed, err={content}'
+            flag, content = execute.use_crudini_save_CONF_to_path(AIO_CONF_PATH, group, key)
+            assert flag==0, f'update group={group} key={key} value={value} to {AIO_CONF_PATH} failed, err={content}'
         self.rsync_to_other_control_nodes()
 
     def rsync_to_other_control_nodes(self):
         if not CONF.openstack.rsync_config_to_other_control_nodes:
             return
-        cmd = f'crudini --get {PVE_TUI_CONF_PATH} openstack control_nodes'
+        cmd = f'crudini --get {AIO_CONF_PATH} openstack control_nodes'
         flag, content = execute.execute_command(cmd)
         if flag != 0:
             LOG.warning(f'rsync_to_other_control_nodes read control_nodes failed, err={content}, skip rsync!')
@@ -153,7 +153,7 @@ class BaseConsoleView:
         self._task_end_time = time.perf_counter()
         use_time = int(self._task_end_time - self._task_start_time)
         end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        time_string = f'\n{CONF.pvetui_title} run end, end at {end_time}, use {use_time} seconds\n'
+        time_string = f'\n{CONF.tui_title} run end, end at {end_time}, use {use_time} seconds\n'
         self.received_output(time_string)
         if self.alarm:
             ui.top_loop.remove_alarm(self.alarm)
@@ -183,7 +183,7 @@ class BaseConsoleView:
         if not cmd:
             err_msg = f'get cmd failed, index={self.current_cmd_index}, cmd_list={self.need_run_cmd_list}'
             raise Exception(cmd)
-        self.received_output(f'\nNow {CONF.pvetui_title} Run: {cmd}\n')
+        self.received_output(f'\nNow {CONF.tui_title} Run: {cmd}\n')
         self.proc = subprocess.Popen(cmd, stdout=write_fd, close_fds=True, shell=True)
 
     def show(self):

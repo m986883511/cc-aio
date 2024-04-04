@@ -33,7 +33,8 @@ PLAIN=''
 
 JM_IP_PRIFIX="192.222.1."
 JM_VERSION_DIR="$OPT_AUTHOR_DIR/jmversion"
-PVETUI_CONFIG_PATH="/etc/$AUTHOR_NAME/pvetui.conf"
+AIO_CONF_NAME='aio.conf'
+PVETUI_CONFIG_PATH="/etc/$AUTHOR_NAME/$AIO_CONF_NAME"
 PVE_IP_ADDRESS=
 CONDA_BIN_PATH="/root/miniconda3/condabin/conda"
 LOG_PATH="/var/log/$AUTHOR_NAME/shell.log"
