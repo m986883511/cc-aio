@@ -152,7 +152,7 @@ class WireguardConfigView(base_view.BaseConfigView):
 
     def update_view(self):
         widget_list = []
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启内网穿透:', state=CONF.wireguard.open_flag, on_state_change=self.open_flag_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启VPN隧道:', state=CONF.wireguard.open_flag, on_state_change=self.open_flag_change), left=4, right=4, min_width=10))
         if CONF.wireguard.open_flag:
             widget_list.append(urwid.Divider())
             widget_list.append(urwid.Padding(
@@ -197,7 +197,7 @@ class WireguardConfigView(base_view.BaseConfigView):
         self.update_view()
         body = urwid.Pile(
             [
-                urwid.Text("编辑内网穿透配置", align="center"),
+                urwid.Text("编辑VPN隧道配置", align="center"),
                 urwid.Divider(),
                 self.pile_view,
                 self.note_text,

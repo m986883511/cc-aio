@@ -106,6 +106,7 @@ def main():
         menu_button('配置物理网络', pve.NetworkConfigView),
         menu_button('安装基础包和配置', base_env.InstallBaseEnvView),
         menu_button('安装ALL-IN-ONE服务', pve.PveAllInOneServicesView),
+        menu_button('操作ALL-IN-ONE设备', pve.PveAllInOneOperationView),
         urwid.Divider(),
         menu_button(CONF.return_last_string, ui.exit_program),
     ])

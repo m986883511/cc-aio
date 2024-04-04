@@ -380,7 +380,7 @@ def service():
 @click.argument('start_or_stop', type=click.STRING)
 def start_or_stop_wireguard(start_or_stop):
     """
-    启动还是停止内网穿透服务
+    启动还是停止VPN隧道服务
 
     start_or_stop: 只能是start或者stop
     """
