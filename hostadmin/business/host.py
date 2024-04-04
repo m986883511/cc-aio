@@ -6,7 +6,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cs_utils import execute, func, file
+from cg_utils import execute, func, file
 from hostadmin.files import FilesDir
 
 CONF = cfg.CONF
@@ -308,7 +308,7 @@ class HostEndPoint(object):
             flag = execute.execute_command_in_popen(cmd, shell=True)
             execute.completed(flag, f'install base env on {host}')
         else:
-            cmd = f'cs-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
+            cmd = f'cg-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
             flag, content = execute.execute_command(cmd, shell=True)
             execute.completed(flag, f'scp {FilesDir.Shell.shell_dir} to {host}', content)
             cmd = 'bash /tmp/shell/install_base_env.sh'

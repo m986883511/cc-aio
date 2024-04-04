@@ -3,7 +3,7 @@ import os
 import logging
 
 from hostadmin import business, config
-from cs_utils import execute
+from cg_utils import execute
 from hostadmin.files import FilesDir
 
 LOG = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ def chmod_ssh_key_path():
 
 
 def chmod_scripts_path():
-    path = '/usr/local/cs/scripts'
+    path = '/usr/local/cg/scripts'
     if not os.path.exists(path):
         LOG.error(f'{path} not exist')
         return

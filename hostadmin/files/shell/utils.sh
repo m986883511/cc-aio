@@ -4,9 +4,9 @@ YUM_REPO_BACKUP_DIR=/etc/yum.repos.d/bak
 YUM_OFFLINE_REPO_NAME=local.repo
 # REPO_SERVER_IP="0.0.0.0"
 REPO_SERVER_PORT=7080
-OPT_CS_DIR="/opt/cs"
+OPT_CS_DIR="/opt/cg"
 REPO_SERVER_NAME="repo-server"
-HOSTRPC_SERVER_NAME="cs-hostrpc"
+HOSTRPC_SERVER_NAME="cg-hostrpc"
 REPO_SERVER_SYSTEMD_FILE=/usr/lib/systemd/system/$REPO_SERVER_NAME.service
 HOSTRPC_SERVER_SYSTEMD_FILE=/usr/lib/systemd/system/$HOSTRPC_SERVER_NAME.service
 REPO_SERVER_DIR="$OPT_CS_DIR/presetup/repo"
@@ -18,7 +18,7 @@ CEPH_BASE_RPM="podman lvm2 cephadm chrony ceph-common smartmontools jq gdisk $BA
 OPENSTACK_BASE_RPM="docker python3-pip nfs-utils $BASE_BASE_RPM"
 PVE_BASE_DEBS="samba samba-common python3-pip wireguard sshpass crudini git net-tools"
 BASE_PIP_PACKAGES=""
-INVENTORY_HOSTS_PATH="/etc/cs/hosts"
+INVENTORY_HOSTS_PATH="/etc/cg/hosts"
 # 
 SYS_ARCH=$(uname -m)
 SSH_TIMEOUT=2
@@ -32,10 +32,10 @@ PLAIN=''
 
 JM_IP_PRIFIX="192.222.1."
 JM_VERSION_DIR="$OPT_CS_DIR/jmversion"
-PVETUI_CONFIG_PATH="/etc/cs/pvetui.conf"
+PVETUI_CONFIG_PATH="/etc/cg/pvetui.conf"
 PVE_IP_ADDRESS=
 CONDA_BIN_PATH="/root/miniconda3/condabin/conda"
-LOG_PATH="/var/log/cs/shell.log"
+LOG_PATH="/var/log/cg/shell.log"
 
 
 function echo_log() {
@@ -109,7 +109,7 @@ EOF
 
 function start_hostrpc_server() {
     echo_log "enter function name: ${FUNCNAME[0]}"
-    command -v cs-hostrpc
+    command -v cg-hostrpc
     completed $? "check command hostrpc exist"
 
     if [ ! -f $HOSTRPC_SERVER_SYSTEMD_FILE ]; then
@@ -124,7 +124,7 @@ User=root
 Group=root
 
 WorkingDirectory=/root
-ExecStart=cs-hostrpc
+ExecStart=cg-hostrpc
 KillSignal=SIGINT
 
 [Install]
@@ -285,7 +285,7 @@ function get_pve_ip(){
 
 function set_pve_node_ip_and_hostname(){
     local node_ip=$1
-    cs-hostcli network change-single-pve-node-ip $node_ip
+    cg-hostcli network change-single-pve-node-ip $node_ip
     completed $? "set $node_ip"
 }
 
@@ -390,7 +390,7 @@ function install_kolla_registry_version(){
     fi
     if [ -z "$already_installed" ]; then
         local path=$(get_kolla_registry_version_path)
-        local conda_env_name="cs"
+        local conda_env_name="cg"
         source ~/.bashrc
         completed $? "source ~/.bashrc"
         eval "$(conda shell.bash hook)"
@@ -403,7 +403,7 @@ function install_kolla_registry_version(){
 }
 
 function execute_kolla_init(){
-    local conda_env_name="cs"
+    local conda_env_name="cg"
     source ~/.bashrc
     completed $? "source ~/.bashrc"
     eval "$(conda shell.bash hook)"
@@ -415,7 +415,7 @@ function execute_kolla_init(){
 }
 
 function execute_kolla_generate(){
-    local conda_env_name="cs"
+    local conda_env_name="cg"
     source ~/.bashrc
     completed $? "source ~/.bashrc"
     eval "$(conda shell.bash hook)"
@@ -427,7 +427,7 @@ function execute_kolla_generate(){
 }
 
 function execute_kolla_deploy(){
-    local conda_env_name="cs"
+    local conda_env_name="cg"
     source ~/.bashrc
     completed $? "source ~/.bashrc"
     eval "$(conda shell.bash hook)"
@@ -439,7 +439,7 @@ function execute_kolla_deploy(){
 }
 
 function execute_kolla_add_nodes(){
-    local conda_env_name="cs"
+    local conda_env_name="cg"
     source ~/.bashrc
     completed $? "source ~/.bashrc"
     eval "$(conda shell.bash hook)"
@@ -452,7 +452,7 @@ function execute_kolla_add_nodes(){
 
 function gen_openstack_ceph_config(){
     echo "enter function name: ${FUNCNAME[0]}"
-    local conda_env_name="cs"
+    local conda_env_name="cg"
     local ceph_admin_node=$1
     source ~/.bashrc
     completed $? "source ~/.bashrc"
@@ -493,8 +493,8 @@ function create_rbd_volume_type(){
     completed $? "source ~/.bashrc"
     eval "$(conda shell.bash hook)"
     completed $? "conda shell.bash hook"
-    source /etc/cs/admin-openrc.sh
-    completed $? "source /etc/cs/admin-openrc.sh"
+    source /etc/cg/admin-openrc.sh
+    completed $? "source /etc/cg/admin-openrc.sh"
 
     volume_type_list=$(openstack volume type list -f value -c Name)
     completed $? "get volume_type_list"
@@ -506,7 +506,7 @@ function create_rbd_volume_type(){
         openstack volume type set rbd --property volume_backend_name=rbd-1 --property image_service:store_id=cinder
         completed $? "exec: openstack volume type set rbd --property volume_backend_name=rbd-1 --property image_service:store_id=cinder"
     fi
-    docker_mysql_cmd=$(crudini --get /etc/cs/admin-openrc.sh "" "alias mysql")
+    docker_mysql_cmd=$(crudini --get /etc/cg/admin-openrc.sh "" "alias mysql")
     completed $? "crudini get mysql alias"
     docker_mysql_cmd=${docker_mysql_cmd//\"/}
     completed $? "get true mysql cmd"
@@ -528,14 +528,14 @@ function restart_ceph_about_container(){
     control_nodes="${control_nodes//,/ }"
     for node in $control_nodes; do
         echo "restart $node"
-        hostcli ssh ssh-run-on-remote $node "cs-hostcli ceph restart-ceph-about-container"
+        hostcli ssh ssh-run-on-remote $node "cg-hostcli ceph restart-ceph-about-container"
         completed $? "restart $node ceph about container"
     done
     completed 0 "restart all control_nodes"
     pure_compute_nodes="${pure_compute_nodes//,/ }"
     for node in $pure_compute_nodes; do
         echo "restart $node"
-        hostcli ssh ssh-run-on-remote $node "cs-hostcli ceph restart-ceph-about-container"
+        hostcli ssh ssh-run-on-remote $node "cg-hostcli ceph restart-ceph-about-container"
         completed $? "restart $node ceph about container"
     done
     completed 0 "restart all pure_compute_nodes"

@@ -141,7 +141,7 @@ def completed(flag, dec, err=None, raise_flag=True):
 
 def use_crudini_save_CONF_to_path(path, group, key):
     from oslo_config import cfg
-    from cs_utils import execute
+    from cg_utils import execute
     group_obj = getattr(cfg.CONF, group)
     value = getattr(group_obj, key)
     flag, content = execute.crudini_set_config(path, group, key, value)

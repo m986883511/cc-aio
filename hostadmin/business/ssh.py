@@ -7,7 +7,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cs_utils import execute, func, file, _
+from cg_utils import execute, func, file, _
 from hostadmin.files import FilesDir
 
 CONF = cfg.CONF
@@ -18,7 +18,7 @@ class SshEndPoint(object):
     def __init__(self):
         self.SSH_TIMEOUT=2
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
-        self.PVETUI_CONF_PATH = '/etc/cs/pvetui.conf'
+        self.PVETUI_CONF_PATH = '/etc/cg/pvetui.conf'
         self.default_root_password = CONF.ssh.root_pwd
 
     def check_ssh_passwordless(self, ctxt, host):

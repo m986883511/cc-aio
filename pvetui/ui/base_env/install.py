@@ -6,7 +6,7 @@ from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from pvetui.utils import get_other_nodes_ntp_server_config
-from cs_utils import execute, func
+from cg_utils import execute, func
 
 LOG = logging.getLogger(__name__)
 
@@ -25,13 +25,13 @@ class InstallBaseEnvConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_base_env_view))
-        self.need_run_cmd_list.append(f'cs-hostcli network check-network-connection {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-passwordless-to-host {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'cs-hostcli host install-base-env --host {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cg-hostcli network check-network-connection {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cg-hostcli ssh ssh-passwordless-to-host {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cg-hostcli host install-base-env --host {self.selected_hostname}')
         # if self.selected_hostname not in CONF.base_env.installed_nodes:
         #     other_node_ntp_server_config = get_other_nodes_ntp_server_config()
         #     other_node_ntp_server_ip = other_node_ntp_server_config['ntp_server_ip']
-        #     self.need_run_cmd_list.append(f'cs-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cs-hostcli host set-ntp-server {other_node_ntp_server_ip}"')
+        #     self.need_run_cmd_list.append(f'cg-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cg-hostcli host set-ntp-server {other_node_ntp_server_ip}"')
         self.start_alarm()
         ui.top_layer.open_box(body)
     

@@ -7,7 +7,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cs_utils import execute, func
+from cg_utils import execute, func
 
 LOG = logging.getLogger(__name__)
 
@@ -37,9 +37,9 @@ class PublicIpTestConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
-        self.need_run_cmd_list.append(f'cs-hostcli service show-qrencode --text {self.public_ip_simple_http_server_url}')
+        self.need_run_cmd_list.append(f'cg-hostcli service show-qrencode --text {self.public_ip_simple_http_server_url}')
         self.need_run_cmd_list.append(f'echo -e 请关闭手机无线网, 使用相机扫码打开网址, 能打开网址说明公网IP测试成功!')
-        self.need_run_cmd_list.append(f'cs-hostcli service create-block-simple-api-service {CONF.public_ip.simple_http_server_port}')
+        self.need_run_cmd_list.append(f'cg-hostcli service create-block-simple-api-service {CONF.public_ip.simple_http_server_port}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 
@@ -58,9 +58,9 @@ class PublicIpConfigConsoleView(base_view.BaseConsoleView):
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
         start_or_stop = 'start' if CONF.public_ip.use_check_robot else 'stop'
-        self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-listen-public-ip-change-rebot {start_or_stop}')
+        self.need_run_cmd_list.append(f'cg-hostcli service start-or-stop-listen-public-ip-change-rebot {start_or_stop}')
         start_or_stop = 'start' if CONF.public_ip.use_ddns else 'stop'
-        self.need_run_cmd_list.append(f'cs-hostcli service start-or-stop-aliyun-ddns {start_or_stop}')
+        self.need_run_cmd_list.append(f'cg-hostcli service start-or-stop-aliyun-ddns {start_or_stop}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

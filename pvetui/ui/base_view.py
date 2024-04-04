@@ -7,15 +7,15 @@ import urwid
 
 from pvetui import ui
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
-from cs_utils import func, execute
+from cg_utils import func, execute
 
 LOG = logging.getLogger(__name__)
 
 
 class KollaBaseConfig:
     def __init__(self):
-        self.kolla_rc_path = '/etc/cs/admin-openrc.sh'
-        self.ansible_hosts = '/etc/cs/hosts'
+        self.kolla_rc_path = '/etc/cg/admin-openrc.sh'
+        self.ansible_hosts = '/etc/cg/hosts'
 
 
 class BaseConfigView(KollaBaseConfig):
@@ -84,7 +84,7 @@ class BaseConfigView(KollaBaseConfig):
         current_hostname = func.get_current_node_hostname()
         other_control_nodes = [x for x in control_nodes if x != current_hostname ]
         for node in other_control_nodes:
-            flag, content = execute.execute_command(f'cs-hostcli ssh rsync-dir-to-remote-host {node} /etc/cs', shell=False, timeout=5)
+            flag, content = execute.execute_command(f'cg-hostcli ssh rsync-dir-to-remote-host {node} /etc/cg', shell=False, timeout=5)
             if flag == 0:
                 LOG.info(f'rsync_to_other_control_nodes to {node} success')
             else:

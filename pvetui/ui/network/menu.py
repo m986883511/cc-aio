@@ -5,7 +5,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui, jm_data
 from pvetui.ui import my_widget, base_view
-from cs_utils import func
+from cg_utils import func
 from .config import NetworkConfigView
 
 LOG = logging.getLogger(__name__)

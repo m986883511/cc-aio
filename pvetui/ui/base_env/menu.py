@@ -7,7 +7,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui, jm_data
 from pvetui.ui import my_widget, base_view
-from cs_utils import execute, func
+from cg_utils import execute, func
 from hostadmin.rpc import rpc_client
 from hostadmin.business import Usage
 

@@ -7,7 +7,7 @@ import traceback
 import jsonrpclib
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
 
-from cs_utils import func
+from cg_utils import func
 from hostadmin import hostcli, business
 from hostadmin.config import CONF
 

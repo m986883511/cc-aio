@@ -5,7 +5,7 @@ VERSION='latest'
 REPO_SERVER_PORT="7080"
 
 if [ ! -n "$2" ]; then
-  INSTALL_PATH='/opt/cs/alist'
+  INSTALL_PATH='/opt/cg/alist'
 else
   if [[ $2 == */ ]]; then
     INSTALL_PATH=${2%?}

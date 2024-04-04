@@ -92,7 +92,7 @@ function getHomeDirForClient() {
   HOME_DIR="/root"
  fi
 
- HOME_DIR="/etc/cs/wireguard"
+ HOME_DIR="/etc/cg/wireguard"
  mkdir -p $HOME_DIR
 
  echo "$HOME_DIR"
@@ -118,13 +118,13 @@ function installQuestions() {
  SERVER_WG_NIC="wg0"
  SERVER_WG_IPV4="10.66.66.1"
  SERVER_WG_IPV6="fd42:42:42::1"
- SERVER_PORT=$(crudini --get /etc/cs/pvetui.conf wireguard server_port)
+ SERVER_PORT=$(crudini --get /etc/cg/pvetui.conf wireguard server_port)
  if [ -z "$SERVER_PORT" ];then
   SERVER_PORT="12001"
  fi
  CLIENT_DNS_1="223.5.5.6"
  CLIENT_DNS_2="223.6.6.6"
- ALLOWED_IPS=$(crudini --get /etc/cs/pvetui.conf wireguard subnet)
+ ALLOWED_IPS=$(crudini --get /etc/cg/pvetui.conf wireguard subnet)
  if [ -z "$ALLOWED_IPS" ];then
    ALLOWED_IPS="192.168.1.0/24"
  fi

@@ -1,13 +1,13 @@
 import os
 import logging
 
-from cs_utils import file, func, execute
+from cg_utils import file, func, execute
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
 
 LOG = logging.getLogger(__name__)
 
 def get_cs_pve_version():
-    flag, content = execute.execute_command('pip show cs-pve')
+    flag, content = execute.execute_command('pip show cg-aio')
     if flag == 0:
         content_list = func.get_string_split_list(content, split_flag='\n')
         for i in content_list:
@@ -21,7 +21,7 @@ def install_new_master_cs_pve_package(auto_install_flag=False):
     branch='.'.join(version.split('.')[0:2])
     branch = 'master' if branch == '4.999' else 'v' + branch
     url = f'http://192.168.1.4:5244/d/4t/fileserver/jenkins/production-pve/pvetui/{branch}/latest'
-    file_url = func.get_http_server_one_file_download_url(url, startswith='cs-pve', endswith=".tar.gz")
+    file_url = func.get_http_server_one_file_download_url(url, startswith='cg-aio', endswith=".tar.gz")
     file_name = func.get_string_split_list(file_url, split_flag='/')[-1]
     print(f'current version is {version}, are you sure install {file_name}?')
     if auto_install_flag:
@@ -30,7 +30,7 @@ def install_new_master_cs_pve_package(auto_install_flag=False):
         name = input("if need install, please input yes: ")
     if name == 'yes':
         flag = execute.execute_command_in_popen(f'pip install {file_url}')
-        execute.completed(flag, 'install cs-pve package')
+        execute.completed(flag, 'install cg-aio package')
         flag = execute.execute_command_in_popen(f'systemctl restart hostrpc')
         execute.completed(flag, 'restart hostrpc')
     else:
@@ -38,7 +38,7 @@ def install_new_master_cs_pve_package(auto_install_flag=False):
 
 
 def show_cs_pve_commit_msg():
-    file_path = '/usr/local/cs/doc/ChangeLog'
+    file_path = '/usr/local/cg/doc/ChangeLog'
     cmd = f'openssl enc -d -aes-256-cbc -in {file_path} -pass pass:password -md sha256'
     if os.path.exists(file_path):
         flag = execute.execute_command_in_popen(cmd)

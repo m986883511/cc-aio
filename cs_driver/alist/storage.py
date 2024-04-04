@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from cs_utils import func
+from cg_utils import func
 
 class Storage():
     def __init__(self, alist_url, headers):

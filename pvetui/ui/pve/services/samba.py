@@ -6,7 +6,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cs_utils import execute, func
+from cg_utils import execute, func
 
 LOG = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class SambaConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_samba_view))
-        self.need_run_cmd_list.append(f'cs-hostcli service create-samba-service {CONF.samba.default_share_path} {CONF.samba.samba_default_password}')
+        self.need_run_cmd_list.append(f'cg-hostcli service create-samba-service {CONF.samba.default_share_path} {CONF.samba.samba_default_password}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

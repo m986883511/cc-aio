@@ -9,7 +9,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cs_utils import linux, func, execute, file, _
+from cg_utils import linux, func, execute, file, _
 from hostadmin.files import FilesDir
 
 CONF = cfg.CONF
@@ -18,7 +18,7 @@ LOG = logging.getLogger(__name__)
 
 class CephEndPoint(object):
     def __init__(self):
-        self.version_path = '/opt/cs/jmversion'
+        self.version_path = '/opt/cg/jmversion'
         self.architecture = linux.get_architecture()
 
         self.initial_dashboard_password = 'password'
@@ -107,7 +107,7 @@ class CephEndPoint(object):
             flag = execute.execute_command_in_popen(cmd, shell=True)
             execute.completed(flag, f'install ceph as admin node on {host}')
         else:
-            cmd = f'cs-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
+            cmd = f'cg-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
             flag, content = execute.execute_command(cmd, shell=True)
             execute.completed(flag, f'scp {FilesDir.Shell.shell_dir} to {host}', content)
             cmd = f'bash /tmp/shell/install_as_ceph_admin_node.sh {osd_pool_default_size}'
@@ -147,7 +147,7 @@ class CephEndPoint(object):
             flag = execute.execute_command_in_popen(cmd, shell=True)
             execute.completed(flag, f'add ceph node {host}')
         else:
-            cmd = f'cs-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
+            cmd = f'cg-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
             flag, content = execute.execute_command(cmd, shell=True)
             execute.completed(flag, f'scp {FilesDir.Shell.shell_dir} to {host}', content)
             cmd = f'bash /tmp/shell/add_as_ceph_node.sh'
@@ -310,7 +310,7 @@ class CephEndPoint(object):
         if os.path.isdir(self.ceph_conf_dir):
             flag, content = execute.execute_command(f'rm -rf {self.ceph_conf_dir}/*')
             execute.completed(flag, f"clear {self.ceph_conf_dir}", content)
-        cmd = 'crudini --set /etc/cs/pvetui.conf ceph current_node_installed_ceph false'
+        cmd = 'crudini --set /etc/cg/pvetui.conf ceph current_node_installed_ceph false'
         flag, content = execute.execute_command(cmd)
         execute.completed(0, f"set current_node_installed_ceph flag, return_code={flag}")
         cmd = "sed -i '/ ceph-/d' /root/.ssh/authorized_keys"

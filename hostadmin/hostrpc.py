@@ -3,12 +3,12 @@ import os
 from hostadmin import rpc
 from hostadmin.config import CONF, HOSTRPC_CONF_PATH
 
-from cs_utils import func
+from cg_utils import func
 from hostadmin import depends
 
 
 def main():
-    func.set_simple_log(f'/var/log/cs/hostrpc.log')
+    func.set_simple_log(f'/var/log/cg/hostrpc.log')
     func.create_conf_file(HOSTRPC_CONF_PATH)
     depends.chmod_ssh_key_path()
     depends.chmod_scripts_path()

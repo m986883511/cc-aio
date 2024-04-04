@@ -9,7 +9,7 @@ from aliyunsdkalidns.request.v20150109.DescribeSubDomainRecordsRequest import De
 from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import AddDomainRecordRequest
 from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import UpdateDomainRecordRequest
 
-from cs_utils import execute, func, file
+from cg_utils import execute, func, file
 
 LOG = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ class DynamicDNS:
    
 
 def get_public_ip_default_value(key):
-    flag, content = execute.crudini_get_config(ini_path='/etc/cs/pvetui.conf', section='public_ip', key=key)
+    flag, content = execute.crudini_get_config(ini_path='/etc/cg/pvetui.conf', section='public_ip', key=key)
     if flag == 0 and content:
         return content
     LOG.warning(f"read default public_ip key={key} config failed, please set it!")
@@ -127,13 +127,13 @@ def parse_arguments():
 
 
 if __name__ == '__main__':
-    func.set_simple_log('/var/log/cs/ddns.log')
+    func.set_simple_log('/var/log/cg/ddns.log')
     args = parse_arguments()
     args_dict = args.__dict__
     for key, value in args_dict.items():
         if not value:
             raise Exception(f'please set {key} value')
-    func.set_simple_log('/var/log/cs/ddns.log')
+    func.set_simple_log('/var/log/cg/ddns.log')
     LOG.info('--------- ddns start ---------')
     DynamicDNS(args_dict).run()
     LOG.info('--------- ddns end ---------')

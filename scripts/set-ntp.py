@@ -1,7 +1,7 @@
 import os
 import logging
 
-from cs_utils import execute, func
+from cg_utils import execute, func
 from pvetui.utils import get_other_nodes_ntp_server_config
 
 LOG = logging.getLogger(__name__)
@@ -23,15 +23,15 @@ class SetNtpTask:
 
     def check_network_connection(self):
         for node in self.nodes_but_not_openstack_node:
-            flag, content = execute.execute_command(f'cs-hostcli network check-network-connection {node}')
+            flag, content = execute.execute_command(f'cg-hostcli network check-network-connection {node}')
             execute.completed(flag, f'check {node} network connection', content)
-            flag, content = execute.execute_command(f'cs-hostcli ssh check-ssh-passwordless {node}')
+            flag, content = execute.execute_command(f'cg-hostcli ssh check-ssh-passwordless {node}')
             execute.completed(flag, f'check {node} ssh passwordless', content)
         self.print_and_log_info(f'check nodes_but_not_openstack_node network connection ok')
 
     def set_ntp(self):
         for node in self.nodes_but_not_openstack_node:
-            flag, content = execute.execute_command(f'cs-hostcli ssh ssh-run-on-remote {node} "cs-hostcli host set-ntp-server {self.other_node_ntp_server_ip}"')
+            flag, content = execute.execute_command(f'cg-hostcli ssh ssh-run-on-remote {node} "cg-hostcli host set-ntp-server {self.other_node_ntp_server_ip}"')
             execute.completed(flag, f'set {node} ntp_server={self.other_node_ntp_server_ip}', content)
         self.print_and_log_info(f'set nodes_but_not_openstack_node network ntp ok')
 
@@ -43,7 +43,7 @@ class SetNtpTask:
 
 if __name__ == "__main__":
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log('/var/log/cs/set_ntp.log')
+    func.set_simple_log('/var/log/cg/set_ntp.log')
     LOG.info('--------- set_ntp start ---------')
     SetNtpTask().run()
     LOG.info('--------- set_ntp end ---------')

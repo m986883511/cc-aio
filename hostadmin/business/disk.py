@@ -8,7 +8,7 @@ import time
 
 from oslo_config import cfg
 
-from cs_utils import execute, func, file, _
+from cg_utils import execute, func, file, _
 
 CONF = cfg.CONF
 LOG = logging.getLogger(__name__)

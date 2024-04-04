@@ -7,7 +7,7 @@ import urllib.request
 import re
 import requests 
 
-from cs_utils import execute, file, func
+from cg_utils import execute, file, func
 
 LOG = logging.getLogger(__name__)
 

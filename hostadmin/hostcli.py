@@ -5,7 +5,7 @@ import logging
 
 from hostadmin import business
 from hostadmin.config import CONF
-from cs_utils import func
+from cg_utils import func
 
 LOG = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 @click.group()
 def cli():
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log('/var/log/cs/hostcli.log')
+    func.set_simple_log('/var/log/cg/hostcli.log')
     LOG.info('--------- command start ---------')
 
 
@@ -134,7 +134,7 @@ def set_pci_device_use_vfio(main_vendor, reset=False, no_check=False):
     value = business.HostEndPoint().set_pci_device_use_vfio(ctxt={}, vendor=main_vendor, reset=reset, no_check=no_check)
     click.secho(value, fg='green')
     click.secho(f'if {main_vendor} driver is use is not vfio, you need reboot to take effect', fg='red')
-    click.secho(f"you can use 'cs-hostcli host get-support-pci-devices' to check it", fg='green')
+    click.secho(f"you can use 'cg-hostcli host get-support-pci-devices' to check it", fg='green')
 
 # ------------------------------------------------------------------------- #
 

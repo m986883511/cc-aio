@@ -4,10 +4,10 @@ import logging
 
 from oslo_config import cfg
 
-from cs_utils import func, network
+from cg_utils import func, network
 
 CONF = cfg.CONF
-PVE_TUI_CONF_PATH = '/etc/cs/pvetui.conf'
+PVE_TUI_CONF_PATH = '/etc/cg/pvetui.conf'
 
 default_opts = [
     cfg.StrOpt('return_last_string', default='返回上一层|ESC', help="conf_path"),

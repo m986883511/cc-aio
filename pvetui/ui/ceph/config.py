@@ -6,7 +6,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cs_utils import execute, func
+from cg_utils import execute, func
 
 LOG = logging.getLogger(__name__)
 
