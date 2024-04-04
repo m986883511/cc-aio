@@ -21,7 +21,7 @@ class PveEndPoint(object):
         self.PVETUI_CONF_PATH = '/etc/cs/pvetui.conf'
         self.default_root_password = CONF.ssh.root_pwd
         self.vbios_path = '/opt/cs/presetup/repo/bin/vbios'
-    
+
     def create_vbios_file(self, ctxt):
         from hostadmin.business import HostEndPoint
         pci_device_dict = HostEndPoint().get_support_pci_devices(ctxt=ctxt)
