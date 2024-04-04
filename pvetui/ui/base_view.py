@@ -7,15 +7,15 @@ import urwid
 
 from pvetui import ui
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
-from cg_utils import func, execute
+from cg_utils import func, execute, AUTHOR_NAME
 
 LOG = logging.getLogger(__name__)
 
 
 class KollaBaseConfig:
     def __init__(self):
-        self.kolla_rc_path = '/etc/cg/admin-openrc.sh'
-        self.ansible_hosts = '/etc/cg/hosts'
+        self.kolla_rc_path = f'/etc/{AUTHOR_NAME}/admin-openrc.sh'
+        self.ansible_hosts = f'/etc/{AUTHOR_NAME}/hosts'
 
 
 class BaseConfigView(KollaBaseConfig):

@@ -7,9 +7,10 @@ from oslo_config import cfg
 
 CONF = cfg.CONF
 # if in kolla container, KOLLA_BASE_ARCH is x86_64 or aarch64
+AUTHOR_NAME="cg"
 MOUNT_HOST = '/host' if os.getenv('KOLLA_BASE_ARCH') else ""
-HOSTRPC_CONF_PATH = '/etc/cg/hostrpc.conf'
-CG_SCRIPTS_DIR = '/usr/local/cg/scripts'
+HOSTRPC_CONF_PATH = f'/etc/{AUTHOR_NAME}/hostrpc.conf'
+CG_SCRIPTS_DIR = f'/usr/local/{AUTHOR_NAME}/scripts'
 
 core_opts = [
     cfg.StrOpt('state_path',

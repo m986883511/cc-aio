@@ -2,10 +2,11 @@
 
 # INSTALL_PATH='/opt/alist'
 VERSION='latest'
+AUTHOR_NAME="cg"
 REPO_SERVER_PORT="7080"
 
 if [ ! -n "$2" ]; then
-  INSTALL_PATH='/opt/cg/alist'
+  INSTALL_PATH="/opt/$AUTHOR_NAME/alist"
 else
   if [[ $2 == */ ]]; then
     INSTALL_PATH=${2%?}

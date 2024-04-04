@@ -9,16 +9,16 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import linux, func, execute, file, _
+from cg_utils import linux, func, execute, file, _, AUTHOR_NAME
 from hostadmin.files import FilesDir
+from hostadmin.config import CONF
 
-CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
 class CephEndPoint(object):
     def __init__(self):
-        self.version_path = '/opt/cg/jmversion'
+        self.version_path = f'/opt/{AUTHOR_NAME}/jmversion'
         self.architecture = linux.get_architecture()
 
         self.initial_dashboard_password = 'password'
@@ -310,7 +310,7 @@ class CephEndPoint(object):
         if os.path.isdir(self.ceph_conf_dir):
             flag, content = execute.execute_command(f'rm -rf {self.ceph_conf_dir}/*')
             execute.completed(flag, f"clear {self.ceph_conf_dir}", content)
-        cmd = 'crudini --set /etc/cg/pvetui.conf ceph current_node_installed_ceph false'
+        cmd = f'crudini --set /etc/{AUTHOR_NAME}/pvetui.conf ceph current_node_installed_ceph false'
         flag, content = execute.execute_command(cmd)
         execute.completed(0, f"set current_node_installed_ceph flag, return_code={flag}")
         cmd = "sed -i '/ ceph-/d' /root/.ssh/authorized_keys"

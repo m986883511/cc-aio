@@ -3,20 +3,20 @@ import json
 import logging
 import argparse
 
-from cg_utils import execute, func, file
+from cg_utils import execute, func, file, AUTHOR_NAME
 from cg_driver.alist import client
 
 LOG = logging.getLogger(__name__)
 
 def get_alist_default_value(key):
-    flag, content = execute.crudini_get_config(ini_path='/etc/cg/pvetui.conf', section='alist', key=key)
+    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/pvetui.conf', section='alist', key=key)
     if flag == 0 and content:
         return content
     LOG.warning(f"read default alist key={key} config failed, please set it!")
 
 
 def get_samba_default_value(key):
-    flag, content = execute.crudini_get_config(ini_path='/etc/cg/pvetui.conf', section='samba', key=key)
+    flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/pvetui.conf', section='samba', key=key)
     if flag == 0 and content:
         return content
     LOG.warning(f"read default samba key={key} config failed, please set it!")
@@ -61,14 +61,14 @@ class CreateLocalAlistStorage():
 
 
 if __name__ == '__main__':
-    func.set_simple_log('/var/log/cg/create-local-alist-storage.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/create-local-alist-storage.log')
     args = parse_arguments()
     args_dict = args.__dict__
     LOG.info(args_dict)
     for key, value in args_dict.items():
         if not value:
             raise Exception(f'please set {key} value')
-    func.set_simple_log('/var/log/cg/create-local-alist-storage.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/create-local-alist-storage.log')
     LOG.info('--------- create-local-alist-storage start ---------')
     CreateLocalAlistStorage(args_dict).run()
     LOG.info('--------- create-local-alist-storage end ---------')

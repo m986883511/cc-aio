@@ -2,7 +2,8 @@
 import os
 import logging
 
-from hostadmin import business, config
+from hostadmin import business
+from hostadmin.config import AUTHOR_NAME
 from cg_utils import execute
 from hostadmin.files import FilesDir
 
@@ -39,7 +40,7 @@ def chmod_ssh_key_path():
 
 
 def chmod_scripts_path():
-    path = '/usr/local/cg/scripts'
+    path = f'/usr/local/{AUTHOR_NAME}/scripts'
     if not os.path.exists(path):
         LOG.error(f'{path} not exist')
         return

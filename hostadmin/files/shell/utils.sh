@@ -4,12 +4,13 @@ YUM_REPO_BACKUP_DIR=/etc/yum.repos.d/bak
 YUM_OFFLINE_REPO_NAME=local.repo
 # REPO_SERVER_IP="0.0.0.0"
 REPO_SERVER_PORT=7080
-OPT_CS_DIR="/opt/cg"
+AUTHOR_NAME="cg"
+OPT_AUTHOR_DIR="/opt/$AUTHOR_NAME"
 REPO_SERVER_NAME="repo-server"
 HOSTRPC_SERVER_NAME="cg-hostrpc"
 REPO_SERVER_SYSTEMD_FILE=/usr/lib/systemd/system/$REPO_SERVER_NAME.service
 HOSTRPC_SERVER_SYSTEMD_FILE=/usr/lib/systemd/system/$HOSTRPC_SERVER_NAME.service
-REPO_SERVER_DIR="$OPT_CS_DIR/presetup/repo"
+REPO_SERVER_DIR="$OPT_AUTHOR_DIR/cg-aio-bin/repo"
 YUM_PACKAGES_DIR_PREFIX="$REPO_SERVER_DIR/yum"
 PIP_PACKAGES_DIR_PREFIX="$REPO_SERVER_DIR/pip"
 # base packages
@@ -18,7 +19,7 @@ CEPH_BASE_RPM="podman lvm2 cephadm chrony ceph-common smartmontools jq gdisk $BA
 OPENSTACK_BASE_RPM="docker python3-pip nfs-utils $BASE_BASE_RPM"
 PVE_BASE_DEBS="samba samba-common python3-pip wireguard sshpass crudini git net-tools"
 BASE_PIP_PACKAGES=""
-INVENTORY_HOSTS_PATH="/etc/cg/hosts"
+INVENTORY_HOSTS_PATH="/etc/$AUTHOR_NAME/hosts"
 # 
 SYS_ARCH=$(uname -m)
 SSH_TIMEOUT=2
@@ -31,11 +32,11 @@ BLUE=''
 PLAIN=''
 
 JM_IP_PRIFIX="192.222.1."
-JM_VERSION_DIR="$OPT_CS_DIR/jmversion"
-PVETUI_CONFIG_PATH="/etc/cg/pvetui.conf"
+JM_VERSION_DIR="$OPT_AUTHOR_DIR/jmversion"
+PVETUI_CONFIG_PATH="/etc/$AUTHOR_NAME/pvetui.conf"
 PVE_IP_ADDRESS=
 CONDA_BIN_PATH="/root/miniconda3/condabin/conda"
-LOG_PATH="/var/log/cg/shell.log"
+LOG_PATH="/var/log/$AUTHOR_NAME/shell.log"
 
 
 function echo_log() {
@@ -493,8 +494,8 @@ function create_rbd_volume_type(){
     completed $? "source ~/.bashrc"
     eval "$(conda shell.bash hook)"
     completed $? "conda shell.bash hook"
-    source /etc/cg/admin-openrc.sh
-    completed $? "source /etc/cg/admin-openrc.sh"
+    source /etc/$AUTHOR_NAME/admin-openrc.sh
+    completed $? "source /etc/$AUTHOR_NAME/admin-openrc.sh"
 
     volume_type_list=$(openstack volume type list -f value -c Name)
     completed $? "get volume_type_list"
@@ -506,7 +507,7 @@ function create_rbd_volume_type(){
         openstack volume type set rbd --property volume_backend_name=rbd-1 --property image_service:store_id=cinder
         completed $? "exec: openstack volume type set rbd --property volume_backend_name=rbd-1 --property image_service:store_id=cinder"
     fi
-    docker_mysql_cmd=$(crudini --get /etc/cg/admin-openrc.sh "" "alias mysql")
+    docker_mysql_cmd=$(crudini --get /etc/$AUTHOR_NAME/admin-openrc.sh "" "alias mysql")
     completed $? "crudini get mysql alias"
     docker_mysql_cmd=${docker_mysql_cmd//\"/}
     completed $? "get true mysql cmd"

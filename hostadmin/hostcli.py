@@ -5,7 +5,7 @@ import logging
 
 from hostadmin import business
 from hostadmin.config import CONF
-from cg_utils import func
+from cg_utils import func, AUTHOR_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 @click.group()
 def cli():
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log('/var/log/cg/hostcli.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/hostcli.log')
     LOG.info('--------- command start ---------')
 
 

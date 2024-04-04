@@ -1,7 +1,7 @@
 import os
 import logging
 
-from cg_utils import file, func, execute
+from cg_utils import file, func, execute, AUTHOR_NAME
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
 
 LOG = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def install_new_master_cs_pve_package(auto_install_flag=False):
 
 
 def show_cs_pve_commit_msg():
-    file_path = '/usr/local/cg/doc/ChangeLog'
+    file_path = f'/usr/local/{AUTHOR_NAME}/doc/ChangeLog'
     cmd = f'openssl enc -d -aes-256-cbc -in {file_path} -pass pass:password -md sha256'
     if os.path.exists(file_path):
         flag = execute.execute_command_in_popen(cmd)

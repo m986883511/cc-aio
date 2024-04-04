@@ -1,7 +1,7 @@
 import os
 import logging
 
-from cg_utils import execute, func
+from cg_utils import execute, func, AUTHOR_NAME
 from pvetui.utils import get_other_nodes_ntp_server_config
 
 LOG = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ class SetNtpTask:
 
 if __name__ == "__main__":
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log('/var/log/cg/set_ntp.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/set_ntp.log')
     LOG.info('--------- set_ntp start ---------')
     SetNtpTask().run()
     LOG.info('--------- set_ntp end ---------')

@@ -9,7 +9,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func, file
+from cg_utils import execute, func, file, AUTHOR_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -139,7 +139,7 @@ class WireguardConfigView(base_view.BaseConfigView):
         RunCmdConsoleView(self, des='删除客户端', cmd=f'cg-hostcli service add-or-remove-wireguard-client remove {client_name}')
 
     def show_cilent(self, button, client_name):
-        path = f'/etc/cg/wireguard/wg0-client-{client_name}.conf'
+        path = f'/etc/{AUTHOR_NAME}/wireguard/wg0-client-{client_name}.conf'
         RunCmdConsoleView(self, '显示客户端', cmd=f'cg-hostcli service show-qrencode --path {path}')
 
     def new_client_click(self, button):

@@ -11,7 +11,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from oslo_config import cfg
 from crontab import CronTab
 
-from cg_utils import execute, func, file
+from cg_utils import execute, func, file, AUTHOR_NAME
 from hostadmin.files import FilesDir
 from hostadmin.config import CG_SCRIPTS_DIR, CONF
 
@@ -56,7 +56,7 @@ class ServiceEndPoint(object):
         self.wireguard_conf_path = '/etc/wireguard/wg0.conf'
         self.wireguard_script_path = os.path.join(CG_SCRIPTS_DIR, self.wireguard_script)
         self.wireguard_params_path = '/etc/wireguard/params'
-        self.pvetui_conf_path = '/etc/cg/pvetui.conf'
+        self.pvetui_conf_path = f'/etc/{AUTHOR_NAME}/pvetui.conf'
         self.create_local_alist_storage_py = 'create-local-alist-storage.py'
 
     def install_alist(self, ctxt):
@@ -98,7 +98,7 @@ class ServiceEndPoint(object):
             execute.completed(flag, f"delete old samba service samba user")
         flag, content = execute.execute_command(f'(echo {samba_user_password}; echo {samba_user_password}) | smbpasswd -s -a samba')
         execute.completed(flag, f"create samba service user=samba")
-        flag, content = execute.execute_command(f'cp -r /opt/cg/presetup/gift/* {share_path}')
+        flag, content = execute.execute_command(f'cp -r /opt/{AUTHOR_NAME}/cg-aio-bin/gift/* {share_path}')
         execute.completed(flag, f"copy chaoge gift")
         # 生效配置文件 重启smbd服务
         smb_conf_path = '/etc/samba/smb.conf'
@@ -114,9 +114,9 @@ class ServiceEndPoint(object):
     def create_alist_service(self, ctxt, admin_password):
         flag = execute.execute_command_in_popen(f'apt install net-tools -y')
         execute.completed(flag, f"apt install net-tools")
-        flag = execute.execute_command_in_popen(f'bash /usr/local/cg/scripts/install_alist.sh install')
+        flag = execute.execute_command_in_popen(f'bash /usr/local/{AUTHOR_NAME}/scripts/install_alist.sh install')
         execute.completed(flag, f"install alist")
-        flag = execute.execute_command_in_popen(f'cd /opt/cg/alist && ./alist admin set {admin_password}')
+        flag = execute.execute_command_in_popen(f'cd /opt/{AUTHOR_NAME}/alist && ./alist admin set {admin_password}')
         execute.completed(flag, f"modify alist admin password")
         path = os.path.join(CG_SCRIPTS_DIR, self.create_local_alist_storage_py)
         flag = execute.execute_command_in_popen(f'python3 {path}')
@@ -164,7 +164,7 @@ class ServiceEndPoint(object):
             flag, content = execute.execute_command(f"rm -f /tmp/public_ip.txt")
             if flag == 0:
                 execute.completed(flag, f"delete old record")
-            flag = execute.execute_command_in_popen(f'bash /usr/local/cg/scripts/report_public_ip_if_changed_robot.sh')
+            flag = execute.execute_command_in_popen(f'bash /usr/local/{AUTHOR_NAME}/scripts/report_public_ip_if_changed_robot.sh')
             execute.completed(flag, f"start listen_public_ip_change_rebot")
             flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
             execute.completed(flag, 'systemctl restart cron', content)

@@ -7,10 +7,10 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import execute, func, file, _
+from cg_utils import execute, func, file, _, AUTHOR_NAME
 from hostadmin.files import FilesDir
+from hostadmin.config import CONF
 
-CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
@@ -18,9 +18,9 @@ class PveEndPoint(object):
     def __init__(self):
         self.SSH_TIMEOUT=2
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
-        self.PVETUI_CONF_PATH = '/etc/cg/pvetui.conf'
+        self.PVETUI_CONF_PATH = f'/etc/{AUTHOR_NAME}/pvetui.conf'
         self.default_root_password = CONF.ssh.root_pwd
-        self.vbios_path = '/opt/cg/presetup/repo/bin/vbios'
+        self.vbios_path = f'/opt/{AUTHOR_NAME}/cg-aio-bin/repo/bin/vbios'
 
     def create_vbios_file(self, ctxt):
         from hostadmin.business import HostEndPoint

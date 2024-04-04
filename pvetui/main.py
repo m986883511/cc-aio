@@ -5,7 +5,7 @@ import logging
 
 import urwid
 
-from cg_utils import func, execute
+from cg_utils import func, execute, AUTHOR_NAME
 from pvetui import ui, utils
 from pvetui.ui import network, base_env, pve
 from pvetui.config import CONF, PVE_TUI_CONF_PATH
@@ -80,7 +80,7 @@ def get_pip_install_truseted_host():
 
 
 def run_depend_tasks():
-    func.set_simple_log('/var/log/cg/pvetui.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/pvetui.log')
     if len(sys.argv) != 1:
         utils.custom_cmd(sys.argv)
     # get_pip_install_truseted_host()
