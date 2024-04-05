@@ -126,6 +126,8 @@ def completed(flag, dec, err=None, raise_flag=True, just_echo=False):
                 click.secho(msg)
             else:
                 click.secho(msg, fg='green')
+        elif os.environ.get('IN_TUI'):
+            LOG.info(msg)
         else:
             print(msg)
     else:
@@ -143,6 +145,8 @@ def completed(flag, dec, err=None, raise_flag=True, just_echo=False):
                 click.secho(msg, fg='red')
             if raise_flag:
                 raise click.ClickException("")
+        elif os.environ.get('IN_TUI'):
+            LOG.error(msg)
         else:
             print(msg)
         if raise_flag:
