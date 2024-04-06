@@ -47,6 +47,7 @@ class IgdConfigView(base_view.BaseConfigView):
         except Exception as e:
             err = f'读取cpu型号失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
             LOG.error(err)
+            self.note_msg = err
             return err
     
     def get_igd_devices(self):
@@ -55,8 +56,9 @@ class IgdConfigView(base_view.BaseConfigView):
             self.igd_devices = pci_devices.get('igd')
             self.find_igd_devices()
         except Exception as e:
-            err = f'读取cpu型号失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            err = f'读取支持的gpu型号失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
             LOG.error(err)
+            self.note_msg = err
             return err
 
     def get_who_use_igd(self):
@@ -78,6 +80,7 @@ class IgdConfigView(base_view.BaseConfigView):
         except Exception as e:
             err = f'创建vbios文件失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
             LOG.error(err)
+            self.note_msg = err
             return err
         file_name = os.path.basename(vbios_path)
         dst_path = os.path.join('/usr/share/kvm', file_name)

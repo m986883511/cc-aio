@@ -9,7 +9,7 @@ LOG = logging.getLogger(__name__)
 
 class Nodes:
     def __init__(self, node_name=None):
-        self.node_name = node_name or func.get_current_node_hostname()
+        self.node_name = node_name or "localhost"
 
     def stop_vm(self, vmid):
         # pvesh create /nodes/{node}/qemu/{vmid}/status/stop
@@ -71,6 +71,54 @@ class Nodes:
             return json.loads(content)
         except Exception as e:
             execute.completed(1, 'json loads node_config')
+    
+    def get_disk_list(self):
+        """
+        root@host055:~/cg-aio# pvesh get /nodes/host055/disks/list --output-format json-pretty
+        [
+            {
+                "by_id_link" : "/dev/disk/by-id/nvme-Great_Wall_GT35_1TB_0008887003486",
+                "devpath" : "/dev/nvme0n1",
+                "gpt" : 1,
+                "health" : "PASSED",
+                "model" : "Great Wall GT35 1TB",
+                "osdid" : -1,
+                "osdid-list" : null,
+                "rpm" : 0,
+                "serial" : "0008887003486",
+                "size" : 1024209543168,
+                "type" : "nvme",
+                "used" : "BIOS boot",
+                "vendor" : "unknown",
+                "wearout" : 100,
+                "wwn" : "nvme.1e4b-30303038383837303033343836-47726561742057616c6c204754333520315442-00000001"
+            },
+            {
+                "by_id_link" : "/dev/disk/by-id/ata-Great_Wall_GW600_1TB_YS20230505814062",
+                "devpath" : "/dev/sda",
+                "gpt" : 0,
+                "health" : "PASSED",
+                "model" : "Great_Wall_GW600_1TB",
+                "osdid" : -1,
+                "osdid-list" : null,
+                "rpm" : 0,
+                "serial" : "YS20230505814062",
+                "size" : 1024209543168,
+                "type" : "ssd",
+                "used" : "ext4",
+                "vendor" : "ATA     ",
+                "wearout" : 100,
+                "wwn" : "unknown"
+            }
+        ]
+        """
+        cmd = f'pvesh get /nodes/{self.node_name}/disks/list --output-format json'
+        flag, content = execute.execute_command(cmd)
+        execute.completed(flag, 'get disk_list', content)
+        try:
+            return json.loads(content)
+        except Exception as e:
+            execute.completed(1, 'json loads disk_list')
 
     def qemu_list(self):
         """
