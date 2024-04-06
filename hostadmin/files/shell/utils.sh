@@ -122,6 +122,21 @@ options vfio_iommu_type1 allow_unsafe_interrupts=1
 EOF
 }
 
+
+function delete_local_lvm_storage(){
+    pvesh delete /storage/local-lvm
+    # todo
+    pvesh set /storage/local --content rootdir,vztmpl,backup,snippets,images,iso
+    completed $? "set local storage content"
+    pvesh get /storage/local
+    completed $? "get local storage content"
+    lvremove pve/data
+    # todo
+    lvextend -l +100%FREE -r pve/root
+    completed $? "lvextend pve/root"
+}
+
+
 function start_hostrpc_server() {
     echo_log "enter function name: ${FUNCNAME[0]}"
     command -v cg-hostrpc

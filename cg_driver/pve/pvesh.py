@@ -18,7 +18,7 @@ class Nodes:
         execute.completed(flag, f'stop vm vmid={vmid}', content)
 
     def set_node_config(self, vmid, key, value):
-        # pvesh set /nodes/localhost/qemu/105/config --hostpci0 0000:04:00.0,pcie=1,x-vga=1,romfile=vbios_1002_1638.bin.bin
+        # pvesh set /nodes/localhost/qemu/105/config --hostpci0 0000:04:00.0,pcie=1,x-vga=1,romfile=vbios_1002_1638.bin
         node_config_dict  = self.get_node_config(vmid)
         if key == 'hostpci':
             for i in range(10):

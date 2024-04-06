@@ -54,6 +54,7 @@ class InstallBaseEnvView(base_view.BaseConfigView):
             '开启IPv6支持',
             '设置3个dns',
             "屏蔽显卡驱动",
+            "删除pve的local-lvm存储"
             '开启cg-hostrpc主机管理服务',
         ]
         self.show()
