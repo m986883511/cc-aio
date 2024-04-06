@@ -7,6 +7,7 @@ import logging
 import urwid
 
 from cg_utils import func, execute, AUTHOR_NAME
+func.set_simple_log(f'/var/log/{AUTHOR_NAME}/aio.log')
 from pvetui import ui, utils
 from pvetui.ui import network, base_env, pve
 from pvetui.config import CONF, AIO_CONF_PATH
@@ -81,7 +82,6 @@ def get_pip_install_truseted_host():
 
 
 def run_depend_tasks():
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/pvetui.log')
     if len(sys.argv) != 1:
         utils.custom_cmd(sys.argv)
     # get_pip_install_truseted_host()

@@ -27,6 +27,7 @@ class InstallBaseEnvConsoleView(base_view.BaseConsoleView):
         current_hostname = func.get_current_node_hostname()
         self.need_run_cmd_list.append(f'cg-hostcli host install-base-env --host {current_hostname}')
         self.need_run_cmd_list.append(f'cg-hostcli pve open-ipv6-support')
+        self.need_run_cmd_list.append(f'pvesh set /nodes/localhost/dns --search localdomain --dns1 {CONF.network.dns1} --dns2 {CONF.network.dns2} --dns3 {CONF.network.dns3}')
         if CONF.base_env.need_reboot_flag:
             self.need_run_cmd_list.append(f'echo "立即重启中!!!"')
         # ntp config
@@ -51,6 +52,8 @@ class InstallBaseEnvView(base_view.BaseConfigView):
             "使用超哥提供本地PIP源",
             '安装基础依赖包',
             '开启IPv6支持',
+            '设置3个dns',
+            "屏蔽显卡驱动",
             '开启cg-hostrpc主机管理服务',
         ]
         self.show()

@@ -39,8 +39,10 @@ network_opts = [
     cfg.IntOpt('extbond_vlan', default=1, help="extbond_vlan"),
 
     cfg.StrOpt('ip_cidr', default=network.get_main_ip_address(), help="ip_cidr"),
-    cfg.StrOpt('dns', default="8.8.8.8", help="dns"),
-    cfg.StrOpt('gateway', default=network.get_default_gateway(), help="dns"),
+    cfg.StrOpt('dns1', default="223.5.5.5", help="dns1"),
+    cfg.StrOpt('dns2', default="223.6.6.6", help="dns2"),
+    cfg.StrOpt('dns3', default="2400:3200::1", help="dns3"),
+    cfg.StrOpt('gateway', default=network.get_default_gateway(), help="gateway"),
     cfg.StrOpt('hostname', default=func.get_current_node_hostname(), help="hostname"),
 ]
 
@@ -101,6 +103,7 @@ openstack_opts = [
 ]
 
 CONF.register_cli_opts(default_opts)
+# todo: 在这之后 set_simple_log 无效
 CONF.register_cli_opts(ceph_opts, group='ceph')
 CONF.register_cli_opts(samba_opts, group='samba')
 CONF.register_cli_opts(alist_opts, group='alist')

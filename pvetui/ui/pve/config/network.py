@@ -25,7 +25,7 @@ class NetworkConsoleView(base_view.BaseConsoleView):
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_config_pve_network_view))
         self.need_run_cmd_list.append(f'cg-hostcli pve open-ipv6-support')
-        self.need_run_cmd_list.append(f'cg-hostcli pve change-single-pve-node-network --ip_mask {CONF.network.ip_cidr} --gateway {CONF.network.gateway} --dns {CONF.network.dns}')
+        self.need_run_cmd_list.append(f'cg-hostcli pve change-single-pve-node-network --ip_mask {CONF.network.ip_cidr} --gateway {CONF.network.gateway}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 
@@ -36,22 +36,9 @@ class NetworkConfigView(base_view.BaseConfigView):
         self.show()
 
     def save_config(self, button):
-        group, keys = 'network', ['gateway', 'dns', 'ip_cidr']
+        group, keys = 'network', ['gateway', 'ip_cidr', 'dns1', 'dns2', 'dns3']
         self.save_CONF_group_keys(group, keys)
         NetworkConsoleView(self)
-
-    def dns_change_button_func(self, edit_obj: urwid.Edit, current_value):
-        if not current_value:
-            edit_obj.set_caption('')
-            CONF.network.dns = '8.8.8.8'
-            return
-        if not current_value.isascii():
-            edit_obj.set_caption(('header', [f"存在不是acsii字符", ("white", " "), ]))
-        elif not func.ValidIpAddress.is_ip(current_value):
-            edit_obj.set_caption(('header', [f"格式不是ip地址!", ("white", " "), ]))
-        else:
-            edit_obj.set_caption('')
-            CONF.network.dns = current_value
 
     def hostname_change_button_func(self, edit_obj: urwid.Edit, current_value):
         if not current_value:
@@ -122,15 +109,7 @@ class NetworkConfigView(base_view.BaseConfigView):
                         urwid.AttrMap(my_widget.TextEdit("", CONF.network.gateway, self.gateway_change_button_func), "editbx", "editfc"),
                     ]
                 ), left=8, right=10
-            ),
-            urwid.Padding(
-                urwid.Columns(
-                    [
-                        urwid.Text("DNS:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.dns, self.dns_change_button_func), "editbx", "editfc"),
-                    ]
-                ), left=8, right=10
-            ),
+            )
         ]
         self.pile_view.widget_list = widget_list
 

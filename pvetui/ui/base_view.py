@@ -188,3 +188,27 @@ class BaseConsoleView:
 
     def show(self):
         raise NotImplementedError
+
+
+class RunCmdConsoleView(BaseConsoleView):
+    def __init__(self, origin_view: BaseConfigView, des='开始执行', cmd=None, cmds=None):
+        super().__init__(origin_view)
+        self.des = des
+        self.cmds = []
+        if cmd:
+            self.cmds.append(cmd)
+        if cmds:
+            self.cmds.extend(cmds)
+        self.show()
+
+    def show(self):
+        start_install_alist_view = [
+            urwid.Text(self.des, align='center'), 
+            urwid.Divider(), 
+            self.output_widget,
+            self.result_button,
+        ]
+        body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
+        self.need_run_cmd_list.extend(self.cmds)
+        self.start_alarm()
+        ui.top_layer.open_box(body)

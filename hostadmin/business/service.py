@@ -47,7 +47,6 @@ class ServiceEndPoint(object):
         self.support_pci_types = ['gpu', 'vgpu', 'other']
         self.pci_device_set_vfio_driver_file_path = '/etc/modprobe.d/vfio-pci.conf'
         self.module_load_vfio_pci_file_path = '/etc/modules-load.d/vfio-pci.conf'
-        self.modprobe_blacklist_file_path = '/etc/modprobe.d/blacklist.conf'
         self.apt_source_list_path = '/etc/apt/sources.list'
         self.public_ip_save_path = "/tmp/public_ip.txt"
         self.report_public_ip_script_name = 'report_public_ip_if_changed_robot.sh'

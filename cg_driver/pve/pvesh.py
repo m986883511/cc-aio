@@ -18,7 +18,7 @@ class Nodes:
         execute.completed(flag, f'stop vm vmid={vmid}', content)
 
     def set_node_config(self, vmid, key, value):
-        # pvesh set /nodes/host055/qemu/105/config --hostpci0 0000:04:00.0,pcie=1,x-vga=1,romfile=vbios_1002_1638.bin.bin
+        # pvesh set /nodes/localhost/qemu/105/config --hostpci0 0000:04:00.0,pcie=1,x-vga=1,romfile=vbios_1002_1638.bin.bin
         node_config_dict  = self.get_node_config(vmid)
         if key == 'hostpci':
             for i in range(10):
@@ -74,7 +74,7 @@ class Nodes:
     
     def get_disk_list(self):
         """
-        root@host055:~/cg-aio# pvesh get /nodes/host055/disks/list --output-format json-pretty
+        root@localhost:~/cg-aio# pvesh get /nodes/localhost/disks/list --output-format json-pretty
         [
             {
                 "by_id_link" : "/dev/disk/by-id/nvme-Great_Wall_GT35_1TB_0008887003486",

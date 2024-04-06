@@ -87,6 +87,7 @@ function main(){
     change_ssh_strict_host_no
     create_pip_conf $REPO_SERVER_IP
     install_base_python_packages
+    blacklist_driver
 
     pip install pbr
     completed $? "install pbr python package"

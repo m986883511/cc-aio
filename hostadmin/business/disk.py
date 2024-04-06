@@ -30,32 +30,47 @@ class DiskEndPoint(object):
         execute.completed(flag, 'get boot disk by lsblk', out)
         return out.strip()
 
-    def get_root_disk_name(self):
+    def format_disk_and_create_one_primary(self, ctxt, dev_disk, confirm_text):
+        true_confirm_text='yes-i-really-really-format-it'
+        flag = true_confirm_text == confirm_text
+        self.umount_disk(dev_disk)
+        execute.completed(not flag, 'check confirm_text', f'input confirm_text not equal "{true_confirm_text}"')
+        flag, content = execute.execute_command(f'parted {dev_disk} --script mklabel gpt mkpart primary ext4 1MiB 100%')
+        execute.completed(flag, 'format_disk_and_create_one_primary', content)
+        flag, content = execute.execute_command(f'sleep 5')
+        execute.completed(flag, 'wait 5 seconds', content)
+        flag, content = execute.execute_command(f'mkfs.ext4 {dev_disk}1')
+        execute.completed(flag, f'mkfs.ext4 {dev_disk}1', content)
+    
+    def umount_disk(self, dev_disk):
+        block_list = self.get_lsblk_of_disk(dev_disk)
+        LOG.info(f'umount_disk_and_mount_new block_list={block_list}')
+        for block_dict in block_list:
+            mount = block_dict.get('mountpoint')
+            if mount:
+                flag, content = execute.execute_command(f"sed -i '/ \{mount} /d' /etc/fstab")
+                execute.completed(flag, f"delete {mount} in /etc/fstab", content)
+                flag, content = execute.execute_command(f"umount /dev/{block_dict['name']}")
+                execute.completed(flag, f"umount /dev/{block_dict['name']}", content)
+
+    def umount_disk_and_mount_new(self, ctxt, dev_disk, new_mount_path, confirm_text):
+        true_confirm_text='yes-i-really-really-mount-it'
+        flag = true_confirm_text == confirm_text
+        execute.completed(not flag, 'check confirm_text', f'input confirm_text not equal "{true_confirm_text}"')
+        self.umount_disk(dev_disk)
         """
-        loop0
-        sda
-        └─sda1       /smb
-        nvme0n1
-        ├─nvme0n1p1
-        ├─nvme0n1p2  /boot/efi
-        └─nvme0n1p3
-        ├─pve-swap [SWAP]
-        └─pve-root /
+        blkid /dev/sdb1
+        UUID=66a4b8fe-8050-4e0e-b546-df42a9473706 /home/wc/share/4t ext4 defaults 0 0
         """
-        f, c = execute.execute_command('lsblk -n -o name,mountpoints')
-        c_list = func.get_string_split_list(c, split_flag='\n')
-        disk_name = ''
-        for line in c_list:
-            line_2 = func.get_string_split_list(line, split_flag=' ')
-            if len(line_2) == 1:
-                line_f1 = line_2[0]
-                if line_f1[0] not in ['├', '└']:
-                    disk_name = line_f1
-                continue
-            elif len(line_2) == 2:
-                mountpoints = line_2[-1]
-                if mountpoints == '/':
-                    return disk_name
+        #todo: 使用uuid更好
+        flag, content = execute.execute_command(f'mkdir -p {new_mount_path}')
+        execute.completed(flag, f'mkdir {new_mount_path}', content)
+        flag, content = execute.execute_command(f"sed -i '/ \{new_mount_path} /d' /etc/fstab")
+        execute.completed(flag, f"delete old {new_mount_path} in /etc/fstab")
+        flag, content = execute.execute_command(f'echo "{dev_disk}1 {new_mount_path} ext4 defaults 0 0" >> /etc/fstab')
+        execute.completed(flag, f'set {dev_disk}1 {new_mount_path} to /etc/fstab', content)
+        flag, content = execute.execute_command(f'mount -a')
+        execute.completed(flag, f'mount -a', content)
 
     def get_all_disk_by_id(self, disk_list):
         def get_id(disk_name, disk_serial):
@@ -78,8 +93,33 @@ class DiskEndPoint(object):
                 continue
             name, serial = value_dict['name'], value_dict['serial']
             value_dict['id'] = get_id(name, serial)
+            block_list = self.get_lsblk_of_disk(f'/dev/{name}')
+            value_dict['mount'] = [value.get('mountpoint') for value in block_list if value.get('mountpoint')]
+            value_dict['block'] = [value.get('name') for value in block_list if value.get('name') != name]
+
+    def disk_parts(self, disk_name):
+        flag, out = execute.execute_command(f'ls /dev/{disk_name}*')
+        execute.completed(flag, f'获取{disk_name}所有分区', out)
+        out_list = func.get_string_split_list(out, split_flag=' ')
+        out_list = [i for i in out_list if not i.endswith(disk_name)]
+        return out_list
 
     def get_all_disks(self, ctxt, return_root_disk=False):
+        """
+        [
+            {
+                "name": "sda",
+                "model": "MICRON SLC SSD",
+                "size": 128000000000,
+                "serial": "HXJ201802Q1124A176",
+                "id": "ata-MICRON_SLC_SSD_HXJ201802Q1124A176",
+                "mount": [
+                    "/mnt"
+                ],
+                "media": "SSD"
+            }
+        ]
+        """
         # 获取所有磁盘，-d 不含磁盘下的分区, -b size为字节单位，-o 字段，-J json格式输出
         cmd = "lsblk -d -b -o name,model,rota,size,type,serial -J --sort name 2>/dev/null"
         flag, out = execute.execute_command(cmd)
@@ -90,18 +130,14 @@ class DiskEndPoint(object):
             execute.completed(1, 'get disks by lsblk', str(e))
 
         self.get_all_disk_by_id(disks)
-        # 获取boot分区所在的磁盘
-        boot_disk = self.get_root_disk_name()
-        if not boot_disk:
-            execute.completed(1, 'get root disk name')
 
         all_disks = []
         for disk in disks:
             # 过滤掉不是disk类型的，例如rom
             if disk.get('type') != 'disk':
                 continue
-
-            if disk.get('name') == boot_disk:
+            
+            if '/' in disk.get('mount') or []:
                 disk['root_disk_flag'] = True
                 # 过滤boot分区所在的磁盘
                 if not return_root_disk:
@@ -116,6 +152,31 @@ class DiskEndPoint(object):
 
         return all_disks
 
+    def get_lsblk_of_disk(self, dev_disk):
+        """
+         [
+            {
+                "name": "sda",
+                "type": "disk",
+                "size": 128000000000,
+                "mountpoint": ""
+            },{
+                "name": "sda1",
+                "type": "part",
+                "size": 127998623744,
+                "mountpoint": "/mnt"
+            }
+        ]
+        """
+        # dev_disk 格式为 /dev/xxx
+        cmd = f"lsblk {dev_disk} -b -o name,type,size,mountpoint -J --sort name 2>/dev/null"
+        flag, out = execute.execute_command(cmd)
+        try:
+            disks = json.loads(out).get('blockdevices', [])
+        except Exception as e:
+            execute.completed(1, _(f"get part of disk {dev_disk} by lsblk"), str(e))
+        return disks
+    
     def get_part_of_disk(self, disk_name):
         # disk_name 格式为 /dev/xxx
         cmd = f"lsblk {disk_name} -b -o name,type,size -J --sort name 2>/dev/null"

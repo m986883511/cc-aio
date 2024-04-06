@@ -34,30 +34,6 @@ class WireguardConfigConsoleView(base_view.BaseConsoleView):
         ui.top_layer.open_box(body)
 
 
-class RunCmdConsoleView(base_view.BaseConsoleView):
-    def __init__(self, origin_view: base_view.BaseConfigView, des='开始执行', cmd=None, cmds=None):
-        super().__init__(origin_view)
-        self.des = des
-        self.cmds = []
-        if cmd:
-            self.cmds.append(cmd)
-        if cmds:
-            self.cmds.extend(cmds)
-        self.show()
-
-    def show(self):
-        start_install_alist_view = [
-            urwid.Text(self.des, align='center'), 
-            urwid.Divider(), 
-            self.output_widget,
-            self.result_button,
-        ]
-        body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
-        self.need_run_cmd_list.extend(self.cmds)
-        self.start_alarm()
-        ui.top_layer.open_box(body)
-
-
 class WireguardConfigView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
@@ -136,11 +112,11 @@ class WireguardConfigView(base_view.BaseConfigView):
         return clients
     
     def delete_cilent(self, button: urwid.Button, client_name):
-        RunCmdConsoleView(self, des='删除客户端', cmd=f'cg-hostcli service add-or-remove-wireguard-client remove {client_name}')
+        base_view.RunCmdConsoleView(self, des='删除客户端', cmd=f'cg-hostcli service add-or-remove-wireguard-client remove {client_name}')
 
     def show_cilent(self, button, client_name):
         path = f'/etc/{AUTHOR_NAME}/wireguard/wg0-client-{client_name}.conf'
-        RunCmdConsoleView(self, '显示客户端', cmd=f'cg-hostcli service show-qrencode --path {path}')
+        base_view.RunCmdConsoleView(self, '显示客户端', cmd=f'cg-hostcli service show-qrencode --path {path}')
 
     def new_client_click(self, button):
         if not self.new_client_name:
@@ -148,7 +124,7 @@ class WireguardConfigView(base_view.BaseConfigView):
              return
         client_name = self.new_client_name
         self.new_client_name= ''
-        RunCmdConsoleView(self, des='创建新的客户端连接', cmd=f'cg-hostcli service add-or-remove-wireguard-client add {client_name}')
+        base_view.RunCmdConsoleView(self, des='创建新的客户端连接', cmd=f'cg-hostcli service add-or-remove-wireguard-client add {client_name}')
 
     def update_view(self):
         widget_list = []

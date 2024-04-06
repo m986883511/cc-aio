@@ -192,6 +192,36 @@ def disk():
 
 
 @disk.command()
+@click.argument('dev_disk')
+@click.argument('confirm_text')
+def format_disk_and_create_one_primary(dev_disk, confirm_text):
+    """格式化磁盘并创建一个ext4主分区
+    
+    dev_disk: 例如 /dev/sda
+
+    confirm_text: 必须为 yes-i-really-really-format-it
+    """
+    business.DiskEndPoint().format_disk_and_create_one_primary(ctxt={}, dev_disk=dev_disk, confirm_text=confirm_text)
+    click.secho(f'format {dev_disk} create_one_primary success, end and exit.', fg='green')
+
+
+@disk.command()
+@click.argument('dev_disk')
+@click.argument('new_mount_path')
+@click.argument('confirm_text')
+def umount_disk_and_mount_new(dev_disk, new_mount_path, confirm_text):
+    """解除硬盘所有挂载并挂载新的
+    
+    dev_disk: 例如 /dev/sda
+
+    new_mount_path: 例如 /smb
+
+    confirm_text: 必须为 yes-i-really-really-mount-it
+    """
+    business.DiskEndPoint().umount_disk_and_mount_new(ctxt={}, dev_disk=dev_disk, new_mount_path=new_mount_path, confirm_text=confirm_text)
+    click.secho(f'umount_disk_and_mount_new success ot {new_mount_path}, end and exit.', fg='green')
+
+@disk.command()
 @click.option('--return_root_disk', is_flag=True, default=False)
 def get_all_disks(return_root_disk):
     """get all disks"""

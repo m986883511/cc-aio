@@ -109,6 +109,19 @@ EOF
     fi
 }
 
+function blacklist_driver(){
+    cat > /etc/modprobe.d/pve-blacklist.conf << EOF
+blacklist nvidiafb
+blacklist nvidia
+blacklist radeon
+blacklist amdgpu
+blacklist i915
+blacklist nouveau
+blacklist snd_hda_intel
+options vfio_iommu_type1 allow_unsafe_interrupts=1
+EOF
+}
+
 function start_hostrpc_server() {
     echo_log "enter function name: ${FUNCNAME[0]}"
     command -v cg-hostrpc
