@@ -6,7 +6,7 @@ from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from pvetui.utils import get_other_nodes_ntp_server_config
-from cc_utils import execute, func
+from cc_utils import execute, func, AUTHOR_ZH_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -48,8 +48,8 @@ class InstallBaseEnvView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
         self.text_list = [
-            "使用超哥提供本地APT源",
-            "使用超哥提供本地PIP源",
+            f"使用{AUTHOR_ZH_NAME}提供的本地APT源",
+            f"使用{AUTHOR_ZH_NAME}提供的本地PIP源",
             '安装基础依赖包',
             '开启IPv6支持',
             '设置3个dns',

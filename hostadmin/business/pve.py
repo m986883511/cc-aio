@@ -51,16 +51,15 @@ class PveEndPoint(object):
         return vbio_file_path
 
     def set_vm_igd_paththrough(self, ctxt, vmid, audio_rom_path):
-        if audio_rom_path:
-            flag = os.path.isfile(audio_rom_path)
-            execute.completed(not flag, f'check audio_rom_path={audio_rom_path} exist')
-            audio_rom_name = os.path.basename(audio_rom_path)
-            dst_path = os.path.join('/usr/share/kvm', audio_rom_name)
-            if not os.path.isfile(dst_path):
-                flag, content = execute.execute_command(f'cp {audio_rom_path} /usr/share/kvm')
-                execute.completed(flag, f'cp {audio_rom_path} /usr/share/kvm')
-            else:
-                execute.completed(0, f'{dst_path} already exist')
+        flag = os.path.isfile(audio_rom_path)
+        execute.completed(not flag, f'check audio_rom_path={audio_rom_path} exist')
+        audio_rom_name = os.path.basename(audio_rom_path)
+        dst_path = os.path.join('/usr/share/kvm', audio_rom_name)
+        if not os.path.isfile(dst_path):
+            flag, content = execute.execute_command(f'cp {audio_rom_path} /usr/share/kvm')
+            execute.completed(flag, f'cp {audio_rom_path} /usr/share/kvm')
+        else:
+            execute.completed(0, f'{dst_path} already exist')
         from hostadmin.business import HostEndPoint
         igd_device = HostEndPoint().get_node_igd_device(ctxt)
         execute.completed(not igd_device, f'get_node_igd_device')
@@ -75,12 +74,11 @@ class PveEndPoint(object):
         flag = len(audio_list) == 1
         execute.completed(not flag, f'check exist one audio failed, audio_list={audio_list}')
         audio = audio_list[0]
-        if audio_rom_path:
-            value = f"{audio['pci_id']},romfile={audio_rom_name}"
-        else:
-            value = f"{audio['pci_id']}"
+        value = f"{audio['pci_id']},romfile={audio_rom_name}"
         flag, content = execute.execute_command(f'pvesh create /nodes/localhost/qemu/{vmid}/config --hostpci1 {value}')
         execute.completed(flag, f'set {vmid} hostpci1 {value}')
+        flag, content = execute.execute_command(f'pvesh create /nodes/localhost/qemu/{vmid}/config --vga none')
+        execute.completed(flag, f'set {vmid} vga none')
 
     def del_vm_hostpci_config(self, ctxt, vmid):
         from cc_driver.pve import pvesh

@@ -75,17 +75,35 @@ class IgdConfigView(base_view.BaseConfigView):
         return vmids
 
     def set_igd_passthrough(self, button: urwid.Button, vmid):
+        self.save_config()
         cmds = [
             f'cc-hostcli pve create-vbios-file',
-            f'cc-hostcli pve set-vm-igd-paththrough {vmid}'
+            f'cc-hostcli pve set-vm-igd-paththrough {vmid} {CONF.igd.audio_rom_path}'
         ]
-        base_view.RunCmdConsoleView(self, cmds=cmds)
+        base_view.RunCmdConsoleView(self, cmds=cmds, des=f'开始设置vmid={vmid}')
 
     def del_igd_passthrough(self, button: urwid.Button, vmid):
+        self.save_config()
         cmds = [
-            f'cc-hostcli pve del-vm-hostpci-config {vmid}'
+            f'cc-hostcli pve del-vm-hostpci-config {vmid}',
+            f'pvesh create /nodes/localhost/qemu/{vmid}/config --delete vga'
         ]
-        base_view.RunCmdConsoleView(self, cmds=cmds)
+        base_view.RunCmdConsoleView(self, cmds=cmds, des=f'开始设置vmid={vmid}')
+
+    def save_config(self):
+        group, keys = 'igd', ['audio_rom_path']
+        self.save_CONF_group_keys(group, keys)
+
+    def audio_rom_path_change(self, edit_obj: my_widget.TextEdit, current_value: str):
+        if not current_value:
+            edit_obj.set_caption(('header', [f"请输入", ("white", " "), ]))
+            CONF.igd.audio_rom_path = ''
+            return
+        if not os.path.isfile(current_value):
+            edit_obj.set_caption(('header', [f"文件不存在", ("white", " "), ]))
+        else:
+            edit_obj.set_caption('')
+            CONF.igd.audio_rom_path = current_value
 
     def update_view(self):
         widget_list = [
@@ -101,9 +119,33 @@ class IgdConfigView(base_view.BaseConfigView):
         widget_list.append(urwid.Divider())
         if self.find_igd_flag:
             widget_list.append(urwid.Padding(urwid.Text(f"直通核显给哪台qemu虚拟机呢?", align="left"), left=4, right=10),)
+            widget_list.append(urwid.Padding(
+                urwid.Columns(
+                    [
+                        urwid.Text("HDMI的音频rom文件绝对路径:", align="left"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.igd.audio_rom_path, self.audio_rom_path_change), "editbx", "editfc"),
+                    ]
+                ),
+                align="left", left=8, right=10,),
+            )
             self.pvesh_qemu_list = pvesh.Nodes().qemu_list()
             self.pvesh_qemu_list.sort(key=lambda x: x['vmid'])
             use_igd_vmids = self.get_who_use_igd()
+            conlumn_table = [
+                urwid.Padding(urwid.Divider('-'), align="left", left=8, right=10,),
+                urwid.Padding(
+                    urwid.Columns(
+                        [
+                            urwid.Text("名称", align="center"),
+                            urwid.Text("ID", align="center"),
+                            urwid.Text("状态", align="center"),
+                            urwid.Text("操作", align="center"), 
+                        ]
+                    ),
+                align="left", left=8, right=10,),
+                urwid.Padding(urwid.Divider('-'), align="left", left=8, right=10,)
+            ]
+            widget_list.extend(conlumn_table)
             for qemu_dict in self.pvesh_qemu_list:
                 vm_status = qemu_dict['status']
                 if qemu_dict['vmid'] in use_igd_vmids:
@@ -120,9 +162,9 @@ class IgdConfigView(base_view.BaseConfigView):
                     urwid.Padding(
                         urwid.Columns(
                             [
-                                urwid.Padding(urwid.Text(f"{qemu_dict['name']}", align="left"), align="center", left=1, right=1),
-                                urwid.Padding(urwid.Text(f"{qemu_dict['vmid']}", align="left"), align="center", left=1, right=1),
-                                urwid.Padding(urwid.Text(vm_status, align="left"), align="center", left=1, right=1),
+                                urwid.Padding(urwid.Text(f"{qemu_dict['name']}", align="center"), align="center", left=1, right=1),
+                                urwid.Padding(urwid.Text(f"{qemu_dict['vmid']}", align="center"), align="center", left=1, right=1),
+                                urwid.Padding(urwid.Text(vm_status, align="center"), align="center", left=1, right=1),
                                 operation_button
                             ]
                         )
@@ -134,7 +176,7 @@ class IgdConfigView(base_view.BaseConfigView):
         self.update_view()
         body = urwid.Pile(
             [
-                urwid.Text(self.origin_layout_button_label, align="center"),
+                urwid.Text(self.origin_layout_button_label, align="left"),
                 urwid.Divider(),
                 self.pile_view,
                 self.note_text,

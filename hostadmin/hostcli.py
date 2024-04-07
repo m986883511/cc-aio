@@ -175,7 +175,7 @@ def del_vm_hostpci_config(vmid):
 
 @pve.command()
 @click.argument('vmid')
-@click.option('--audio_rom_path')
+@click.argument('audio_rom_path')
 def set_vm_igd_paththrough(vmid, audio_rom_path):
     """
     设置某个虚拟机直通核显

@@ -103,7 +103,7 @@ def main():
         ("buttn", "black", "dark cyan"),
         ("buttnf", "white", "dark blue", "bold"),
     ]
-    menu_top = menu(CONF.tui_title, [
+    menu_top = menu(f"{CONF.tui_title} ({CONF.author_des})", [
         menu_button('配置物理网络', pve.NetworkConfigView),
         menu_button('安装基础包和配置', base_env.InstallBaseEnvView),
         menu_button('安装ALL-IN-ONE服务', pve.PveAllInOneServicesView),

@@ -4,7 +4,7 @@ import logging
 
 from oslo_config import cfg
 
-from cc_utils import func, network, AUTHOR_NAME, AIO_CONF_NAME
+from cc_utils import func, network, AUTHOR_NAME, AIO_CONF_NAME, AUTHOR_ZH_NAME
 
 CONF = cfg.CONF
 AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
@@ -12,6 +12,7 @@ AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
 default_opts = [
     cfg.StrOpt('return_last_string', default='返回上一层|ESC', help="conf_path"),
     cfg.StrOpt('tui_title', default='CC-AIO v1.0', help="tui title"),
+    cfg.StrOpt('author_des', default=f'本工具完全免费, 由B站UP主{AUTHOR_ZH_NAME}开发', help="tui title"),
     cfg.IntOpt('console_max_item_number', default=20, help="console_max_item_number"),
 ]
 
@@ -29,6 +30,10 @@ ceph_opts = [
     cfg.StrOpt('monitor_nodes', default="", help="monitor_nodes"),
     cfg.BoolOpt('allow_hdd_as_osd', default=False, help='allow_hdd_as_osd'),
     cfg.BoolOpt('current_node_installed_ceph', default=False, help='current_node_installed_ceph'),
+]
+
+igd_opts = [
+    cfg.StrOpt('audio_rom_path', default='', help="audio_rom_path"),
 ]
 
 network_opts = [
@@ -112,3 +117,4 @@ CONF.register_cli_opts(wireguard_opts, group='wireguard')
 CONF.register_cli_opts(network_opts, group='network')
 CONF.register_cli_opts(base_env_opts, group='base_env')
 CONF.register_cli_opts(openstack_opts, group='openstack')
+CONF.register_cli_opts(igd_opts, group='igd')
