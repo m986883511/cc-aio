@@ -8,6 +8,8 @@ from aliyunsdkalidns.request.v20150109.DescribeDomainRecordsRequest import Descr
 from aliyunsdkalidns.request.v20150109.DescribeSubDomainRecordsRequest import DescribeSubDomainRecordsRequest
 from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import AddDomainRecordRequest
 from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import UpdateDomainRecordRequest
+from aliyunsdkalidns.request.v20150109.DeleteDomainRecordRequest import DeleteDomainRecordRequest
+
 
 from cc_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
 
@@ -38,24 +40,33 @@ class DynamicDNS:
         """
         if not self.saved_current_public_ip:
             return
-        des_result = self.describe_domain_records(self.ip_type, self.domain)
+        des_result = self.describe_domain_records(self.domain, rr=self.rr)
         LOG.info(des_result)
         if des_result["TotalCount"] == 0:
             self.add_record(self.ip_type, self.saved_current_public_ip, self.rr, self.domain)
-        else:
-            request_id = des_result["DomainRecords"]["Record"][0]["RecordId"]
-            LOG.info("RequestID: " + request_id)
-            request_value = des_result["DomainRecords"]["Record"][0]["Value"]
-            request_rr = des_result["DomainRecords"]["Record"][0]["RR"]
-            if self.saved_current_public_ip != request_value or self.rr != request_rr:
-                self.update_record(self.ip_type, self.saved_current_public_ip, self.rr, request_id)
-                LOG.info(f'{self.rr}.{self.domain}被解析到{self.saved_current_public_ip}')
+            return
+        for record in des_result["DomainRecords"]["Record"]:
+            if self.ip_type != record['Type']:
+                RecordId = record["RecordId"]
+                LOG.info(f'delete {RecordId} record={record}')
+                self.delete_record(RecordId)
+            else:
+                request_id = record["RecordId"]
+                LOG.info("RequestID: " + request_id)
+                request_value = record["Value"]
+                request_rr = record["RR"]
+                if self.saved_current_public_ip != request_value or self.rr != request_rr:
+                    self.update_record(self.ip_type, self.saved_current_public_ip, self.rr, request_id)
+                    LOG.info(f'{self.rr}.{self.domain}被解析到{self.saved_current_public_ip}')
 
-    def describe_domain_records(self, record_type, subdomain):
+    def describe_domain_records(self, subdomain, record_type=None, rr=None):
         LOG.info("域名解析记录查询")
         request = DescribeDomainRecordsRequest()
         request.set_accept_format('json')
-        request.set_Type(record_type)
+        if record_type:
+            request.set_Type(record_type)
+        if rr:
+            request.set_RRKeyWord(rr)
         request.set_DomainName(subdomain)
         response = self.client.do_action_with_exception(request)
         response = str(response, encoding='utf-8')
@@ -105,7 +116,17 @@ class DynamicDNS:
         response = str(response, encoding='utf-8')
         logging.debug(response)
         return response
-   
+
+    def delete_record(self, record_id):
+        LOG.info("删除域名解析记录")
+        request = DeleteDomainRecordRequest()
+        request.set_accept_format('json')
+        request.set_RecordId(record_id)
+        response = self.client.do_action_with_exception(request)
+        response = str(response, encoding='utf-8')
+        logging.debug(response)
+        return response
+
 
 def get_public_ip_default_value(key):
     flag, content = execute.crudini_get_config(ini_path=f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}', section='public_ip', key=key)
