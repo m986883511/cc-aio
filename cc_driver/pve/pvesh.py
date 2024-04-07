@@ -70,7 +70,7 @@ class Nodes:
         try:
             return json.loads(content)
         except Exception as e:
-            execute.completed(1, 'json loads node_config')
+            execute.completed(1, 'json loads node_config', f'err={str(e)}, content={content}')
     
     def get_disk_list(self):
         """

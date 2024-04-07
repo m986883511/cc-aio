@@ -23,6 +23,17 @@ def host():
 
 
 @host.command()
+def get_node_igd_device():
+    """
+    获取核显信息
+    """
+    value = business.HostEndPoint().get_node_igd_device(ctxt={})
+    assert isinstance(value, dict), f'return value should be dict, but is {type(value)}'
+    value = json.dumps(value, indent=4)
+    click.secho(f'get igd model, value="{value}", end and exit.', fg='green')
+
+
+@host.command()
 def get_cpu_model():
     """
     获取cpu型号
@@ -148,6 +159,33 @@ def create_vbios_file():
     """创建核显直通的vbios文件"""
     file_path = business.PveEndPoint().create_vbios_file(ctxt={})
     click.secho(f"create vbios file success, path={file_path}, end and exit.", fg='green')
+
+
+@pve.command()
+@click.argument('vmid')
+def del_vm_hostpci_config(vmid):
+    """
+    设置某个虚拟机直通核显
+    
+    vmid: 虚拟机id
+    """
+    business.PveEndPoint().del_vm_hostpci_config(ctxt={}, vmid=vmid)
+    click.secho(f"del vm={vmid} hostpci_config, end and exit.", fg='green')
+
+
+@pve.command()
+@click.argument('vmid')
+@click.option('--audio_rom_path')
+def set_vm_igd_paththrough(vmid, audio_rom_path):
+    """
+    设置某个虚拟机直通核显
+    
+    vmid: 虚拟机id
+
+    audio_rom_path: 音频文件的rom绝对路径
+    """
+    business.PveEndPoint().set_vm_igd_paththrough(ctxt={}, vmid=vmid, audio_rom_path=audio_rom_path)
+    click.secho(f"set_vm_igd_paththrough, end and exit.", fg='green')
 
 
 @pve.command()

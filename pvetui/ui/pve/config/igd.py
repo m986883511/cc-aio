@@ -75,29 +75,17 @@ class IgdConfigView(base_view.BaseConfigView):
         return vmids
 
     def set_igd_passthrough(self, button: urwid.Button, vmid):
-        try:
-            vbios_path = rpc_client('create_vbios_file', hostname=self.current_hostname)
-        except Exception as e:
-            err = f'创建vbios文件失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
-            LOG.error(err)
-            self.note_msg = err
-            return err
-        file_name = os.path.basename(vbios_path)
-        dst_path = os.path.join('/usr/share/kvm', file_name)
-        if not os.path.isfile(dst_path):
-            shutil.copy(vbios_path, '/usr/share/kvm')
-        value = f'{self.igd_full_pci_id},pcie=1,x-vga=1,romfile={file_name}'
-        pvesh.Nodes().set_node_config(vmid, 'hostpci', value)
-        self.update_view()
+        cmds = [
+            f'cc-hostcli pve create-vbios-file',
+            f'cc-hostcli pve set-vm-igd-paththrough {vmid}'
+        ]
+        base_view.RunCmdConsoleView(self, cmds=cmds)
 
     def del_igd_passthrough(self, button: urwid.Button, vmid):
-        config_dict = pvesh.Nodes().get_node_config(vmid)
-        for key, value in config_dict.items():
-            if isinstance(value, str):
-                if self.igd_full_pci_id in value:
-                    pvesh.Nodes().set_node_config(vmid, key, "")
-                    break
-        self.update_view()
+        cmds = [
+            f'cc-hostcli pve del-vm-hostpci-config {vmid}'
+        ]
+        base_view.RunCmdConsoleView(self, cmds=cmds)
 
     def update_view(self):
         widget_list = [

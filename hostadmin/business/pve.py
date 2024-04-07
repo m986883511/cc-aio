@@ -40,8 +40,55 @@ class PveEndPoint(object):
         content_list = func.get_string_split_list(content, ' ')
         flag = content_list[-1].startswith('vbios_') and content_list[-1].endswith('.bin')
         execute.completed(not flag, 'find vbios file from output')
-        vbio_file_path = os.path.join(vbios_dir_name, content_list[-1])
+        file_name = content_list[-1]
+        vbio_file_path = os.path.join(vbios_dir_name, file_name)
+        dst_path = os.path.join('/usr/share/kvm', file_name)
+        if not os.path.isfile(dst_path):
+            flag, content = execute.execute_command(f'cp {vbio_file_path} /usr/share/kvm')
+            execute.completed(flag, f'cp {vbio_file_path} /usr/share/kvm')
+        else:
+            execute.completed(0, f'{dst_path} already exist')
         return vbio_file_path
+
+    def set_vm_igd_paththrough(self, ctxt, vmid, audio_rom_path):
+        if audio_rom_path:
+            flag = os.path.isfile(audio_rom_path)
+            execute.completed(not flag, f'check audio_rom_path={audio_rom_path} exist')
+            audio_rom_name = os.path.basename(audio_rom_path)
+            dst_path = os.path.join('/usr/share/kvm', audio_rom_name)
+            if not os.path.isfile(dst_path):
+                flag, content = execute.execute_command(f'cp {audio_rom_path} /usr/share/kvm')
+                execute.completed(flag, f'cp {audio_rom_path} /usr/share/kvm')
+            else:
+                execute.completed(0, f'{dst_path} already exist')
+        from hostadmin.business import HostEndPoint
+        igd_device = HostEndPoint().get_node_igd_device(ctxt)
+        execute.completed(not igd_device, f'get_node_igd_device')
+        self.del_vm_hostpci_config(ctxt, vmid=vmid)
+        vbios_file_path = self.create_vbios_file(ctxt)
+        file_name = os.path.basename(vbios_file_path)
+        igd_full_pci_id = igd_device['full_pci_id']
+        value = f'{igd_full_pci_id},pcie=1,x-vga=1,romfile={file_name}'
+        flag, content = execute.execute_command(f'pvesh create /nodes/localhost/qemu/{vmid}/config --hostpci0 {value}')
+        execute.completed(flag, f'set {vmid} hostpci0 {value}')
+        audio_list = igd_device.get('audio') or []
+        flag = len(audio_list) == 1
+        execute.completed(not flag, f'check exist one audio failed, audio_list={audio_list}')
+        audio = audio_list[0]
+        if audio_rom_path:
+            value = f"{audio['pci_id']},romfile={audio_rom_name}"
+        else:
+            value = f"{audio['pci_id']}"
+        flag, content = execute.execute_command(f'pvesh create /nodes/localhost/qemu/{vmid}/config --hostpci1 {value}')
+        execute.completed(flag, f'set {vmid} hostpci1 {value}')
+
+    def del_vm_hostpci_config(self, ctxt, vmid):
+        from cc_driver.pve import pvesh
+        node_config = pvesh.Nodes().get_node_config(vmid)
+        hostpci_keys = [key for key in node_config.keys() if 'hostpci' in key]
+        for key in hostpci_keys:
+            flag, content = execute.execute_command(f'pvesh set /nodes/localhost/qemu/{vmid}/config --delete {key}')
+            execute.completed(flag, f'delete {vmid} {key}')
 
     def change_single_pve_node_network(self, ctxt, ip_mask, gateway, dns, hostname, need_restart = False, need_reboot=False):
         """

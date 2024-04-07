@@ -92,6 +92,28 @@ class HostEndPoint(object):
         flag, content = execute.execute_command(cmd, shell=True)
         return flag == 0
 
+    def get_node_igd_device(self, ctxt):
+        pci_devices = self.get_support_pci_devices(ctxt)
+        igd_devices = pci_devices.get('igd')
+        if not igd_devices:
+            return {}
+        igd_pci_full_ids = list(igd_devices.keys())
+        if len(igd_pci_full_ids) != 1:
+            execute.completed(1, f'读取到多个核显设备，不正常啊! keys={igd_pci_full_ids}')
+        igd_full_pci_id = igd_pci_full_ids[0]
+        res = {
+            'name': igd_devices[igd_full_pci_id]['name'],
+            'full_pci_id': igd_full_pci_id,
+            'main_vendor': igd_devices[igd_full_pci_id]['main_vendor']
+        }
+        all_devices = igd_devices[igd_full_pci_id]['all_devices']
+        audio = [
+            {'vendor':value['vendor'], 'pci_id':value['pci_id'], 'name':value['long_name']}
+            for value in all_devices if 'audio' in value['long_name'].lower() and value['vendor'].startswith(res['main_vendor'][:7])
+        ]
+        res['audio'] = audio
+        return res
+
     def get_support_pci_devices(self, ctxt):
         def nnk_analyse(pci_id) -> dict:
             cmd = f'lspci -v -s {pci_id}'
