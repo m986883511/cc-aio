@@ -193,11 +193,12 @@ class DiskConfigView(base_view.BaseConfigView):
         for disk_dict in all_disk_list:
             size = disk_dict['size'] or 0
             size = func.convert_to_GT_str(int(disk_dict['size'])) or '--'
+            button_text = disk_dict['id'] or disk_dict['model']
             widget_list.append(
                 urwid.Padding(
                     urwid.Columns(
                         [
-                            urwid.Button(disk_dict['id'], self.disk_config, user_data=disk_dict['name'], align="center"),
+                            urwid.Button(button_text, self.disk_config, user_data=disk_dict['name'], align="center"),
                             urwid.Columns([
                                 urwid.Text(disk_dict['name'], align="center"),
                                 urwid.Text(disk_dict['media'], align="center"),
