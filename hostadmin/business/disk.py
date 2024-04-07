@@ -33,6 +33,8 @@ class DiskEndPoint(object):
     def format_disk_and_create_one_primary(self, ctxt, dev_disk, confirm_text):
         true_confirm_text='yes-i-really-really-format-it'
         flag = true_confirm_text == confirm_text
+        flag, content = execute.execute_command(f'apt install parted -y')
+        execute.completed(flag, 'apt install parted', content)
         self.umount_disk(dev_disk)
         execute.completed(not flag, 'check confirm_text', f'input confirm_text not equal "{true_confirm_text}"')
         flag, content = execute.execute_command(f'parted {dev_disk} --script mklabel gpt mkpart primary ext4 1MiB 100%')

@@ -17,7 +17,7 @@ PIP_PACKAGES_DIR_PREFIX="$REPO_SERVER_DIR/pip"
 BASE_BASE_RPM="which tar wget systemd sshpass newt python3 rsync pciutils"
 CEPH_BASE_RPM="podman lvm2 cephadm chrony ceph-common smartmontools jq gdisk $BASE_BASE_RPM"
 OPENSTACK_BASE_RPM="docker python3-pip nfs-utils $BASE_BASE_RPM"
-PVE_BASE_DEBS="samba samba-common python3-pip wireguard sshpass crudini git net-tools"
+PVE_BASE_DEBS="samba samba-common python3-pip wireguard sshpass crudini git net-tools parted"
 BASE_PIP_PACKAGES=""
 INVENTORY_HOSTS_PATH="/etc/$AUTHOR_NAME/hosts"
 # 
