@@ -22,14 +22,9 @@ def get_samba_default_value(key):
     LOG.warning(f"read default samba key={key} config failed, please set it!")
 
 
-def get_alist_ip():
-    ip = func.get_hostname_map_ip()
-    return ip
-
-
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--alist_ip', help='alist ip', default=get_alist_ip())
+    parser.add_argument('--alist_ip', help='alist ip', default='localhost')
     parser.add_argument('--admin_password', help='admin password', default=get_alist_default_value('default_admin_password'))
     parser.add_argument('--default_share_path', help='download.txt path', default=get_samba_default_value('default_share_path'))
     args = parser.parse_args()
