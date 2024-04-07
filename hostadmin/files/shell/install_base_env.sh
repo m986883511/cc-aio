@@ -92,8 +92,8 @@ function main(){
 
     pip install pbr
     completed $? "install pbr python package"
-    pip install --use-deprecated=legacy-resolver --upgrade cg-aio
-    completed $? "install cg-aio python package"
+    pip install --use-deprecated=legacy-resolver --upgrade cc-aio
+    completed $? "install cc-aio python package"
     start_hostrpc_server
 }
 

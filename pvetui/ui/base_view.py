@@ -7,7 +7,7 @@ import urwid
 
 from pvetui import ui
 from pvetui.config import CONF, AIO_CONF_PATH
-from cg_utils import func, execute, AUTHOR_NAME
+from cc_utils import func, execute, AUTHOR_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ class BaseConfigView(KollaBaseConfig):
         current_hostname = func.get_current_node_hostname()
         other_control_nodes = [x for x in control_nodes if x != current_hostname ]
         for node in other_control_nodes:
-            flag, content = execute.execute_command(f'cg-hostcli ssh rsync-dir-to-remote-host {node} /etc/cg', shell=False, timeout=5)
+            flag, content = execute.execute_command(f'cc-hostcli ssh rsync-dir-to-remote-host {node} /etc/cc', shell=False, timeout=5)
             if flag == 0:
                 LOG.info(f'rsync_to_other_control_nodes to {node} success')
             else:

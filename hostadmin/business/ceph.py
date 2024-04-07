@@ -9,7 +9,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import linux, func, execute, file, _, AUTHOR_NAME, AIO_CONF_NAME
+from cc_utils import linux, func, execute, file, _, AUTHOR_NAME, AIO_CONF_NAME
 from hostadmin.files import FilesDir
 from hostadmin.config import CONF
 
@@ -107,7 +107,7 @@ class CephEndPoint(object):
             flag = execute.execute_command_in_popen(cmd, shell=True)
             execute.completed(flag, f'install ceph as admin node on {host}')
         else:
-            cmd = f'cg-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
+            cmd = f'cc-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
             flag, content = execute.execute_command(cmd, shell=True)
             execute.completed(flag, f'scp {FilesDir.Shell.shell_dir} to {host}', content)
             cmd = f'bash /tmp/shell/install_as_ceph_admin_node.sh {osd_pool_default_size}'
@@ -147,7 +147,7 @@ class CephEndPoint(object):
             flag = execute.execute_command_in_popen(cmd, shell=True)
             execute.completed(flag, f'add ceph node {host}')
         else:
-            cmd = f'cg-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
+            cmd = f'cc-hostcli ssh scp-dir-to-remote-host {host} {FilesDir.Shell.shell_dir} /tmp'
             flag, content = execute.execute_command(cmd, shell=True)
             execute.completed(flag, f'scp {FilesDir.Shell.shell_dir} to {host}', content)
             cmd = f'bash /tmp/shell/add_as_ceph_node.sh'

@@ -4,7 +4,7 @@ import threading
 from pvetui.config import CONF
 from pvetui import ui, utils
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func
+from cc_utils import execute, func
 from hostadmin.rpc import rpc_client
 
 
@@ -48,23 +48,23 @@ class DeployCephConsoleView(base_view.BaseConsoleView):
         if not self.selected_name_list:
             self.need_run_cmd_list.append(f'echo "please save ceph config first!"')
             self.need_run_cmd_list.append(f'exit 1')
-        self.need_run_cmd_list.append('cg-hostcli ceph run-ceph-registry')
+        self.need_run_cmd_list.append('cc-hostcli ceph run-ceph-registry')
         for i, node in enumerate(self.selected_name_list):
-            self.need_run_cmd_list.append(f'cg-hostcli network check-network-connection {node}')
-            self.need_run_cmd_list.append(f'cg-hostcli ssh check-ssh-passwordless {node}')
-            self.need_run_cmd_list.append(f'cg-hostcli ceph check-ceph-node-network {node}')
-            self.need_run_cmd_list.append(f'cg-hostcli ssh ssh-run-on-remote {node} "cg-hostcli ceph set-ceph-registry-url {current_hostname}"')
-            self.need_run_cmd_list.append(f'cg-hostcli ssh ssh-run-on-remote {node} "cg-hostcli ceph pull-ceph-image"')
+            self.need_run_cmd_list.append(f'cc-hostcli network check-network-connection {node}')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh check-ssh-passwordless {node}')
+            self.need_run_cmd_list.append(f'cc-hostcli ceph check-ceph-node-network {node}')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh ssh-run-on-remote {node} "cc-hostcli ceph set-ceph-registry-url {current_hostname}"')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh ssh-run-on-remote {node} "cc-hostcli ceph pull-ceph-image"')
             if i == 0 and not self.installed_ceph_nodes:
-                cmd = f'cg-hostcli ceph run-install-ceph-node {node} --osd_pool_default_size {CONF.ceph.osd_pool_default_size}'
+                cmd = f'cc-hostcli ceph run-install-ceph-node {node} --osd_pool_default_size {CONF.ceph.osd_pool_default_size}'
                 self.need_run_cmd_list.append(cmd)
                 continue
-            self.need_run_cmd_list.append(f'cg-hostcli ssh scp-dir-to-remote-host {node} /etc/ceph /etc')
-            self.need_run_cmd_list.append(f'cg-hostcli ceph run-add-ceph-node {node}')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh scp-dir-to-remote-host {node} /etc/ceph /etc')
+            self.need_run_cmd_list.append(f'cc-hostcli ceph run-add-ceph-node {node}')
         for node in self.compute_nodes:
             if node == current_hostname:
                 continue
-            self.need_run_cmd_list.append(f'cg-hostcli ssh rsync-dir-to-remote-host {node} /etc/ceph')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh rsync-dir-to-remote-host {node} /etc/ceph')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

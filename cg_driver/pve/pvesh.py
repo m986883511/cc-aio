@@ -2,7 +2,7 @@
 import json
 import logging
 
-from cg_utils import func, execute
+from cc_utils import func, execute
 
 LOG = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ class Nodes:
     
     def get_disk_list(self):
         """
-        root@localhost:~/cg-aio# pvesh get /nodes/localhost/disks/list --output-format json-pretty
+        root@localhost:~/cc-aio# pvesh get /nodes/localhost/disks/list --output-format json-pretty
         [
             {
                 "by_id_link" : "/dev/disk/by-id/nvme-Great_Wall_GT35_1TB_0008887003486",

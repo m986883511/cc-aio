@@ -7,7 +7,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import execute, func, file, _, AUTHOR_NAME, AIO_CONF_NAME, network
+from cc_utils import execute, func, file, _, AUTHOR_NAME, AIO_CONF_NAME, network
 from hostadmin.files import FilesDir
 from hostadmin.config import CONF
 
@@ -20,7 +20,7 @@ class PveEndPoint(object):
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
         self.AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
         self.default_root_password = CONF.ssh.root_pwd
-        self.vbios_path = f'/opt/{AUTHOR_NAME}/cg-aio-bin/repo/bin/vbios'
+        self.vbios_path = f'/opt/{AUTHOR_NAME}/{AUTHOR_NAME}-aio-bin/repo/bin/vbios'
         self.sysctl_conf_path = '/etc/sysctl.conf'
         self.debian_network_interfaces_path = '/etc/network/interfaces'
 

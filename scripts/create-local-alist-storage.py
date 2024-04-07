@@ -3,8 +3,8 @@ import json
 import logging
 import argparse
 
-from cg_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
-from cg_driver.alist import client
+from cc_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
+from cc_driver.alist import client
 
 LOG = logging.getLogger(__name__)
 

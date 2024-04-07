@@ -4,14 +4,14 @@ import logging
 
 from oslo_config import cfg
 
-from cg_utils import func, network, AUTHOR_NAME, AIO_CONF_NAME
+from cc_utils import func, network, AUTHOR_NAME, AIO_CONF_NAME
 
 CONF = cfg.CONF
 AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
 
 default_opts = [
     cfg.StrOpt('return_last_string', default='返回上一层|ESC', help="conf_path"),
-    cfg.StrOpt('tui_title', default='CG-AIO v1.0', help="tui title"),
+    cfg.StrOpt('tui_title', default='CC-AIO v1.0', help="tui title"),
     cfg.IntOpt('console_max_item_number', default=20, help="console_max_item_number"),
 ]
 

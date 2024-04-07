@@ -1,6 +1,6 @@
 import logging
 
-from cg_utils import func
+from cc_utils import func
 
 LOG = logging.getLogger(__name__)
 

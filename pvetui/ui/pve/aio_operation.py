@@ -5,7 +5,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func
+from cc_utils import execute, func
 
 from .config import disk, igd
 

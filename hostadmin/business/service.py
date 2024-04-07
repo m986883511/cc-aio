@@ -11,9 +11,9 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from oslo_config import cfg
 from crontab import CronTab
 
-from cg_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
+from cc_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
 from hostadmin.files import FilesDir
-from hostadmin.config import CG_SCRIPTS_DIR, CONF
+from hostadmin.config import AUTHOR_SCRIPTS_DIR, CONF
 
 LOG = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ class ServiceEndPoint(object):
         self.aliyun_ddns_script = 'aliyun-ddns.py'
         self.wireguard_script = 'wireguard.sh'
         self.wireguard_conf_path = '/etc/wireguard/wg0.conf'
-        self.wireguard_script_path = os.path.join(CG_SCRIPTS_DIR, self.wireguard_script)
+        self.wireguard_script_path = os.path.join(AUTHOR_SCRIPTS_DIR, self.wireguard_script)
         self.wireguard_params_path = '/etc/wireguard/params'
         self.pvetui_conf_path = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
         self.create_local_alist_storage_py = 'create-local-alist-storage.py'
@@ -97,7 +97,7 @@ class ServiceEndPoint(object):
             execute.completed(flag, f"delete old samba service samba user")
         flag, content = execute.execute_command(f'(echo {samba_user_password}; echo {samba_user_password}) | smbpasswd -s -a samba')
         execute.completed(flag, f"create samba service user=samba")
-        flag, content = execute.execute_command(f'cp -r /opt/{AUTHOR_NAME}/cg-aio-bin/gift/* {share_path}')
+        flag, content = execute.execute_command(f'cp -r /opt/{AUTHOR_NAME}/{AUTHOR_NAME}-aio-bin/gift/* {share_path}')
         execute.completed(flag, f"copy chaoge gift")
         # 生效配置文件 重启smbd服务
         smb_conf_path = '/etc/samba/smb.conf'
@@ -117,7 +117,7 @@ class ServiceEndPoint(object):
         execute.completed(flag, f"install alist")
         flag = execute.execute_command_in_popen(f'cd /opt/{AUTHOR_NAME}/alist && ./alist admin set {admin_password}')
         execute.completed(flag, f"modify alist admin password")
-        path = os.path.join(CG_SCRIPTS_DIR, self.create_local_alist_storage_py)
+        path = os.path.join(AUTHOR_SCRIPTS_DIR, self.create_local_alist_storage_py)
         flag = execute.execute_command_in_popen(f'python3 {path}')
         execute.completed(flag, 'create-local-alist-storage')
         flag, content = execute.execute_command('systemctl restart alist', shell=False, timeout=10)
@@ -179,7 +179,7 @@ class ServiceEndPoint(object):
         flag = start_or_stop in ['start', 'stop']
         execute.completed(not flag, f"check input param ipv4_or_ipv6")
         my_cron = CronTab(user='root')
-        path = os.path.join(CG_SCRIPTS_DIR, self.aliyun_ddns_script)
+        path = os.path.join(AUTHOR_SCRIPTS_DIR, self.aliyun_ddns_script)
         command = f'python3 {path}'
         exist_task = False
         exist_job = None

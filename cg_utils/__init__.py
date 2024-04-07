@@ -1,4 +1,4 @@
 from .func import _
 
-AUTHOR_NAME = 'cg'
+AUTHOR_NAME = 'cc'
 AIO_CONF_NAME = 'aio.conf'

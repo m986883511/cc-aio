@@ -4,7 +4,7 @@ import logging
 
 from hostadmin import business
 from hostadmin.config import AUTHOR_NAME
-from cg_utils import execute
+from cc_utils import execute
 from hostadmin.files import FilesDir
 
 LOG = logging.getLogger(__name__)

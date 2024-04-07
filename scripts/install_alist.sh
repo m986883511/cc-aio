@@ -2,7 +2,7 @@
 
 # INSTALL_PATH='/opt/alist'
 VERSION='latest'
-AUTHOR_NAME="cg"
+AUTHOR_NAME="cc"
 REPO_SERVER_PORT="7080"
 
 if [ ! -n "$2" ]; then

@@ -1,5 +1,5 @@
 #!/bin/bash
-AUTHOR_NAME="cg"
+AUTHOR_NAME="cc"
 WHO_AM_I="$(hostname)"
 RUN_AS_SOURCE_FLAG=
 PUBLIC_IP=""
@@ -110,7 +110,7 @@ function check_public_changed(){
         echo "public ip is $PUBLIC_IP not change"
     else
         echo "public ip change to $PUBLIC_IP"
-        cg-hostcli service update-wireguard-service
+        cc-hostcli service update-wireguard-service
         send_change_public_ip
     fi
 }

@@ -8,7 +8,7 @@ ORANGE='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-AUTHOR_NAME="cg"
+AUTHOR_NAME="cc"
 AIO_CONF_NAME='aio.conf'
 
 function isRoot() {

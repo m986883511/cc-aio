@@ -7,7 +7,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui, jm_data
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func
+from cc_utils import execute, func
 from hostadmin.business import Usage
 
 LOG = logging.getLogger(__name__)

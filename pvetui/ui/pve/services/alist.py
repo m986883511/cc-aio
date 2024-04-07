@@ -6,7 +6,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func
+from cc_utils import execute, func
 
 LOG = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class AlistConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
-        self.need_run_cmd_list.append(f'cg-hostcli service create-alist-service {CONF.alist.default_admin_password}')
+        self.need_run_cmd_list.append(f'cc-hostcli service create-alist-service {CONF.alist.default_admin_password}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

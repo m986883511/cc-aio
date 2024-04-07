@@ -1,6 +1,6 @@
 import requests
 
-from cg_driver.alist import storage
+from cc_driver.alist import storage
 
 class Client():
     def __init__(self, alist_url, admin_password):

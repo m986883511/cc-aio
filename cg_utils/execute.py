@@ -121,7 +121,7 @@ def completed(flag, dec, err=None, raise_flag=True, just_echo=False):
             msg += f' success'
         LOG.info(msg)
         if os.environ.get('IN_CLICK'):
-            import click # 不要在cg_utils模块中公开引入任何第三方包
+            import click # 不要在cc_utils模块中公开引入任何第三方包
             if just_echo:
                 click.secho(msg)
             else:
@@ -140,7 +140,7 @@ def completed(flag, dec, err=None, raise_flag=True, just_echo=False):
             msg = f'{msg}, err: {err}'
         LOG.error(msg)
         if os.environ.get('IN_CLICK'):
-            import click # 不要在cg_utils模块中公开引入任何第三方包
+            import click # 不要在cc_utils模块中公开引入任何第三方包
             if just_echo:
                 click.secho(msg)
             else:
@@ -157,7 +157,7 @@ def completed(flag, dec, err=None, raise_flag=True, just_echo=False):
 
 def use_crudini_save_CONF_to_path(path, group, key):
     from oslo_config import cfg
-    from cg_utils import execute
+    from cc_utils import execute
     group_obj = getattr(cfg.CONF, group)
     value = getattr(group_obj, key)
     flag, content = execute.crudini_set_config(path, group, key, value)

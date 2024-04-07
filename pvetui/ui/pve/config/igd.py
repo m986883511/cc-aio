@@ -9,8 +9,8 @@ from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from hostadmin.rpc import rpc_client
-from cg_utils import execute, func, AUTHOR_NAME
-from cg_driver.pve import pvesh
+from cc_utils import execute, func, AUTHOR_NAME
+from cc_driver.pve import pvesh
 
 LOG = logging.getLogger(__name__)
 

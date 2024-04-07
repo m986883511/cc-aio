@@ -5,7 +5,7 @@ import typing
 import urwid
 
 from pvetui.config import CONF
-from cg_utils import file, execute, func
+from cc_utils import file, execute, func
 
 
 # def get_int_edit_widget(name, group=None):

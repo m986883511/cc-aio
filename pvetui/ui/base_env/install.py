@@ -6,7 +6,7 @@ from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from pvetui.utils import get_other_nodes_ntp_server_config
-from cg_utils import execute, func
+from cc_utils import execute, func
 
 LOG = logging.getLogger(__name__)
 
@@ -25,8 +25,8 @@ class InstallBaseEnvConsoleView(base_view.BaseConsoleView):
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_base_env_view))
         current_hostname = func.get_current_node_hostname()
-        self.need_run_cmd_list.append(f'cg-hostcli host install-base-env --host {current_hostname}')
-        self.need_run_cmd_list.append(f'cg-hostcli pve open-ipv6-support')
+        self.need_run_cmd_list.append(f'cc-hostcli host install-base-env --host {current_hostname}')
+        self.need_run_cmd_list.append(f'cc-hostcli pve open-ipv6-support')
         self.need_run_cmd_list.append(f'pvesh set /nodes/localhost/dns --search localdomain --dns1 {CONF.network.dns1} --dns2 {CONF.network.dns2} --dns3 {CONF.network.dns3}')
         if CONF.base_env.need_reboot_flag:
             self.need_run_cmd_list.append(f'echo "立即重启中!!!"')
@@ -55,7 +55,7 @@ class InstallBaseEnvView(base_view.BaseConfigView):
             '设置3个dns',
             "屏蔽显卡驱动",
             "删除pve的local-lvm存储"
-            '开启cg-hostrpc主机管理服务',
+            '开启cc-hostrpc主机管理服务',
         ]
         self.show()
 

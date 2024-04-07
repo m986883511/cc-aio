@@ -34,7 +34,7 @@ sleep 1
 
 function main(){
     hostcli ceph cephadm-init-pools
-    completed $? 'cg-hostcli ceph cephadm-init-pools'
+    completed $? 'cc-hostcli ceph cephadm-init-pools'
     gen_openstack_ceph_config $1
     create_rbd_volume_type
     restart_ceph_about_container

@@ -9,7 +9,7 @@ from aliyunsdkalidns.request.v20150109.DescribeSubDomainRecordsRequest import De
 from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import AddDomainRecordRequest
 from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import UpdateDomainRecordRequest
 
-from cg_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
+from cc_utils import execute, func, file, AUTHOR_NAME, AIO_CONF_NAME
 
 LOG = logging.getLogger(__name__)
 

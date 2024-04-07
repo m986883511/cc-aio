@@ -3,7 +3,7 @@ import os
 from hostadmin import rpc
 from hostadmin.config import CONF, HOSTRPC_CONF_PATH
 
-from cg_utils import func, AUTHOR_NAME
+from cc_utils import func, AUTHOR_NAME
 from hostadmin import depends
 
 

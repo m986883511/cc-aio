@@ -5,7 +5,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui, jm_data, exception
 from pvetui.ui import my_widget, base_view
-from cg_utils import func
+from cc_utils import func
 from hostadmin.rpc import rpc_client
 
 LOG = logging.getLogger(__name__)
@@ -27,9 +27,9 @@ class DeleteOsdConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_del_osd_view))
-        self.need_run_cmd_list.append(f'cg-hostcli network check-network-connection {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'cg-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
-        cmd = f'cg-hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "cg-hostcli disk remove-osds {self.selected_osd_name_string}"'
+        self.need_run_cmd_list.append(f'cc-hostcli network check-network-connection {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cc-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
+        cmd = f'cc-hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "cc-hostcli disk remove-osds {self.selected_osd_name_string}"'
         self.need_run_cmd_list.append(cmd)
         self.start_alarm()
         ui.top_layer.open_box(body)

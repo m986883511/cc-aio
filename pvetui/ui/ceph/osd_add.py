@@ -7,7 +7,7 @@ from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from pvetui import jm_data, exception
 from hostadmin.rpc import rpc_client
-from cg_utils import func
+from cc_utils import func
 
 LOG = logging.getLogger(__name__)
 
@@ -45,19 +45,19 @@ class AddOsdConsoleView(base_view.BaseConsoleView):
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_add_osd_view))
         ceph_cluster_nodes = self.get_ceph_cluster_nodes()
-        self.need_run_cmd_list.append(f'cg-hostcli network check-network-connection {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'cg-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
-        self.need_run_cmd_list.append(f'cg-hostcli ceph check-ceph-node-network {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cc-hostcli network check-network-connection {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cc-hostcli ssh check-ssh-passwordless {self.selected_hostname}')
+        self.need_run_cmd_list.append(f'cc-hostcli ceph check-ceph-node-network {self.selected_hostname}')
         if self.selected_hostname not in ceph_cluster_nodes:
             current_hostname = func.get_current_node_hostname()
-            self.need_run_cmd_list.append(f'cg-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cg-hostcli ceph set-ceph-registry-url {current_hostname}"')
-            self.need_run_cmd_list.append(f'cg-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cg-hostcli ceph pull-ceph-image"')
-            self.need_run_cmd_list.append(f'cg-hostcli ssh scp-dir-to-remote-host {self.selected_hostname} /etc/ceph /etc')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cc-hostcli ceph set-ceph-registry-url {current_hostname}"')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh ssh-run-on-remote {self.selected_hostname} "cc-hostcli ceph pull-ceph-image"')
+            self.need_run_cmd_list.append(f'cc-hostcli ssh scp-dir-to-remote-host {self.selected_hostname} /etc/ceph /etc')
             ceph_public_ip = f'192.222.13.{int(self.selected_hostname[4:])}'
             self.need_run_cmd_list.append(f"ceph orch host add {self.selected_hostname} {ceph_public_ip}")
         cache_disk = self.get_cache_disk_config_string()
         allow_hdd_as_osd_string = f'--allow_hdd_as_osd' if CONF.ceph.allow_hdd_as_osd else ''
-        cmd = f'cg-hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "cg-hostcli disk add-osds {allow_hdd_as_osd_string} {self.osd_disks} \'{cache_disk}\'"'
+        cmd = f'cc-hostcli ssh ssh-run-on-remote-via-popen {self.selected_hostname} "cc-hostcli disk add-osds {allow_hdd_as_osd_string} {self.osd_disks} \'{cache_disk}\'"'
         self.need_run_cmd_list.append(cmd)
         self.start_alarm()
         ui.top_layer.open_box(body)

@@ -7,7 +7,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cg_utils import execute, func, file, _, AUTHOR_NAME, AIO_CONF_NAME
+from cc_utils import execute, func, file, _, AUTHOR_NAME, AIO_CONF_NAME
 from hostadmin.files import FilesDir
 from hostadmin.config import CONF
 

@@ -6,7 +6,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func, AUTHOR_NAME
+from cc_utils import execute, func, AUTHOR_NAME
 from hostadmin.rpc import rpc_client
 
 LOG = logging.getLogger(__name__)
@@ -26,11 +26,11 @@ class DiskOperationView(base_view.BaseConfigView):
 
     def geshihua_disk_button(self, button):
         self.geshihua_input_text = ""
-        base_view.RunCmdConsoleView(self, des=f'格式化{self.disk_name}硬盘', cmd=f'cg-hostcli disk format-disk-and-create-one-primary /dev/{self.disk_name} {self.geshihua_confirm_text}')
+        base_view.RunCmdConsoleView(self, des=f'格式化{self.disk_name}硬盘', cmd=f'cc-hostcli disk format-disk-and-create-one-primary /dev/{self.disk_name} {self.geshihua_confirm_text}')
 
     def mount_disk_button(self, button, new_mount_path):
         self.mount_input_text = ""
-        base_view.RunCmdConsoleView(self, des=f'{self.disk_name}硬盘挂载配置', cmd=f'cg-hostcli disk umount-disk-and-mount-new /dev/{self.disk_name} {new_mount_path} {self.mount_confirm_text}')
+        base_view.RunCmdConsoleView(self, des=f'{self.disk_name}硬盘挂载配置', cmd=f'cc-hostcli disk umount-disk-and-mount-new /dev/{self.disk_name} {new_mount_path} {self.mount_confirm_text}')
 
     def geshihua_input_text_change_button_func(self, edit_obj: urwid.Edit, current_value):
         if not current_value:

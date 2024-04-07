@@ -6,7 +6,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cg_utils import execute, func, network
+from cc_utils import execute, func, network
 
 LOG = logging.getLogger(__name__)
 
@@ -24,8 +24,8 @@ class NetworkConsoleView(base_view.BaseConsoleView):
             self.result_button,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_config_pve_network_view))
-        self.need_run_cmd_list.append(f'cg-hostcli pve open-ipv6-support')
-        self.need_run_cmd_list.append(f'cg-hostcli pve change-single-pve-node-network --ip_mask {CONF.network.ip_cidr} --gateway {CONF.network.gateway}')
+        self.need_run_cmd_list.append(f'cc-hostcli pve open-ipv6-support')
+        self.need_run_cmd_list.append(f'cc-hostcli pve change-single-pve-node-network --ip_mask {CONF.network.ip_cidr} --gateway {CONF.network.gateway}')
         self.start_alarm()
         ui.top_layer.open_box(body)
 

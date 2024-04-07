@@ -6,7 +6,7 @@ import logging
 
 import urwid
 
-from cg_utils import func, execute, AUTHOR_NAME
+from cc_utils import func, execute, AUTHOR_NAME
 func.set_simple_log(f'/var/log/{AUTHOR_NAME}/aio.log')
 from pvetui import ui, utils
 from pvetui.ui import network, base_env, pve
