@@ -163,8 +163,8 @@ class ServiceEndPoint(object):
             flag, content = execute.execute_command(f"rm -f /tmp/public_ip.txt")
             if flag == 0:
                 execute.completed(flag, f"delete old record")
-            flag = execute.execute_command_in_popen(f'bash /usr/local/{AUTHOR_NAME}/scripts/report_public_ip_if_changed_robot.sh')
-            execute.completed(flag, f"start listen_public_ip_change_rebot")
+            flag, content = execute.execute_command(f'bash /usr/local/{AUTHOR_NAME}/scripts/report_public_ip_if_changed_robot.sh')
+            execute.completed(flag, f"start listen_public_ip_change_rebot", content)
             flag, content = execute.execute_command('systemctl restart cron', shell=False, timeout=10)
             execute.completed(flag, 'systemctl restart cron', content)
         else:

@@ -49,7 +49,7 @@ def rpc_server():
         sys.exit()
 
 
-def rpc_client(func_name, hostname=None, **kwargs):
+def rpc_client(func_name, hostname="localhost", **kwargs):
     kwargs['ctxt'] = kwargs.get('ctxt') or {}
     kwargs['func_name'] = func_name
     LOG.info(f'rpc run func={func_name} on hostname={hostname} kwargs={kwargs}')

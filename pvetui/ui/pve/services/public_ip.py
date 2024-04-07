@@ -7,7 +7,8 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cc_utils import execute, func
+from hostadmin.rpc import rpc_client
+from cc_utils import execute, func, AUTHOR_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -17,14 +18,14 @@ class PublicIpTestConsoleView(base_view.BaseConsoleView):
         super().__init__(origin_view)
         self.public_ip_simple_http_server_url = self.get_test_http_server_url()
         self.show()
-    
+
     def get_test_http_server_url(self):
         if CONF.public_ip.ipv4_or_ipv6 == 'ipv4':
             url = f'http://{self.origin_view.public_ipv4}:{CONF.public_ip.simple_http_server_port}'
         else:
-            url = '123'
+            url = f'http://[{self.origin_view.public_ipv6}]:{CONF.public_ip.simple_http_server_port}'
         return url
-    
+
     def task_success_callback(self):
         self.received_output('\n 你刚刚使用手机的流量, 访问到了你家里的局域网! 所以!!!')
         self.received_output('\n 恭喜! 你的环境可以使用wireguard搭建虚拟专用网络! 在外面就像回家一下!'*3 + '\n')
@@ -170,6 +171,21 @@ class PublicIpConfigView(base_view.BaseConfigView):
         else:
             edit_obj.set_caption('')
             CONF.public_ip.feishu_webhook_uuid = current_value
+    
+    def get_public_ipv6(self):
+        try:
+            network_dict = rpc_client('get_pve_main_bridge_nics')
+        except Exception as e:
+            err = f'读取pve的vmbr0网络配置, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            LOG.error(err)
+            self.note_msg = err
+            return
+        ipv6_list = network_dict.get('ipv6') or []
+        ipv6s = [i.get('ip') for i in ipv6_list if 'ip' in i]
+        ipv6 = func.get_public_ipv6_from_list(ipv6s)
+        if '/' in ipv6:
+            ipv6 = func.get_string_split_list(ipv6, split_flag='/')[0]
+        return ipv6
 
     def update_view(self):
         widget_list = []
@@ -198,11 +214,11 @@ class PublicIpConfigView(base_view.BaseConfigView):
             if self.public_ipv6:
                 public_ip = self.public_ipv6
             else:
-                public_ip = func.get_current_node_public_ipv6()
+                public_ip = self.get_public_ipv6()
                 if public_ip:
                     self.public_ipv6 = public_ip
                 else:
-                    public_ip = "获取公网ipv6地址失败! 你的光猫开IPv6了吗?"
+                    public_ip = "获取公网ipv6地址失败! 你真的联网了吗? 你的光猫开IPv6了吗?"
             widget_list.append(urwid.Padding(urwid.Text(f"PVE的公网IPv6为: {public_ip}", align="left"), left=8, right=4, min_width=10))
         if (CONF.public_ip.ipv4_or_ipv6 == 'ipv4' and self.public_ipv4) or (CONF.public_ip.ipv4_or_ipv6 == 'ipv6' and self.public_ipv6):
             if CONF.public_ip.ipv4_or_ipv6 == 'ipv4':
