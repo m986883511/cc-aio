@@ -68,6 +68,7 @@ class PublicIpConfigConsoleView(base_view.BaseConsoleView):
 class PublicIpConfigView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
+        self.pve_ip = func.get_hostname_map_ip()
         self.ipv4_ipv6_choose_list = []
         self.ip_types = ['ipv4', 'ipv6']
         self.ip_type_radio_buttons = []
@@ -192,8 +193,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 else:
                     public_ip = "获取公网ipv4地址失败! 你真的联网了吗?"
             widget_list.append(urwid.Padding(urwid.Text(f"公网IPv4地址为: {public_ip}", align="left"), left=8, right=4, min_width=10))
-            pve_ip = func.get_hostname_map_ip()
-            widget_list.append(urwid.Padding(urwid.Text(f"PVE的内网IPv4为: {pve_ip}", align="left"), left=8, right=4, min_width=10))
+            widget_list.append(urwid.Padding(urwid.Text(f"PVE的内网IPv4为: {self.pve_ip}", align="left"), left=8, right=4, min_width=10))
         else:
             if self.public_ipv6:
                 public_ip = self.public_ipv6
@@ -205,7 +205,11 @@ class PublicIpConfigView(base_view.BaseConfigView):
                     public_ip = "获取公网ipv6地址失败! 你的光猫开IPv6了吗?"
             widget_list.append(urwid.Padding(urwid.Text(f"PVE的公网IPv6为: {public_ip}", align="left"), left=8, right=4, min_width=10))
         if (CONF.public_ip.ipv4_or_ipv6 == 'ipv4' and self.public_ipv4) or (CONF.public_ip.ipv4_or_ipv6 == 'ipv6' and self.public_ipv6):
-            widget_list.append(urwid.Padding(urwid.Button("运行自建的API服务来测试公网IP是否可用", self.start_public_ip_test, align="left", wrap='clip'), align="left", left=8, right=1),)
+            if CONF.public_ip.ipv4_or_ipv6 == 'ipv4':
+                tishi = f"请用普通用户登录光猫, 做端口映射, 光猫端口{CONF.public_ip.simple_http_server_port}->{self.pve_ip}:{CONF.public_ip.simple_http_server_port}"
+            else:
+                tishi = f"请用超级管理员用户登录光猫, 将防火墙等级改为低"
+            widget_list.append(urwid.Padding(urwid.Button(f"运行自建的API服务来测试公网IP是否可用 ({tishi})", self.start_public_ip_test, align="left", wrap='clip'), align="left", left=8, right=1),)
         widget_list.append(urwid.Divider())
         widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人(每分钟查一次):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
         if CONF.public_ip.use_check_robot:
