@@ -50,7 +50,8 @@ class DiskEndPoint(object):
         for block_dict in block_list:
             mount = block_dict.get('mountpoint')
             if mount:
-                flag, content = execute.execute_command(f"sed -i '/ \{mount} /d' /etc/fstab")
+                mount_tmp = mount.replace('/', '\/')
+                flag, content = execute.execute_command(f"sed -i '/ {mount_tmp} /d' /etc/fstab")
                 execute.completed(flag, f"delete {mount} in /etc/fstab", content)
                 flag, content = execute.execute_command(f"umount /dev/{block_dict['name']}")
                 execute.completed(flag, f"umount /dev/{block_dict['name']}", content)
