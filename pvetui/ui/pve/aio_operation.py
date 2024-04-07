@@ -16,13 +16,13 @@ class PveAllInOneOperationView(base_view.BaseConfigView):
         super().__init__(button)
         self.menu_buttons = []
         self.services_dict = {
-            'igd':{
-                'text': 'igd (核显直通配置)',
-                'view': igd.IgdConfigView,
-            },
             'disk':{
                 'text': 'disk (硬盘挂载/直通/格式化)',
                 'view': disk.DiskConfigView,
+            },
+            'igd':{
+                'text': 'igd (核显直通配置)',
+                'view': igd.IgdConfigView,
             },
         }
         self.show()
