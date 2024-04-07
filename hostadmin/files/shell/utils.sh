@@ -124,14 +124,27 @@ EOF
 
 
 function delete_local_lvm_storage(){
-    pvesh delete /storage/local-lvm
-    # todo
+    local content
+    content=$(pvesh get /storage)
+    completed $? "pvesh get /storage"
+    if echo "$content" | grep -q "local-lvm"; then
+        pvesh delete /storage/local-lvm
+        completed $? "delete local-lv storage"
+    else
+        echo "no need delete local-lvm"
+    fi
     pvesh set /storage/local --content rootdir,vztmpl,backup,snippets,images,iso
     completed $? "set local storage content"
     pvesh get /storage/local
     completed $? "get local storage content"
-    lvremove pve/data -y
-    # todo
+    content=$(lvs)
+    completed $? "lvs"
+    if echo "$content" | grep -q "data pve"; then
+        lvremove pve/data -y
+        completed $? "delete lv pve/data"
+    else
+        echo "no need delete pve/data"
+    fi
     lvextend -l +100%FREE -r pve/root
     completed $? "lvextend pve/root"
 }
