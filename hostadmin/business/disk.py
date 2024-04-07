@@ -73,6 +73,9 @@ class DiskEndPoint(object):
         execute.completed(flag, f'set {dev_disk}1 {new_mount_path} to /etc/fstab', content)
         flag, content = execute.execute_command(f'mount -a')
         execute.completed(flag, f'mount -a', content)
+        flag, content = execute.execute_command(f'chown -R samba:sambashare {new_mount_path}')
+        execute.completed(flag, f"chown new_mount_path={new_mount_path}")
+
 
     def get_all_disk_by_id(self, disk_list):
         def get_id(disk_name, disk_serial):
