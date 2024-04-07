@@ -130,7 +130,7 @@ function delete_local_lvm_storage(){
     completed $? "set local storage content"
     pvesh get /storage/local
     completed $? "get local storage content"
-    lvremove pve/data
+    lvremove pve/data -y
     # todo
     lvextend -l +100%FREE -r pve/root
     completed $? "lvextend pve/root"
