@@ -311,7 +311,9 @@ def get_public_ipv4(timeout=10):
     try:
         public_ip = requests.get('https://checkip.amazonaws.com', timeout=timeout).text.strip()
     except Exception as e:
-        LOG.info(f'get public_ip failed, err={str(e)}')
+        err = f'get public ipv4 failed, err={str(e)}'
+        LOG.info(err)
+        self.note_msg = err
     else:
         return public_ip
 
