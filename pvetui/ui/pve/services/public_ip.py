@@ -237,18 +237,18 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 tishi = f"请用超级管理员用户登录光猫, 将防火墙等级改为低"
             widget_list.append(urwid.Padding(urwid.Button(f"运行自建的API服务来测试公网IP是否可用 ({tishi})", self.start_public_ip_test, align="left", wrap='clip'), align="left", left=8, right=1),)
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更通知机器人(每分钟查一次):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更检查服务(每分钟查一次)(推荐开):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
         if CONF.public_ip.use_check_robot:
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
-                        urwid.Text("飞书WebHook UUID:", align="left"),
+                        urwid.Text("飞书WebHook UUID (若配置将上报变化的公网IP地址):", align="left"),
                         urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.feishu_webhook_uuid, self.feishu_webhook_uuid_change), "editbx", "editfc"),
                     ]
                 ), left=8, right=10
             ))
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否使用阿里云ddns (依赖变更通知机器人):', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.CheckBox('是否使用阿里云ddns (依赖公网IP变更检查服务):', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), left=4, right=4, min_width=10))
         if CONF.public_ip.use_ddns:
             widget_list.append(urwid.Padding(
                 urwid.Columns(
