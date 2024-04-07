@@ -51,6 +51,14 @@ function get_public_ipv4(){
     echo "public ip is $PUBLIC_IP"
 }
 
+function get_public_ipv6(){
+    echo "enter function name: ${FUNCNAME[0]}"
+    result=$(curl https://v6.ident.me)
+    completed $? "curl https://v6.ident.me"
+    PUBLIC_IP=$result
+    echo "public ip is $PUBLIC_IP"
+}
+
 function write_public_ip(){
     echo "enter function name: ${FUNCNAME[0]}"
     echo $PUBLIC_IP > $PUBLIC_IP_SAVED_PATH
