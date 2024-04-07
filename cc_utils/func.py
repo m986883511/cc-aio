@@ -307,13 +307,14 @@ def get_http_server_one_file_download_url(url, startswith:str, endswith:str):
     return file_url
 
 
-def get_public_ipv4(timeout=10):
+def get_public_ipv4(timeout=10, raise_flag=True):
     try:
         public_ip = requests.get('https://checkip.amazonaws.com', timeout=timeout).text.strip()
     except Exception as e:
         err = f'get public ipv4 failed, err={str(e)}'
         LOG.info(err)
-        self.note_msg = err
+        if raise_flag:
+            raise Exception(err)
     else:
         return public_ip
 

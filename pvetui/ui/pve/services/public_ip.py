@@ -186,6 +186,16 @@ class PublicIpConfigView(base_view.BaseConfigView):
         if '/' in ipv6:
             ipv6 = func.get_string_split_list(ipv6, split_flag='/')[0]
         return ipv6
+    
+    def get_public_ipv4(self):
+        try:
+            public_ip = func.get_public_ipv4(timeout=3)
+        except Exception as e:
+            err = f'读取public_ipv4失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            LOG.error(err)
+            self.note_msg = err
+            return
+        return public_ip
 
     def update_view(self):
         widget_list = []
@@ -203,7 +213,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
             if self.public_ipv4:
                 public_ip = self.public_ipv4
             else:
-                public_ip = func.get_public_ipv4(timeout=3)
+                public_ip = self.get_public_ipv4()
                 if public_ip:
                     self.public_ipv4 = public_ip
                 else:
