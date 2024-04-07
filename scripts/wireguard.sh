@@ -126,7 +126,7 @@ function installQuestions() {
   SERVER_PORT="12001"
  fi
  CLIENT_DNS_1="223.5.5.6"
- CLIENT_DNS_2="223.6.6.6"
+ CLIENT_DNS_2="2400:3200::1"
  ALLOWED_IPS=$(crudini --get /etc/$AUTHOR_NAME/$AIO_CONF_NAME wireguard subnet)
  if [ -z "$ALLOWED_IPS" ];then
    ALLOWED_IPS="192.168.1.0/24"
