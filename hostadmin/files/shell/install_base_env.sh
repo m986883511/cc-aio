@@ -88,6 +88,7 @@ function main(){
     create_pip_conf $REPO_SERVER_IP
     install_base_python_packages
     blacklist_driver
+    set_and_update_grub
     delete_local_lvm_storage
 
     pip install pbr

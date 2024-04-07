@@ -122,6 +122,15 @@ options vfio_iommu_type1 allow_unsafe_interrupts=1
 EOF
 }
 
+function set_and_update_grub(){
+    crudini --set /etc/default/grub "" GRUB_CMDLINE_LINUX_DEFAULT "\"quiet initcall_blacklist=sysfb_init\""
+    completed $? "open grub initcall_blacklist"
+    update-grub
+    completed $? "update-grub"
+    update-initramfs -u -k all
+    completed $? "update-initramfs -u -k all"
+}
+
 
 function delete_local_lvm_storage(){
     local content
