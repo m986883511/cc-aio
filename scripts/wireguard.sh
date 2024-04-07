@@ -117,6 +117,10 @@ function installQuestions() {
 
  # Detect public IPv4 or IPv6 address and pre-fill for the user
  SERVER_PUB_IP=$(cat /tmp/public_ip.txt)
+ if [ -z "$SERVER_PUB_IP" ];then
+  echo "no public find, check /tmp/public_ip.txt"
+  exit 1
+fi
  SERVER_PUB_NIC="vmbr0"
  SERVER_WG_NIC="wg0"
  SERVER_WG_IPV4="10.66.66.1"
