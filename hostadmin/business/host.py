@@ -167,6 +167,8 @@ class HostEndPoint(object):
                 pci_id = string.split(' ')[0]
                 if 'rom' in ini_dict[i]:
                     temp['rom'] = ini_dict[i]['rom']
+                if 'audio_rom' in ini_dict[i]:
+                    temp['audio_rom'] = ini_dict[i]['audio_rom']
                 temp['all_devices'] = get_sub_device_dict(pci_id, content)
                 pci_type = func.get_dict_dict_value(ini_dict, i, 'type') or 'other'
                 if pci_type not in self.support_pci_types:
