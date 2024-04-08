@@ -55,7 +55,7 @@ class InstallBaseEnvView(base_view.BaseConfigView):
             '设置3个dns',
             "屏蔽显卡驱动",
             "设置grub更新grub",
-            "删除pve的local-lvm存储"
+            "删除pve的local-lvm存储",
             '开启cc-hostrpc主机管理服务',
         ]
         self.show()
