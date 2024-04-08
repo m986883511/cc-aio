@@ -12,7 +12,7 @@ AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
 default_opts = [
     cfg.StrOpt('return_last_string', default='返回上一层|ESC', help="conf_path"),
     cfg.StrOpt('tui_title', default='CC-AIO v1.0', help="tui title"),
-    cfg.StrOpt('author_des', default=f'本工具完全免费, 由B站UP主{AUTHOR_ZH_NAME}开发', help="tui title"),
+    cfg.StrOpt('author_des', default=f'本工具完全免费, 由{AUTHOR_ZH_NAME}开发', help="tui title"),
     cfg.IntOpt('console_max_item_number', default=20, help="console_max_item_number"),
 ]
 

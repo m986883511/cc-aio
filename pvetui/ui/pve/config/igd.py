@@ -9,7 +9,7 @@ from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from hostadmin.rpc import rpc_client
-from cc_utils import execute, func, AUTHOR_NAME
+from cc_utils import execute, func, AUTHOR_NAME, AUTHOR_ZH_NAME
 from cc_driver.pve import pvesh
 
 LOG = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class IgdConfigView(base_view.BaseConfigView):
             cpu_model = rpc_client('get_cpu_model', hostname=self.current_hostname)
             return cpu_model
         except Exception as e:
-            err = f'读取cpu型号失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            err = f'读取cpu型号失败, 请联系开发者{AUTHOR_ZH_NAME}, err={str(e)}'
             LOG.error(err)
             self.note_msg = err
             return err
@@ -56,7 +56,7 @@ class IgdConfigView(base_view.BaseConfigView):
             self.igd_devices = pci_devices.get('igd')
             self.find_igd_devices()
         except Exception as e:
-            err = f'读取支持的gpu型号失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            err = f'读取支持的gpu型号失败, 请联系开发者{AUTHOR_ZH_NAME}, err={str(e)}'
             LOG.error(err)
             self.note_msg = err
             return err
@@ -115,7 +115,7 @@ class IgdConfigView(base_view.BaseConfigView):
             widget_list.append(urwid.Padding(urwid.Text(f"你的核显vendor是: {self.igd_main_vendor}", align="left"), left=8, right=10),)
             widget_list.append(urwid.Padding(urwid.Text(f"你的核显full_pci_id是: {self.igd_full_pci_id}", align="left"), left=8, right=10),)
         else:
-            widget_list.append(urwid.Padding(urwid.Text(f"没有找到核显, 如果你确定真的有, 清联系开发者{AUTHOR_NAME}, 很快就能加一下.", align="left"), left=8, right=10),)
+            widget_list.append(urwid.Padding(urwid.Text(f"没有找到核显, 如果你确定真的有, 清联系开发者{AUTHOR_ZH_NAME}, 很快就能加一下.", align="left"), left=8, right=10),)
         widget_list.append(urwid.Divider())
         if self.find_igd_flag:
             widget_list.append(urwid.Padding(urwid.Text(f"直通核显给哪台qemu虚拟机呢?", align="left"), left=4, right=10),)

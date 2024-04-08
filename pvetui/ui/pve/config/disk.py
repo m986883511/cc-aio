@@ -6,7 +6,7 @@ import urwid
 from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
-from cc_utils import execute, func, AUTHOR_NAME
+from cc_utils import execute, func, AUTHOR_NAME, AUTHOR_ZH_NAME
 from hostadmin.rpc import rpc_client
 
 LOG = logging.getLogger(__name__)
@@ -166,7 +166,7 @@ class DiskConfigView(base_view.BaseConfigView):
             all_disk_list = rpc_client('get_all_disks', hostname=self.current_hostname)
             return all_disk_list
         except Exception as e:
-            err = f'获取非系统盘失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            err = f'获取非系统盘失败, 联系开发者{AUTHOR_ZH_NAME}, err={str(e)}'
             LOG.error(err)
             self.note_msg = err
             return []

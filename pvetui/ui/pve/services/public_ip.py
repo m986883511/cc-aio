@@ -8,7 +8,7 @@ from pvetui.config import CONF
 from pvetui import ui
 from pvetui.ui import my_widget, base_view
 from hostadmin.rpc import rpc_client
-from cc_utils import execute, func, AUTHOR_NAME
+from cc_utils import execute, func, AUTHOR_NAME, AUTHOR_ZH_NAME
 
 LOG = logging.getLogger(__name__)
 
@@ -176,7 +176,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
         try:
             network_dict = rpc_client('get_pve_main_bridge_nics')
         except Exception as e:
-            err = f'读取pve的vmbr0网络配置, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            err = f'读取pve的vmbr0网络配置, 请联系开发者{AUTHOR_ZH_NAME}, err={str(e)}'
             LOG.error(err)
             self.note_msg = err
             return
@@ -191,7 +191,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
         try:
             public_ip = func.get_public_ipv4(timeout=3)
         except Exception as e:
-            err = f'读取public_ipv4失败, 联系开发者{AUTHOR_NAME}, err={str(e)}'
+            err = f'读取public_ipv4失败, 请联系开发者{AUTHOR_ZH_NAME}, err={str(e)}'
             LOG.error(err)
             self.note_msg = err
             return
