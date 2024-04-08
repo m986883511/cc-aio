@@ -34,6 +34,7 @@ ceph_opts = [
 
 igd_opts = [
     cfg.StrOpt('audio_rom_path', default='', help="audio_rom_path"),
+    cfg.StrOpt('igd_rom_path', default='', help="igd_rom_path"),
 ]
 
 network_opts = [

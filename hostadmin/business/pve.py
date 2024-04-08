@@ -50,10 +50,13 @@ class PveEndPoint(object):
             execute.completed(0, f'{dst_path} already exist')
         return vbio_file_path
 
-    def set_vm_igd_paththrough(self, ctxt, vmid, audio_rom_path):
+    def set_vm_igd_paththrough(self, ctxt, vmid, igd_rom_path, audio_rom_path):
+        flag = os.path.isfile(igd_rom_path)
+        execute.completed(not flag, f'check igd_rom_path={igd_rom_path} exist')
         flag = os.path.isfile(audio_rom_path)
         execute.completed(not flag, f'check audio_rom_path={audio_rom_path} exist')
         audio_rom_name = os.path.basename(audio_rom_path)
+        igd_rom_name = os.path.basename(igd_rom_path)
         dst_path = os.path.join('/usr/share/kvm', audio_rom_name)
         if not os.path.isfile(dst_path):
             flag, content = execute.execute_command(f'cp {audio_rom_path} /usr/share/kvm')
@@ -64,16 +67,14 @@ class PveEndPoint(object):
         igd_device = HostEndPoint().get_node_igd_device(ctxt)
         execute.completed(not igd_device, f'get_node_igd_device')
         self.del_vm_hostpci_config(ctxt, vmid=vmid)
-        vbios_file_path = self.create_vbios_file(ctxt)
-        file_name = os.path.basename(vbios_file_path)
+        cmd_type = HostEndPoint().get_intel_or_amd_cpu_type()
+        vga_str = 'legacy-igd=1' if cmd_type == 'intel' else 'pcie=1,x-vga=1'
         igd_full_pci_id = igd_device['full_pci_id']
-        value = f'{igd_full_pci_id},pcie=1,x-vga=1,romfile={file_name}'
+        value = f'{igd_full_pci_id},{vga_str},romfile={igd_rom_name}'
         flag, content = execute.execute_command(f'pvesh create /nodes/localhost/qemu/{vmid}/config --hostpci0 {value}')
         execute.completed(flag, f'set {vmid} hostpci0 {value}')
-        audio_list = igd_device.get('audio') or []
-        flag = len(audio_list) == 1
-        execute.completed(not flag, f'check exist one audio failed, audio_list={audio_list}')
-        audio = audio_list[0]
+        audio = igd_device.get('audio') or {}
+        execute.completed(not audio, f'check audio failed, audio={audio}')
         value = f"{audio['pci_id']},romfile={audio_rom_name}"
         flag, content = execute.execute_command(f'pvesh create /nodes/localhost/qemu/{vmid}/config --hostpci1 {value}')
         execute.completed(flag, f'set {vmid} hostpci1 {value}')

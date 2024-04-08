@@ -165,7 +165,7 @@ def create_vbios_file():
 @click.argument('vmid')
 def del_vm_hostpci_config(vmid):
     """
-    设置某个虚拟机直通核显
+    设置某个虚拟机删除核显配置
     
     vmid: 虚拟机id
     """
@@ -175,16 +175,18 @@ def del_vm_hostpci_config(vmid):
 
 @pve.command()
 @click.argument('vmid')
+@click.argument('igd_rom_path')
 @click.argument('audio_rom_path')
-def set_vm_igd_paththrough(vmid, audio_rom_path):
+def set_vm_igd_paththrough(vmid, igd_rom_path, audio_rom_path):
     """
     设置某个虚拟机直通核显
     
     vmid: 虚拟机id
 
+    igd_rom_path: vbios的rom绝对路径
     audio_rom_path: 音频文件的rom绝对路径
     """
-    business.PveEndPoint().set_vm_igd_paththrough(ctxt={}, vmid=vmid, audio_rom_path=audio_rom_path)
+    business.PveEndPoint().set_vm_igd_paththrough(ctxt={}, vmid=vmid, igd_rom_path=igd_rom_path, audio_rom_path=audio_rom_path)
     click.secho(f"set_vm_igd_paththrough, end and exit.", fg='green')
 
 

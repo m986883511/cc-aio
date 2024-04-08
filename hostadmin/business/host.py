@@ -92,6 +92,16 @@ class HostEndPoint(object):
         flag, content = execute.execute_command(cmd, shell=True)
         return flag == 0
 
+    def get_intel_or_amd_cpu_type(self):
+        flag, content = execute.execute_command('cat /proc/cpuinfo |grep vendor_id')
+        execute.completed(flag, f'find vendor_id in cpuinfo')
+        if 'amd' in content.lower():
+            return 'amd'
+        elif 'intel' in content.lower():
+            return 'intel'
+        else:
+            execute.completed(1, f'not known cpu type, content={content}')
+
     def get_node_igd_device(self, ctxt):
         pci_devices = self.get_support_pci_devices(ctxt)
         igd_devices = pci_devices.get('igd')
@@ -112,45 +122,76 @@ class HostEndPoint(object):
         if 'audio_rom' in this_device:
             res['audio_rom'] = this_device['audio_rom']
         all_devices = this_device['all_devices']
-        audio = [
+        audios = [
             {'vendor':value['vendor'], 'pci_id':value['pci_id'], 'name':value['long_name']}
-            for value in all_devices if 'audio' in value['long_name'].lower() and value['vendor'].startswith(res['main_vendor'][:7])
+            for value in all_devices if 'audio' in value['long_name'].lower()
         ]
-        res['audio'] = audio
+        if audios:
+            if len(audios) == 1:
+                res['audio'] = audios[0]
+            else:
+                for audio in audios:
+                    if audio['vendor'].startswith(res['main_vendor'][:7]):
+                        res['audio']
+                        break
+                else:
+                    execute.completed(1, f'have multi audio pci, not known which is hdmi audio, audios={audios}')
+        else:
+            flag, content = execute.execute_command('lspci -nn|grep -i audio', shell=True)
+            if flag != 0:
+                execute.completed(1, f'get audio pci')
+            else:
+                content_list = func.get_string_split_list(content, split_flag='\n')
+                if len(content_list) == 1:
+                    temp_id = content_list[0][:7]
+                    temp_full_pci_id = '0000:' + temp_id if len(temp_id) == 7 else temp_id
+                    audio_dict = self.nnk_analyse(temp_full_pci_id)
+                    vendor = audio_dict
+                    vendor_id = self._get_vendor_id(content_list[0])
+                    if vendor_id:
+                        audio_dict['vendor'] = vendor_id
+                    res['audio'] = audio_dict
+                else:
+                    execute.completed(1, f'get multi audio pci, content_list={content_list}')
         return res
 
+    def nnk_analyse(self, pci_id) -> dict:
+        cmd = f'lspci -v -s {pci_id}'
+        flag, content = execute.execute_command(cmd, shell=True)
+        execute.completed(flag, f'execute {cmd}', content)
+        content_list = func.get_string_split_list(content, split_flag='\n')
+        return_dict = {'pci_id': pci_id, 'cmd': cmd, 'error': []}
+        for i in content_list:
+            if pci_id[5:] in i:
+                return_dict['long_name'] = i.replace(pci_id[5:], '').strip()
+            if 'driver in use' in i.lower():
+                return_dict['driver'] = i.split(':')[-1].strip()
+            if 'iommu group' in i.lower():
+                return_dict['iommu'] = i.lower().split('iommu group')[-1].strip()
+            if 'error' in i.lower() or 'unable' in i.lower():
+                return_dict['error'].append(i)
+        return return_dict
+
+    def _get_vendor_id(self, line):
+        pattern = r"\[([0-9a-fA-F]{4}:[0-9a-fA-F]{4})\]"
+        matches = re.findall(pattern, line)
+        if matches:
+            return matches[0]
+
     def get_support_pci_devices(self, ctxt):
-        def nnk_analyse(pci_id) -> dict:
-            cmd = f'lspci -v -s {pci_id}'
-            flag, content = execute.execute_command(cmd, shell=True)
-            execute.completed(flag, f'execute {cmd}', content)
-            content_list = func.get_string_split_list(content, split_flag='\n')
-            return_dict = {'pci_id': pci_id, 'cmd': cmd, 'error': []}
-            for i in content_list:
-                if pci_id[5:] in i:
-                    return_dict['long_name'] = i.replace(pci_id[5:], '').strip()
-                if 'driver in use' in i.lower():
-                    return_dict['driver'] = i.split(':')[-1].strip()
-                if 'iommu group' in i.lower():
-                    return_dict['iommu'] = i.lower().split('iommu group')[-1].strip()
-                if 'error' in i.lower() or 'unable' in i.lower():
-                    return_dict['error'].append(i)
-            return return_dict
-        
         def get_sub_device_dict(master_pci_id, lspci_nn_content):
             master_pci_id_prifix = master_pci_id[:-1]
             lspci_nn_content_list = func.get_string_split_list(lspci_nn_content, split_flag='\n')
             temp_return_dict = []
-            pattern = r"\[([0-9a-fA-F]{4}:[0-9a-fA-F]{4})\]"
             for line in lspci_nn_content_list:
                 if master_pci_id_prifix not in line:
                     continue
                 temp_id = line.split(' ')[0]
                 temp_full_pci_id = '0000:' + temp_id if len(temp_id) == 7 else temp_id
-                temp_nnk_dict = nnk_analyse(temp_full_pci_id)
-                matches = re.findall(pattern, line)
-                if matches:
-                    temp_nnk_dict['vendor'] = matches[0]
+                temp_nnk_dict = self.nnk_analyse(temp_full_pci_id)
+                vendor_id = self._get_vendor_id(line)
+                if vendor_id:
+                    temp_nnk_dict['vendor'] = vendor_id
                 temp_return_dict.append(temp_nnk_dict)
             return temp_return_dict
 
