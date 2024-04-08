@@ -98,7 +98,7 @@ class ServiceEndPoint(object):
         flag, content = execute.execute_command(f'(echo {samba_user_password}; echo {samba_user_password}) | smbpasswd -s -a samba')
         execute.completed(flag, f"create samba service user=samba")
         flag, content = execute.execute_command(f'cp -r /opt/{AUTHOR_NAME}/{AUTHOR_NAME}-aio-bin/gift/* {share_path}')
-        execute.completed(flag, f"copy chaoge gift")
+        execute.completed(flag, f"copy chaochao gift")
         flag, content = execute.execute_command(f'chown -R samba:sambashare {share_path}')
         execute.completed(flag, f"chown share_path={share_path}")
         # 生效配置文件 重启smbd服务
