@@ -107,7 +107,7 @@ class DiskOperationView(base_view.BaseConfigView):
                 )
             )
             if self.geshihua_input_text == self.geshihua_confirm_text:
-                widget_list.append(urwid.Padding(urwid.Button("点击此按钮将格式化此硬盘, 所有数据将丢失, 后果很严重想清楚再点!", self.geshihua_disk_button, align="center"), align="left", left=8, right=4))
+                widget_list.append(urwid.Padding(urwid.AttrMap(urwid.Button("点击此按钮将格式化此硬盘, 所有数据将丢失, 后果很严重想清楚再点!", self.geshihua_disk_button, align="center"), None, focus_map='buttn'), align="left", left=8, right=4))
         widget_list.append(urwid.Divider())
         widget_list.append(urwid.Padding(urwid.CheckBox('挂载硬盘到samba共享存储:', state=self.mount_flag, on_state_change=self.mount_flag_change), left=4, right=4, min_width=10))
         if self.mount_flag:
@@ -134,7 +134,7 @@ class DiskOperationView(base_view.BaseConfigView):
             )
             if self.mount_input_text == self.mount_confirm_text:
                 new_mount_path = f'{CONF.samba.default_share_path}/{self.origin_layout_button_label}'
-                widget_list.append(urwid.Padding(urwid.Button(f"点击此按钮将解除{self.disk_name}硬盘所有挂载, 并将其挂载到{new_mount_path}", self.mount_disk_button, user_data=new_mount_path, align="center"), align="left", left=8, right=4))
+                widget_list.append(urwid.Padding(urwid.AttrMap(urwid.Button(f"点击此按钮将解除{self.disk_name}硬盘所有挂载, 并将其挂载到{new_mount_path}", self.mount_disk_button, user_data=new_mount_path, align="center"), None, focus_map='buttn'), align="left", left=8, right=4))
         self.pile_view.widget_list = widget_list
 
     def show(self):
@@ -146,7 +146,7 @@ class DiskOperationView(base_view.BaseConfigView):
                 self.pile_view,
                 self.note_text,
                 urwid.Divider(),
-                urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=4, right=4),
+                urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=4, right=4),
             ]
         )
         ui.top_layer.open_box(urwid.Filler(body, valign='top'))
