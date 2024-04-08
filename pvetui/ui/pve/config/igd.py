@@ -25,21 +25,6 @@ class IgdConfigView(base_view.BaseConfigView):
         self.get_igd_devices()
         self.show()
 
-    def find_igd_devices(self):
-        self.find_igd_flag = False
-        if not self.igd_devices:
-            return
-        igd_pci_full_ids = list(self.igd_devices.keys())
-        if len(igd_pci_full_ids) != 1:
-            err_msg = f'读取到多个核显设备，不正常啊! keys={igd_pci_full_ids}'
-            LOG.error(err_msg)
-            self.note_msg = err_msg
-        igd_full_pci_id = igd_pci_full_ids[0]
-        self.igd_full_pci_id = igd_full_pci_id
-        self.igd_name = self.igd_devices[igd_full_pci_id]['name']
-        self.igd_main_vendor = self.igd_devices[igd_full_pci_id]['main_vendor']
-        self.find_igd_flag = True
-
     def get_cpu_model(self):
         try:
             cpu_model = rpc_client('get_cpu_model', hostname=self.current_hostname)
@@ -52,14 +37,41 @@ class IgdConfigView(base_view.BaseConfigView):
     
     def get_igd_devices(self):
         try:
-            pci_devices = rpc_client('get_support_pci_devices', hostname=self.current_hostname)
-            self.igd_devices = pci_devices.get('igd')
-            self.find_igd_devices()
+            igd_device = rpc_client('get_node_igd_device', hostname=self.current_hostname)
         except Exception as e:
             err = f'读取支持的gpu型号失败, 请联系开发者{AUTHOR_ZH_NAME}, err={str(e)}'
             LOG.error(err)
             self.note_msg = err
             return err
+        self.find_igd_flag = False
+        if not self.igd_devices:
+            return
+        self.igd_full_pci_id = igd_device['full_pci_id']
+        self.igd_name = igd_devices['name']
+        self.igd_main_vendor = igd_devices['main_vendor']
+        self.audio_rom = igd_devices.get('audio_rom')
+        self.find_audio_rom_path()
+        self.find_igd_flag = True
+
+    def find_audio_rom_path(self):
+        if not self.audio_rom:
+            return
+        if CONF.igd.audio_rom_path:
+            return
+        # 先检查用户自己传的
+        flag, content = execute.execute_command(f'find /{CONF.samba.default_share_path}/{AUTHOR_ZH_NAME}的赠礼 -name my-audio.com')
+        if flag == 0:
+            content_list = func.get_string_split_list(content, split_flag='\n')
+            if content_list:
+                CONF.igd.audio_rom_path = content_list[0]
+                return
+        # 再检查版本自带的
+        flag, content = execute.execute_command(f'find /opt/{AUTHOR_NAME} -name {self.audio_rom}')
+        if flag == 0:
+            content_list = func.get_string_split_list(content, split_flag='\n')
+            if content_list:
+                CONF.igd.audio_rom_path = content_list[0]
+                return
 
     def get_who_use_igd(self):
         vmids = []
