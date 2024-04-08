@@ -59,7 +59,7 @@ class IgdConfigView(base_view.BaseConfigView):
         if CONF.igd.audio_rom_path:
             return
         # 先检查用户自己传的
-        flag, content = execute.execute_command(f'find /{CONF.samba.default_share_path}/{AUTHOR_ZH_NAME}的赠礼 -name my-audio.com')
+        flag, content = execute.execute_command(f'find /{CONF.samba.default_share_path}/{AUTHOR_ZH_NAME}的赠礼 -name my-audio.rom')
         if flag == 0:
             content_list = func.get_string_split_list(content, split_flag='\n')
             if content_list:
