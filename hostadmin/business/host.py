@@ -101,12 +101,17 @@ class HostEndPoint(object):
         if len(igd_pci_full_ids) != 1:
             execute.completed(1, f'读取到多个核显设备，不正常啊! keys={igd_pci_full_ids}')
         igd_full_pci_id = igd_pci_full_ids[0]
+        this_device = igd_devices[igd_full_pci_id]
         res = {
-            'name': igd_devices[igd_full_pci_id]['name'],
+            'name': this_device['name'],
             'full_pci_id': igd_full_pci_id,
-            'main_vendor': igd_devices[igd_full_pci_id]['main_vendor']
+            'main_vendor': this_device['main_vendor']
         }
-        all_devices = igd_devices[igd_full_pci_id]['all_devices']
+        if 'rom' in this_device:
+            res['rom'] = this_device['rom']
+        if 'audio_rom' in this_device:
+            res['audio_rom'] = this_device['audio_rom']
+        all_devices = this_device['all_devices']
         audio = [
             {'vendor':value['vendor'], 'pci_id':value['pci_id'], 'name':value['long_name']}
             for value in all_devices if 'audio' in value['long_name'].lower() and value['vendor'].startswith(res['main_vendor'][:7])
