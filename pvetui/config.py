@@ -43,12 +43,12 @@ network_opts = [
     cfg.IntOpt('vmbond_vlan', default=1, help="vmbond_vlan"),
     cfg.IntOpt('extbond_vlan', default=1, help="extbond_vlan"),
 
-    cfg.StrOpt('ip_cidr', default=network.get_main_ip_address(), help="ip_cidr"),
+    cfg.StrOpt('ip_cidr', default=network.get_main_ip_address() or '', help="ip_cidr"),
     cfg.StrOpt('dns1', default="223.5.5.5", help="dns1"),
     cfg.StrOpt('dns2', default="223.6.6.6", help="dns2"),
     cfg.StrOpt('dns3', default="2400:3200::1", help="dns3"),
-    cfg.StrOpt('gateway', default=network.get_default_gateway(), help="gateway"),
-    cfg.StrOpt('hostname', default=func.get_current_node_hostname(), help="hostname"),
+    cfg.StrOpt('gateway', default=network.get_default_gateway() or '', help="gateway"),
+    cfg.StrOpt('hostname', default=func.get_current_node_hostname() or '', help="hostname"),
 ]
 
 base_env_opts = [
@@ -103,7 +103,7 @@ openstack_opts = [
     cfg.StrOpt('enable_cinder_backend_nfs', default='no', help="enable_cinder_backend_nfs"),
     cfg.StrOpt('ceph_admin_node', default='', help="ceph_admin_node"),
     cfg.BoolOpt('rsync_config_to_other_control_nodes', default=False, help='rsync_config_to_other_control_nodes'),
-    cfg.StrOpt('control_nodes_ntp_server', default=func.get_hostname_map_ip(), help='control_nodes_ntp_server'),
+    cfg.StrOpt('control_nodes_ntp_server', default=func.get_hostname_map_ip() or '', help='control_nodes_ntp_server'),
     cfg.StrOpt('enable_cinder', default='yes', help='enable_cinder'),
 ]
 

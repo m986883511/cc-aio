@@ -173,13 +173,13 @@ class NetworkConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("IP地址/掩码", align="left"),
-                        urwid.AttrMap(self.access_ip_mask_edit_obj, "editbx", "editfc"),
+                        urwid.AttrMap(self.access_ip_mask_edit_obj, "bright", "buttn"),
                     ]
                 ),
                 urwid.Columns(
                     [
                         urwid.Text("默认网关", align="left"),
-                        urwid.AttrMap(self.access_default_gateway_edit_obj, "editbx", "editfc"),
+                        urwid.AttrMap(self.access_default_gateway_edit_obj, "bright", "buttn"),
                     ]
                 )
             ]
@@ -251,7 +251,7 @@ class NetworkConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("Bond模式(不填默认为模式0, 即balance-rr)", align="left"),
-                        urwid.AttrMap(self.bond_mode_edit_obj, "editbx", "editfc")
+                        urwid.AttrMap(self.bond_mode_edit_obj, "bright", "buttn")
                     ]
                 ), left=8, right=10
             ),

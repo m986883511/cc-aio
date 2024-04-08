@@ -74,7 +74,7 @@ class InstallBaseEnvView(base_view.BaseConfigView):
         for i, text in enumerate(self.text_list):
             widget_list.append(urwid.Padding(urwid.Text(f'{i+1}. {text}', align="left"), left=8, right=8))
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('安装成功后立即重启', state=CONF.base_env.need_reboot_flag, on_state_change=self.reboot_flag_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.AttrMap(urwid.CheckBox('安装成功后立即重启', state=CONF.base_env.need_reboot_flag, on_state_change=self.reboot_flag_change), None, focus_map='buttn'), left=4, right=4, min_width=10))
         widget_list.append(urwid.Divider())
         self.pile_view.widget_list = [*widget_list]
 
@@ -89,8 +89,8 @@ class InstallBaseEnvView(base_view.BaseConfigView):
                 self.note_text,
                 urwid.Columns(
                     [
-                        urwid.Padding(urwid.Button(f"保存配置并开始安装{installed_str}", self.start_install_env, align="center"), align="center", left=1, right=1),
-                        urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button(f"保存配置并开始安装{installed_str}", self.start_install_env, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
                     ]
                 )
             ]

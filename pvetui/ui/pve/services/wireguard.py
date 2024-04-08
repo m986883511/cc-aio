@@ -128,18 +128,18 @@ class WireguardConfigView(base_view.BaseConfigView):
 
     def update_view(self):
         widget_list = []
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启VPN隧道:', state=CONF.wireguard.open_flag, on_state_change=self.open_flag_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.AttrMap(urwid.CheckBox('是否开启VPN隧道:', state=CONF.wireguard.open_flag, on_state_change=self.open_flag_change), None, focus_map='buttn'), left=4, right=4, min_width=10))
         if CONF.wireguard.open_flag:
             widget_list.append(urwid.Divider())
             widget_list.append(urwid.Padding(
                 urwid.Columns([
                         urwid.Text("服务监听端口:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.server_port, self.server_port_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.server_port, self.server_port_change), "bright", "buttn"),
                 ]), left=4, right=10))
             widget_list.append(urwid.Padding(
                 urwid.Columns([
                         urwid.Text("客户端默认允许访问的网络(cidr格式):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.subnet, self.subnet_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.wireguard.subnet, self.subnet_change), "bright", "buttn"),
                 ]), left=4, right=10))
             widget_list.append(urwid.Divider())
             widget_list.append(urwid.Padding(
@@ -147,8 +147,8 @@ class WireguardConfigView(base_view.BaseConfigView):
                     [
                         urwid.Text("添加新的客户端:", align="left"),
                         urwid.Columns([
-                            urwid.AttrMap(my_widget.TextEdit("", self.new_client_name, self.new_client_text_change), "editbx", "editfc"),
-                            urwid.Button("开始添加", self.new_client_click, align="center"), 
+                            urwid.AttrMap(my_widget.TextEdit("", self.new_client_name, self.new_client_text_change), "bright", "buttn"),
+                            urwid.AttrMap(urwid.Button("开始添加", self.new_client_click, align="center"), None, focus_map='buttn') 
                         ])
                     ]
                 ), left=4, right=10
@@ -161,8 +161,8 @@ class WireguardConfigView(base_view.BaseConfigView):
                 widget_list.append(urwid.Padding(
                     urwid.GridFlow([
                             urwid.Text(f"名称: {client}", align="left"), 
-                            urwid.Button("显示", self.show_cilent, align="center", user_data=client), 
-                            urwid.Button("刪除", self.delete_cilent, align="center", user_data=client),
+                            urwid.AttrMap(urwid.Button("显示", self.show_cilent, align="center", user_data=client), None, focus_map='buttn'), 
+                            urwid.AttrMap(urwid.Button("刪除", self.delete_cilent, align="center", user_data=client), None, focus_map='buttn'),
                             urwid.Divider()
                     ], 20,3,1,"left"), left=8, right=10, min_width=10))
         else:
@@ -179,8 +179,8 @@ class WireguardConfigView(base_view.BaseConfigView):
                 self.note_text,
                 urwid.Columns(
                     [
-                        urwid.Padding(urwid.Button("保存并配置服务", self.save_config, align="center"), align="center", left=1, right=1),
-                        urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button("保存并配置服务", self.save_config, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
                     ]
                 ),
             ]

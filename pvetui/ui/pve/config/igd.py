@@ -123,7 +123,7 @@ class IgdConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("HDMI的音频rom文件绝对路径:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.igd.audio_rom_path, self.audio_rom_path_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.igd.audio_rom_path, self.audio_rom_path_change), "bright", "buttn"),
                     ]
                 ),
                 align="left", left=8, right=10,),
@@ -150,12 +150,12 @@ class IgdConfigView(base_view.BaseConfigView):
                 vm_status = qemu_dict['status']
                 if qemu_dict['vmid'] in use_igd_vmids:
                     if vm_status == 'stopped':
-                        operation_button = urwid.Padding(urwid.Button(f"删除直通配置", user_data=qemu_dict['vmid'], on_press=self.del_igd_passthrough, align="center"), align="center", left=1, right=1)
+                        operation_button = urwid.Padding(urwid.AttrMap(urwid.Button(f"删除直通配置", user_data=qemu_dict['vmid'], on_press=self.del_igd_passthrough, align="center"), None, focus_map='buttn'), align="center", left=1, right=1)
                     else:
                         operation_button = urwid.Padding(urwid.Text(f"停止后才能删除配置", align="center"), align="center", left=1, right=1)
                 else:
                     if vm_status == 'stopped':
-                        operation_button = urwid.Padding(urwid.Button(f"配置直通", user_data=qemu_dict['vmid'], on_press=self.set_igd_passthrough, align="center"), align="center", left=1, right=1)
+                        operation_button = urwid.Padding(urwid.AttrMap(urwid.Button(f"配置直通", user_data=qemu_dict['vmid'], on_press=self.set_igd_passthrough, align="center"), None, focus_map='buttn'), align="center", left=1, right=1)
                     else:
                         operation_button = urwid.Padding(urwid.Text(f"停止后才能配置直通", align="center"), align="center", left=1, right=1)
                 widget_list.append(
@@ -181,7 +181,7 @@ class IgdConfigView(base_view.BaseConfigView):
                 self.pile_view,
                 self.note_text,
                 urwid.Divider(),
-                urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1)
+                urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=1, right=1)
             ]
         )
         ui.top_layer.open_box(urwid.Filler(body, valign='top'))

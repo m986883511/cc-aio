@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 def menu_button(caption, callback):
     button = urwid.Button(caption, align='center')
     urwid.connect_signal(button, 'click', callback)
-    return urwid.AttrMap(button, None, focus_map='reversed')
+    return urwid.AttrMap(button, None, focus_map='buttn')
 
 
 def sub_menu(caption, choices):
@@ -99,7 +99,7 @@ def main():
         ("editfc", "white", "dark blue", "bold"),
         ("editbx", "light gray", "dark blue"),
         ("editcp", "black", "light gray", "standout"),
-        ("bright", "dark gray", "light gray", ("bold", "standout")),
+        ("bright", "black", "light gray", ("bold", "standout")),
         ("buttn", "black", "dark cyan"),
         ("buttnf", "white", "dark blue", "bold"),
     ]

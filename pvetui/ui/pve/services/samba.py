@@ -75,7 +75,7 @@ class SambaConfigView(base_view.BaseConfigView):
                     urwid.Columns(
                         [
                             urwid.Text("共享目录", align="left"),
-                            urwid.AttrMap(my_widget.TextEdit("", CONF.samba.default_share_path, self.default_share_path_change_button_func), "editbx", "editfc"),
+                            urwid.AttrMap(my_widget.TextEdit("", CONF.samba.default_share_path, self.default_share_path_change_button_func), "bright", "buttn"),
                         ]
                     ), left=8, right=10
                 ),
@@ -85,7 +85,7 @@ class SambaConfigView(base_view.BaseConfigView):
                     urwid.Columns(
                         [
                             urwid.Text("samba用户密码", align="left"),
-                            urwid.AttrMap(my_widget.TextEdit("", CONF.samba.samba_default_password, self.default_password_change_button_func), "editbx", "editfc"),
+                            urwid.AttrMap(my_widget.TextEdit("", CONF.samba.samba_default_password, self.default_password_change_button_func), "bright", "buttn"),
                         ]
                     ), left=8, right=10
                 ),
@@ -103,8 +103,8 @@ class SambaConfigView(base_view.BaseConfigView):
                 self.note_text,
                 urwid.Columns(
                     [
-                        urwid.Padding(urwid.Button("保存并配置服务", self.save_config, align="center"), align="center", left=1, right=1),
-                        urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button("保存并配置服务", self.save_config, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
                     ]
                 ),
             ]

@@ -101,7 +101,7 @@ class DiskOperationView(base_view.BaseConfigView):
                     urwid.Columns(
                         [
                             urwid.Text(f"二次确认, 若要格式化请输入({self.geshihua_confirm_text}), 才会显示操作按钮:", align="left"),
-                            urwid.AttrMap(my_widget.TextEdit("", self.geshihua_input_text, self.geshihua_input_text_change_button_func), "editbx", "editfc")
+                            urwid.AttrMap(my_widget.TextEdit("", self.geshihua_input_text, self.geshihua_input_text_change_button_func), "bright", "buttn")
                         ]
                     ), align="left", left=8, right=4
                 )
@@ -127,7 +127,7 @@ class DiskOperationView(base_view.BaseConfigView):
                     urwid.Columns(
                         [
                             urwid.Text(f"二次确认, 若要挂载请输入({self.mount_confirm_text}), 才会显示操作按钮:", align="left"),
-                            urwid.AttrMap(my_widget.TextEdit("", self.mount_input_text, self.mount_input_text_change_button_func), "editbx", "editfc")
+                            urwid.AttrMap(my_widget.TextEdit("", self.mount_input_text, self.mount_input_text_change_button_func), "bright", "buttn")
                         ]
                     ), align="left", left=8, right=4
                 )
@@ -198,7 +198,7 @@ class DiskConfigView(base_view.BaseConfigView):
                 urwid.Padding(
                     urwid.Columns(
                         [
-                            urwid.Button(button_text, self.disk_config, user_data=disk_dict['name'], align="center"),
+                            urwid.AttrMap(urwid.Button(button_text, self.disk_config, user_data=disk_dict['name'], align="center"), None, focus_map='buttn'),
                             urwid.Columns([
                                 urwid.Text(disk_dict['name'], align="center"),
                                 urwid.Text(disk_dict['media'], align="center"),
@@ -219,7 +219,7 @@ class DiskConfigView(base_view.BaseConfigView):
                 self.pile_view,
                 self.note_text,
                 urwid.Divider(),
-                urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=4, right=4),
+                urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=4, right=4),
             ]
         )
         ui.top_layer.open_box(urwid.Filler(body, valign='top'))

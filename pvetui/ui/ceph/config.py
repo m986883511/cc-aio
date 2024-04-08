@@ -37,7 +37,7 @@ class CephClusterConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("bcache分区大小(GB)", align="left"),
-                        urwid.AttrMap(my_widget.IntEdit('bcache_size', CONF_group_name='ceph', my_max=CONF.ceph.bcache_size_minimum*100, my_min=CONF.ceph.bcache_size_minimum), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.IntEdit('bcache_size', CONF_group_name='ceph', my_max=CONF.ceph.bcache_size_minimum*100, my_min=CONF.ceph.bcache_size_minimum), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ),
@@ -45,7 +45,7 @@ class CephClusterConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("db分区大小(GB)", align="left"),
-                        urwid.AttrMap(my_widget.IntEdit('db_size', CONF_group_name='ceph', my_max=CONF.ceph.db_size_minimum*100, my_min=CONF.ceph.db_size_minimum), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.IntEdit('db_size', CONF_group_name='ceph', my_max=CONF.ceph.db_size_minimum*100, my_min=CONF.ceph.db_size_minimum), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ),
@@ -53,7 +53,7 @@ class CephClusterConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("缓存盘与数据盘的数量配比", align="left"),
-                        urwid.AttrMap(my_widget.IntEdit('max_backends_per_cache', CONF_group_name='ceph', my_max=CONF.ceph.max_backends_per_cache_minimum*100, my_min=CONF.ceph.max_backends_per_cache_minimum), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.IntEdit('max_backends_per_cache', CONF_group_name='ceph', my_max=CONF.ceph.max_backends_per_cache_minimum*100, my_min=CONF.ceph.max_backends_per_cache_minimum), "bright", "buttn"),
                     ]
                 ),left=8, right=10
             ),
@@ -118,7 +118,7 @@ class CephClusterConfigView(base_view.BaseConfigView):
                     urwid.Columns(
                         [
                             urwid.Text("pool副本数", align="left"),
-                            urwid.AttrMap(my_widget.IntEdit('osd_pool_default_size', CONF_group_name='ceph', my_max=CONF.ceph.osd_pool_default_min_size*3, my_min=CONF.ceph.osd_pool_default_min_size), "editbx", "editfc"),
+                            urwid.AttrMap(my_widget.IntEdit('osd_pool_default_size', CONF_group_name='ceph', my_max=CONF.ceph.osd_pool_default_min_size*3, my_min=CONF.ceph.osd_pool_default_min_size), "bright", "buttn"),
                         ]
                     ), left=4, right=10
                 ),

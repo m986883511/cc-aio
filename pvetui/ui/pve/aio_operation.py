@@ -32,7 +32,7 @@ class PveAllInOneOperationView(base_view.BaseConfigView):
         for key, value_dict in self.services_dict.items():
             text = value_dict['text']
             view = value_dict['view']
-            self.menu_buttons.append(urwid.Button(text, view, align="center"))
+            self.menu_buttons.append(urwid.AttrMap(urwid.Button(text, view, align="center"), None, focus_map='buttn'))
         self.pile_view.widget_list = self.menu_buttons
 
     def show(self):
@@ -44,7 +44,7 @@ class PveAllInOneOperationView(base_view.BaseConfigView):
                 self.pile_view,
                 urwid.Divider(),
                 self.note_text,
-                urwid.Button(CONF.return_last_string, ui.return_last, align="center"),
+                urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn')
             ]
         )
         ui.top_layer.open_box(urwid.Filler(ii, valign='top'))

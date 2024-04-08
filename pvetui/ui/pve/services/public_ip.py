@@ -203,7 +203,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
         self.ipv4_ipv6_choose_list = []
         for item in self.ip_types:
             flag = item == CONF.public_ip.ipv4_or_ipv6
-            self.ip_type_radio_buttons.append(urwid.RadioButton(self.ipv4_ipv6_choose_list, item, state=flag, on_state_change=self.ipv4_or_ipv6_button_change))
+            self.ip_type_radio_buttons.append(urwid.AttrMap(urwid.RadioButton(self.ipv4_ipv6_choose_list, item, state=flag, on_state_change=self.ipv4_or_ipv6_button_change), None, focus_map='buttn'))
         ip_type_column = urwid.Columns([
             urwid.Padding(urwid.Text("选择一种公网ip方式:", align="left"), left=4, right=4, min_width=10),
             *self.ip_type_radio_buttons
@@ -235,26 +235,26 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 tishi = f"请用普通用户登录光猫, 做端口映射, 光猫端口{CONF.public_ip.simple_http_server_port}->{self.pve_ip}:{CONF.public_ip.simple_http_server_port}"
             else:
                 tishi = f"请用超级管理员用户登录光猫, 将防火墙等级改为低"
-            widget_list.append(urwid.Padding(urwid.Button(f"运行自建的API服务来测试公网IP是否可用 ({tishi})", self.start_public_ip_test, align="left", wrap='clip'), align="left", left=8, right=1),)
+            widget_list.append(urwid.Padding(urwid.AttrMap(urwid.Button(f"运行自建的API服务来测试公网IP是否可用 ({tishi})", self.start_public_ip_test, align="left", wrap='clip'), None, focus_map='buttn'), align="left", left=8, right=1),)
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否开启公网IP变更检查服务(每分钟查一次)(推荐开):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.AttrMap(urwid.CheckBox('是否开启公网IP变更检查服务(每分钟查一次)(推荐开):', state=CONF.public_ip.use_check_robot, on_state_change=self.use_check_robot_change), None, focus_map='buttn'), left=4, right=4, min_width=10))
         if CONF.public_ip.use_check_robot:
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
                         urwid.Text("飞书WebHook UUID (若配置将上报变化的公网IP地址):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.feishu_webhook_uuid, self.feishu_webhook_uuid_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.feishu_webhook_uuid, self.feishu_webhook_uuid_change), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ))
         widget_list.append(urwid.Divider())
-        widget_list.append(urwid.Padding(urwid.CheckBox('是否使用阿里云ddns (依赖公网IP变更检查服务):', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), left=4, right=4, min_width=10))
+        widget_list.append(urwid.Padding(urwid.AttrMap(urwid.CheckBox('是否使用阿里云ddns (依赖公网IP变更检查服务):', state=CONF.public_ip.use_ddns, on_state_change=self.use_ddns_change), None, focus_map='buttn'), left=4, right=4, min_width=10))
         if CONF.public_ip.use_ddns:
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
                         urwid.Text("域名rr (域名前缀, 就像www):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.rr, self.rr_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.rr, self.rr_change), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ))
@@ -262,7 +262,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("域名domain (没有前缀, 就像baidu.com):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.domain, self.domain_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.domain, self.domain_change), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ))
@@ -270,7 +270,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("域名regionId (看帮助文档查一下):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.regionId, self.region_id_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.regionId, self.region_id_change), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ))
@@ -278,7 +278,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("域名accessKeyId:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.accessKeyId, self.access_key_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.accessKeyId, self.access_key_change), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ))
@@ -286,7 +286,7 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("域名accessKeySecret:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.accessKeySecret, self.access_secret_change), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.public_ip.accessKeySecret, self.access_secret_change), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ))
@@ -305,8 +305,8 @@ class PublicIpConfigView(base_view.BaseConfigView):
                 self.note_text,
                 urwid.Columns(
                     [
-                        urwid.Padding(urwid.Button("保存并配置服务", self.save_config, align="center"), align="center", left=1, right=1),
-                        urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button("保存并配置服务", self.save_config, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=1, right=1),
                     ]
                 ),
             ]

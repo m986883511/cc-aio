@@ -89,7 +89,7 @@ class NetworkConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("主机名:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.hostname, self.hostname_change_button_func), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.hostname, self.hostname_change_button_func), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ),
@@ -98,7 +98,7 @@ class NetworkConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("IP地址 (cidr格式 比如192.168.1.55/24):", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.ip_cidr, self.ip_cidr_change_button_func), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.ip_cidr, self.ip_cidr_change_button_func), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             ),
@@ -106,7 +106,7 @@ class NetworkConfigView(base_view.BaseConfigView):
                 urwid.Columns(
                     [
                         urwid.Text("默认网关:", align="left"),
-                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.gateway, self.gateway_change_button_func), "editbx", "editfc"),
+                        urwid.AttrMap(my_widget.TextEdit("", CONF.network.gateway, self.gateway_change_button_func), "bright", "buttn"),
                     ]
                 ), left=8, right=10
             )
@@ -123,8 +123,8 @@ class NetworkConfigView(base_view.BaseConfigView):
                 self.note_text,
                 urwid.Columns(
                     [
-                        urwid.Padding(urwid.Button("保存并配置服务", self.save_config, align="center"), align="center", left=1, right=1),
-                        urwid.Padding(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), align="center", left=1, right=1),
+                        urwid.Padding(urwid.AttrMap(urwid.Button("保存并配置服务", self.save_config, align="center"), None, focus_map='buttn'), align="center", left=4, right=4),
+                        urwid.Padding(urwid.AttrMap(urwid.Button(CONF.return_last_string, ui.return_last, align="center"), None, focus_map='buttn'), align="center", left=4, right=4),
                     ]
                 ),
             ]
