@@ -132,7 +132,7 @@ class HostEndPoint(object):
             else:
                 for audio in audios:
                     if audio['vendor'].startswith(res['main_vendor'][:7]):
-                        res['audio']
+                        res['audio'] = audio
                         break
                 else:
                     execute.completed(1, f'have multi audio pci, not known which is hdmi audio, audios={audios}')
