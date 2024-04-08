@@ -134,7 +134,7 @@ class IgdConfigView(base_view.BaseConfigView):
         base_view.RunCmdConsoleView(self, cmds=cmds, des=f'开始设置vmid={vmid}')
 
     def save_config(self):
-        group, keys = 'igd', ['audio_rom_path']
+        group, keys = 'igd', ['audio_rom_path', 'igd_rom_path']
         self.save_CONF_group_keys(group, keys)
 
     def audio_rom_path_change(self, edit_obj: my_widget.TextEdit, current_value: str):
