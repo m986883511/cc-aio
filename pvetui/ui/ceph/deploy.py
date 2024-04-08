@@ -41,7 +41,7 @@ class DeployCephConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始在{self.selected_name_str}部署Ceph集群', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_deploy_ceph_view))
         current_hostname = func.get_current_node_hostname()

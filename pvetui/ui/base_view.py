@@ -100,6 +100,7 @@ class BaseConsoleView:
         self.failed_text = '执行失败 点击此按钮返回上一层'
         self.output_widget = urwid.Text("")
         self.result_button = urwid.Button(result_button_text, self.result_button_click, align='center')
+        self.result_button_attrmap = urwid.AttrMap(self.result_button, None, focus_map=None)
         self.console_list = func.FixedSizeList(console_line_number)
         self.need_run_cmd_list = []
         self.current_cmd_index = 0
@@ -137,10 +138,12 @@ class BaseConsoleView:
                 else:
                     self.result_button.set_label(self.success_text)
                     self.stop_alarm()
+                    self.result_button_attrmap.set_attr_map({None:"buttn"})
                     self.task_success_callback()
             else:
                 self.result_button.set_label(self.failed_text)
                 self.stop_alarm()
+                self.result_button_attrmap.set_attr_map({None:"header"})
                 self.task_failed_callback()
 
     def task_success_callback(self):

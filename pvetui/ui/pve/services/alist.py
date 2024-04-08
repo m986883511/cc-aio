@@ -21,7 +21,7 @@ class AlistConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始配置alist服务', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
         self.need_run_cmd_list.append(f'cc-hostcli service create-alist-service {CONF.alist.default_admin_password}')

@@ -24,7 +24,7 @@ class DeleteOsdConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始在{self.selected_hostname}移除OSD={self.selected_osd_name_string}', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_del_osd_view))
         self.need_run_cmd_list.append(f'cc-hostcli network check-network-connection {self.selected_hostname}')

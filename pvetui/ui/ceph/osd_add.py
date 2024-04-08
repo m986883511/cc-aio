@@ -41,7 +41,7 @@ class AddOsdConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始在{self.selected_hostname}添加OSD={self.osd_disks}', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_add_osd_view))
         ceph_cluster_nodes = self.get_ceph_cluster_nodes()

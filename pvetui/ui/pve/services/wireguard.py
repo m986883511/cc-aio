@@ -23,7 +23,7 @@ class WireguardConfigConsoleView(base_view.BaseConsoleView):
             urwid.Text('开始配置wireguard服务', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_wireguard_view))
         start_or_stop = 'start' if CONF.wireguard.open_flag else 'stop'

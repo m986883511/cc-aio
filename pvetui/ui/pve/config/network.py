@@ -21,7 +21,7 @@ class NetworkConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始配置网络', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_config_pve_network_view))
         self.need_run_cmd_list.append(f'cc-hostcli pve open-ipv6-support')

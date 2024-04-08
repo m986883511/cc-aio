@@ -21,7 +21,7 @@ class SambaConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始配置samba服务', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_samba_view))
         self.need_run_cmd_list.append(f'cc-hostcli service create-samba-service {CONF.samba.default_share_path} {CONF.samba.samba_default_password}')

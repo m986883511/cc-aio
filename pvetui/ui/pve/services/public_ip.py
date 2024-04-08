@@ -35,7 +35,7 @@ class PublicIpTestConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始测试公网IP是否可用', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
         self.need_run_cmd_list.append(f'cc-hostcli service show-qrencode --text {self.public_ip_simple_http_server_url}')
@@ -55,7 +55,7 @@ class PublicIpConfigConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'配置public_ip相关服务', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
         start_or_stop = 'start' if CONF.public_ip.use_check_robot else 'stop'

@@ -21,7 +21,7 @@ class InstallBaseEnvConsoleView(base_view.BaseConsoleView):
             urwid.Text(f'开始安装', align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_base_env_view))
         current_hostname = func.get_current_node_hostname()
