@@ -209,7 +209,7 @@ class RunCmdConsoleView(BaseConsoleView):
             urwid.Text(self.des, align='center'), 
             urwid.Divider(), 
             self.output_widget,
-            self.result_button,
+            self.result_button_attrmap,
         ]
         body = urwid.ListBox(urwid.SimpleFocusListWalker(start_install_alist_view))
         self.need_run_cmd_list.extend(self.cmds)
