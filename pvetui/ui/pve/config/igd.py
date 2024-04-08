@@ -19,6 +19,7 @@ class IgdConfigView(base_view.BaseConfigView):
     def __init__(self, button):
         super().__init__(button)
         self.current_hostname = func.get_current_node_hostname()
+        self.my_audio_rom_name = 'my-audio.rom'
         self.cpu_model = self.get_cpu_model()
         self.find_igd_flag = False
         self.pvesh_qemu_list = {}
@@ -59,7 +60,7 @@ class IgdConfigView(base_view.BaseConfigView):
         if CONF.igd.audio_rom_path:
             return
         # 先检查用户自己传的
-        flag, content = execute.execute_command(f'find {CONF.samba.default_share_path}/{AUTHOR_ZH_NAME}的赠礼 -name my-audio.rom')
+        flag, content = execute.execute_command(f'find {CONF.samba.default_share_path}/{AUTHOR_ZH_NAME}的赠礼 -name {self.my_audio_rom_name}')
         if flag == 0:
             content_list = func.get_string_split_list(content, split_flag='\n')
             if content_list:
@@ -134,7 +135,7 @@ class IgdConfigView(base_view.BaseConfigView):
             widget_list.append(urwid.Padding(
                 urwid.Columns(
                     [
-                        urwid.Text("HDMI的音频rom文件绝对路径:", align="left"),
+                        urwid.Text(f"HDMI的音频rom文件绝对路径(优先在{AUTHOR_ZH_NAME}的赠礼中查找{self.my_audio_rom_name}):", align="left"),
                         urwid.AttrMap(my_widget.TextEdit("", CONF.igd.audio_rom_path, self.audio_rom_path_change), "bright", "buttn"),
                     ]
                 ),
