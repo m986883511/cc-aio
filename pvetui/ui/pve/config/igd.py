@@ -22,7 +22,7 @@ class IgdConfigView(base_view.BaseConfigView):
         self.cpu_model = self.get_cpu_model()
         self.find_igd_flag = False
         self.pvesh_qemu_list = {}
-        self.get_igd_devices()
+        self.get_igd_device()
         self.show()
 
     def get_cpu_model(self):
@@ -35,7 +35,7 @@ class IgdConfigView(base_view.BaseConfigView):
             self.note_msg = err
             return err
     
-    def get_igd_devices(self):
+    def get_igd_device(self):
         try:
             igd_device = rpc_client('get_node_igd_device', hostname=self.current_hostname)
         except Exception as e:
@@ -44,12 +44,12 @@ class IgdConfigView(base_view.BaseConfigView):
             self.note_msg = err
             return err
         self.find_igd_flag = False
-        if not self.igd_devices:
+        if not igd_device:
             return
         self.igd_full_pci_id = igd_device['full_pci_id']
-        self.igd_name = igd_devices['name']
-        self.igd_main_vendor = igd_devices['main_vendor']
-        self.audio_rom = igd_devices.get('audio_rom')
+        self.igd_name = igd_device['name']
+        self.igd_main_vendor = igd_device['main_vendor']
+        self.audio_rom = igd_device.get('audio_rom')
         self.find_audio_rom_path()
         self.find_igd_flag = True
 
