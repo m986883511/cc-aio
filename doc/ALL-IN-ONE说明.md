@@ -68,11 +68,17 @@
 
 ## cc-aio
 
-由B站UP主开发的部署工具，只支持pve8.1版本！旨在快速搭建好PVE的ALL-IN-ONE场景，cc是吵吵的缩写，aio是ALL-IN-ONE的缩写，通过ssh登录到pve节点，然后输入
+由B站UP主吵吵博士开发的all-in-one部署工具，只支持pve8.1版本！（我用的是8.1.4）旨在快速搭建好PVE的ALL-IN-ONE场景，cc是吵吵的缩写，aio是ALL-IN-ONE的缩写，通过ssh登录到pve节点，然后输入
+
+先安装版本
+```shell
+bash cc-aip-bin-1.999.xx.bin
+```
+
+即可打开操作界面，用方向键操作，也可以用鼠标点击
 ```shell
 cc-aio
 ```
-即可打开操作界面，用方向键操作，也可以用鼠标点击
 
 宗旨：把用户当傻子，减少一切用户输入命令，编辑文件的操作
 
@@ -171,3 +177,4 @@ root@host056:~# ip a s vmbr0
 | gangqizai | [仓库地址](https://github.com/gangqizai/igd)               | intel12代以上直通文件   |
 | angristan | [仓库地址](https://github.com/angristan/wireguard-install) | wireguard快速部署脚本  |
 | alist-org | [仓库地址](https://github.com/alist-org/alist)             | alist快速部署脚本      |
+| ivanhao   | [仓库地址](https://github.com/ivanhao/pvetools)            | pvetools工具    |
