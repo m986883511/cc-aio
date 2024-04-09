@@ -1,1 +1,1 @@
-python setup.py sdist
+参考 doc/ALL-IN-ONE说明.md
