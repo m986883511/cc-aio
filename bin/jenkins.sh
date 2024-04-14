@@ -24,7 +24,7 @@ SMALL_NUMBER=$BRANCH_FLAG
 PBR_VERSION=$BIG_NUMBER.$SMALL_NUMBER.$BUILD_NUMBER
 export PBR_VERSION
 
-package_new_name="$JOB_NAME-$PBR_VERSION.bin"
+package_new_name="$PROJECT_NAME-bin-$PBR_VERSION.bin"
 
 IDENTITY=wc@192.168.1.4
 FILEDIR=/smb/4t/fileserver/jenkins/production-pve/$PROJECT_NAME/$GIT_BRANCH

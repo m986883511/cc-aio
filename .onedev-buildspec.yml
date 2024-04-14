@@ -1,6 +1,6 @@
 version: 30
 jobs:
-- name: cc-aio
+- name: ci
   steps:
   - !CheckoutStep
     name: checkout_code
@@ -9,7 +9,7 @@ jobs:
     withSubmodules: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
-    name: build
+    name: build pip
     runInContainer: false
     interpreter: !ShellInterpreter
       shell: bash
@@ -20,7 +20,7 @@ jobs:
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
-    name: upload
+    name: upload pip
     runInContainer: false
     interpreter: !ShellInterpreter
       shell: bash
@@ -30,23 +30,8 @@ jobs:
         bash jenkins.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  triggers:
-  - !BranchUpdateTrigger {}
-  - !TagCreateTrigger {}
-  retryCondition: never
-  maxRetries: 3
-  retryDelay: 30
-  timeout: 3600
-- name: cc-aio-bin
-  steps:
-  - !CheckoutStep
-    name: checkout_code
-    cloneCredential: !DefaultCredential {}
-    withLfs: false
-    withSubmodules: false
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
-    name: build
+    name: build bin
     runInContainer: false
     interpreter: !ShellInterpreter
       shell: bash
@@ -57,7 +42,7 @@ jobs:
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
-    name: upload
+    name: upload bin
     runInContainer: false
     interpreter: !DefaultInterpreter
       commands: |
