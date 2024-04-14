@@ -14,6 +14,7 @@ jobs:
     interpreter: !ShellInterpreter
       shell: bash
       commands: |
+        export http_proxy=; export https_proxy=;
         export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
         echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
         bash make.sh
