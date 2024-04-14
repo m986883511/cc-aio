@@ -1,5 +1,6 @@
 #!/bin/bash -x
-
+http_proxy=
+https_proxy=
 WORK_DIR=`dirname $0`
 cd $WORK_DIR
 package_base_name=$(crudini --get setup.cfg metadata name)

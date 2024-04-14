@@ -1,7 +1,8 @@
 #!/bin/bash -x
 # by: wang.chao
 # date: 2023-5-8
-
+http_proxy=
+https_proxy=
 WORK_DIR=`dirname $0`
 cd $WORK_DIR
 
