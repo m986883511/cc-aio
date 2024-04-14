@@ -34,7 +34,7 @@ package_new_name=$package_base_name-$PBR_VERSION.tar.gz
 /bin/cp dist/$package_name $package_new_name
 
 IDENTITY=wc@192.168.1.4
-FILEDIR=/smb/4t/fileserver/jenkins/production-pve/$PROJECT_NAME/$GIT_BRANCH
+FILEDIR=/smb/4t/fileserver/OneDev/projects/$PROJECT_NAME/$GIT_BRANCH
 echo "FILEDIR is $FILEDIR"
 md5sum $package_new_name > $package_new_name.md5
 ssh $IDENTITY mkdir -p $FILEDIR/$BUILD_NUMBER

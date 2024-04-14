@@ -27,7 +27,7 @@ export PBR_VERSION
 package_new_name="$PROJECT_NAME-$PBR_VERSION.bin"
 
 IDENTITY=wc@192.168.1.4
-FILEDIR=/smb/4t/fileserver/jenkins/production-pve/$PROJECT_NAME/$GIT_BRANCH
+FILEDIR=/smb/4t/fileserver/OneDev/projects/$PROJECT_NAME/$GIT_BRANCH
 md5sum $package_new_name >> ${package_new_name}.md5
 ssh $IDENTITY mkdir -p $FILEDIR/$BUILD_NUMBER
 scp $package_new_name ${package_new_name}.md5 $IDENTITY:$FILEDIR/$BUILD_NUMBER/
