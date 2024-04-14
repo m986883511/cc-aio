@@ -15,8 +15,8 @@ cc-aio
 ```
 
 视频演示： https://www.bilibili.com/video/BV1mx4y1h7E8/
-文档参考： doc/ALL-IN-ONE说明.md
 
+文档参考： [ALL-IN-ONE说明](doc/ALL-IN-ONE说明.md)
 
 ### 目录说明
 bin 做cc-aio.bin版本包的
