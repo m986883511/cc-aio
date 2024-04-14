@@ -52,7 +52,7 @@ function make_apt_source(){
 }
 
 function download_cc_aio(){
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/jenkins/production-pve/cc-aio/master/latest -s cc-aio -e tar.gz -p $PIP_REPO_DIR
+    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/OneDev/projects/cc-aio/master/latest -s cc-aio -e tar.gz -p $PIP_REPO_DIR
     completed $? "download cc-aio package"
 }
 

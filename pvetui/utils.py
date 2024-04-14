@@ -20,7 +20,7 @@ def install_new_master_cs_pve_package(auto_install_flag=False):
     version = get_cs_pve_version()
     branch='.'.join(version.split('.')[0:2])
     branch = 'master' if branch == '4.999' else 'v' + branch
-    url = f'http://192.168.1.4:5244/d/4t/fileserver/jenkins/production-pve/pvetui/{branch}/latest'
+    url = f'http://192.168.1.4:5244/d/4t/fileserver/OneDev/projects/cc-aio/{branch}/latest'
     file_url = func.get_http_server_one_file_download_url(url, startswith='cc-aio', endswith=".tar.gz")
     file_name = func.get_string_split_list(file_url, split_flag='/')[-1]
     print(f'current version is {version}, are you sure install {file_name}?')

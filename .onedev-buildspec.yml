@@ -27,7 +27,7 @@ jobs:
       commands: |
         export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
         echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
-        bash jenkins.sh
+        export http_proxy= && export https_proxy= && bash jenkins.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
@@ -38,7 +38,7 @@ jobs:
       commands: |
         export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
         echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
-        cd bin && bash build.sh
+        cd bin && export http_proxy= && export https_proxy= && bash build.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !CommandStep
@@ -48,7 +48,7 @@ jobs:
       commands: |
         export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
         echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
-        cd bin && bash jenkins.sh
+        cd bin && export http_proxy= && export https_proxy= && bash jenkins.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:

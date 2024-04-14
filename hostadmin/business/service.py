@@ -98,7 +98,7 @@ class ServiceEndPoint(object):
             execute.completed(flag, f"delete old samba service samba user")
         flag, content = execute.execute_command(f'(echo {samba_user_password}; echo {samba_user_password}) | smbpasswd -s -a samba')
         execute.completed(flag, f"create samba service user=samba")
-        flag, content = execute.execute_command(f'cp -r /opt/{Author.name}/{Author.name}-aio-bin/gift/* {share_path}')
+        flag, content = execute.execute_command(f'cp -r /opt/{Author.name}/{Author.name}-aio/gift/* {share_path}')
         execute.completed(flag, f"copy chaochao gift")
         md_file_names = [file_name for file_name in os.listdir(self.cc_doc_path) if '.md' in file_name]
         pve_ip_cidr = network.get_main_ip_address()

@@ -20,7 +20,7 @@ class PveEndPoint(object):
         self.SSH_PRIVATE_KEY_PATH = FilesDir.SSH.id_rsa
         self.AIO_CONF_PATH = f'/etc/{AUTHOR_NAME}/{AIO_CONF_NAME}'
         self.default_root_password = CONF.ssh.root_pwd
-        self.vbios_path = f'/opt/{AUTHOR_NAME}/{AUTHOR_NAME}-aio-bin/repo/bin/vbios'
+        self.vbios_path = f'/opt/{AUTHOR_NAME}/{AUTHOR_NAME}-aio/repo/bin/vbios'
         self.sysctl_conf_path = '/etc/sysctl.conf'
         self.debian_network_interfaces_path = '/etc/network/interfaces'
 

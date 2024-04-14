@@ -1,15 +1,13 @@
 #!/bin/bash -x
 # by: wang.chao
 # date: 2023-5-8
-http_proxy=
-https_proxy=
 WORK_DIR=`dirname $0`
 cd $WORK_DIR
 
 if [ -z $BUILD_NUMBER ] || [ -z $JOB_NAME ] || [ -z $GIT_BRANCH ]; then
    echo "Not in jenkins!"
    echo "debug use follow"
-   echo "export BUILD_NUMBER=0; export JOB_NAME=cc-aio-bin; export PROJECT_NAME=cc-aio; export GIT_BRANCH=master"
+   echo "export BUILD_NUMBER=0; export JOB_NAME=cc-aio; export PROJECT_NAME=cc-aio; export GIT_BRANCH=master"
    exit -1
 fi
 
