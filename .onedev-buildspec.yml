@@ -1,6 +1,6 @@
 version: 30
 jobs:
-- name: ci
+- name: cc-aio
   steps:
   - !CheckoutStep
     name: checkout_code
@@ -28,6 +28,42 @@ jobs:
         export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
         echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
         bash jenkins.sh
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !TagCreateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: cc-aio-bin
+  steps:
+  - !CheckoutStep
+    name: checkout_code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: build
+    runInContainer: false
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
+        echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
+        cd bin && bash build.sh
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: upload
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands: |
+        export BUILD_NUMBER=@build_number@; export JOB_NAME=@job_name@; export GIT_BRANCH=@branch@; export PROJECT_NAME=@project_name@
+        echo "BUILD_NUMBER=$BUILD_NUMBER JOB_NAME=$JOB_NAME GIT_BRANCH=$GIT_BRANCH PROJECT_NAME=$PROJECT_NAME"
+        cd bin && bash jenkins.sh
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:

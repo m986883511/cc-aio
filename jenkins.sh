@@ -7,7 +7,7 @@ package_base_name=$(crudini --get setup.cfg metadata name)
 if [ -z $BUILD_NUMBER ] || [ -z $JOB_NAME ] || [ -z $GIT_BRANCH ]; then
    echo "Not in jenkins!"
    echo "you can test use follow command"
-   echo "export BUILD_NUMBER=0; export JOB_NAME=pvetui/master; export GIT_BRANCH=master"
+   echo "export BUILD_NUMBER=0; export JOB_NAME=cc-aio; export PROJECT_NAME=cc-aio; export GIT_BRANCH=master"
    exit 1
 fi
 
