@@ -6,7 +6,7 @@
 ## 使用说明
 下载安装，下载地址请从群内获取最新，github的release更新可能不及时。
 ```shell
-bash cc-aio-bin-*.bin
+bash cc-aio-*.bin
 ```
 
 然后使用`cc-aio`通过界面操作
@@ -19,7 +19,7 @@ cc-aio
 
 
 ### 目录说明
-bin 做cc-aio-bin版本包的
+bin 做cc-aio.bin版本包的
 cc_driver 驱动
 cc_utils 通用函数
 hostadmin click写的命令行代码，jsonrpclib提供rpc接口

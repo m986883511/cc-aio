@@ -72,7 +72,7 @@
 
 先安装版本
 ```shell
-bash cc-aip-bin-1.999.xx.bin
+bash cc-aio-1.999.xx.bin
 ```
 
 即可打开操作界面，用方向键操作，也可以用鼠标点击
