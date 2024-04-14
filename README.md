@@ -19,8 +19,8 @@ cc-aio
 文档参考： [ALL-IN-ONE说明](doc/ALL-IN-ONE说明.md)
 
 ### 目录说明
-bin 做cc-aio.bin版本包的
-cc_driver 驱动
-cc_utils 通用函数
-hostadmin click写的命令行代码，jsonrpclib提供rpc接口
+1. bin 做cc-aio.bin版本包的
+2. cc_driver 驱动
+3. cc_utils 通用函数
+4. hostadmin click写的命令行代码，jsonrpclib提供rpc接口
 
