@@ -13,6 +13,8 @@
 
 当前零刻，铭凡等众多小主机越来越多，功耗也不高，非常适合做一台家用的服务器。当一个下载机，htpc，smb服务器，文件服务器，科学上网代理是一个很好的选择。例如性价比之王，零刻SER5 Pro 5800H为例，我将以此为例搭建all-in-one服务器。
 
+开源地址: https://github.com/m986883511/cc-aio.git
+
 ![image.png](https://gitee.com/m986883511/picture-bed/raw/master/PyPicGo/cs-20240409094024-tmp.png)
 
 ## 网络架构图
