@@ -15,6 +15,8 @@
 
 开源地址: https://github.com/m986883511/cc-aio.git
 
+QQ交流群：776589605
+
 ![image.png](https://gitee.com/m986883511/picture-bed/raw/master/PyPicGo/cs-20240409094024-tmp.png)
 
 ## 网络架构图

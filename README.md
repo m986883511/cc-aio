@@ -4,7 +4,9 @@
 目前只能支持pve8.1版本，我使用的是最新的8.1.4，建议和我一样。
 
 ## 使用说明
-下载安装，下载地址请从群内获取最新，github的release更新可能不及时。
+下载安装，下载地址请从qq群内(776589605)获取最新，github的release更新可能不及时。
+
+解压压缩包，然后执行：
 ```shell
 bash cc-aio-*.bin
 ```
@@ -23,4 +25,5 @@ cc-aio
 2. cc_driver 驱动
 3. cc_utils 通用函数
 4. hostadmin click写的命令行代码，jsonrpclib提供rpc接口
+5. pvetui urwid写的tui界面，提供用户交互
 
