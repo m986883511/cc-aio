@@ -42,9 +42,17 @@ function start_log(){
     echo -e '\n'
 }
 
+function download_7_4_1_rpms(){
+    mkdir -p $APT_REPO_DIR
+    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives/7.4-1 -e .deb -p $APT_REPO_DIR
+    completed $? "download 7.4-1 rpms"
+}
+
 function make_apt_source(){
     mkdir -p $APT_REPO_DIR
     python3 download_alist_dir.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives deb.txt $APT_REPO_DIR
+    completed $? "download 8.1-2 rpms"
+    download_7_4_1_rpms
     docker rm -f build_apt_sources
     docker run -d --name build_apt_sources -v $APT_REPO_DIR:/tmp/apt -w /tmp/apt debian:dpkg-dev sleep 1d
     docker exec build_apt_sources bash /generate_apt_source.sh
