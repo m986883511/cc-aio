@@ -216,11 +216,25 @@ function install_base_apt_packages(){
 }
 
 function create_local_file_repo(){
+    local pve_release
+    local pve_version_output
     local release_id=$(get_os_release_id)
     mkdir -p $APT_REPO_BACKUP_DIR
     mv $APT_REPO_DIR/*.list $APT_REPO_BACKUP_DIR
+    pve_version_output=$(pvesh get version --output-format json)
+    completed $? "get pve version"
+    pve_release=$(python3 -c "import json;mm=json.loads('$pve_version_output');print(mm['release'])")
+    completed $? "calc pve version"
+    local local_apt_source_path=$APT_PACKAGES_DIR_PREFIX/$pve_release
+    if [ -d $local_apt_source_path ];then
+        completed 0 "current pve version is $pve_release, check local apt source path exist"
+    else
+        local support_version=$(ls $APT_PACKAGES_DIR_PREFIX)
+        echo "support pve version is $support_version" 
+        completed 1 "current pve version is $pve_release, check support pve version"
+    fi
     cat > /etc/apt/sources.list <<EOF
-deb [trusted=yes] file://$APT_PACKAGES_DIR_PREFIX ./
+deb [trusted=yes] file://$APT_PACKAGES_DIR_PREFIX/$pve_release ./
 EOF
     completed $? "create local apt repo file"
     chmod -R 777 $APT_PACKAGES_DIR_PREFIX

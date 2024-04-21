@@ -42,21 +42,34 @@ function start_log(){
     echo -e '\n'
 }
 
-function download_7_4_1_rpms(){
-    mkdir -p $APT_REPO_DIR
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives/7.4-1 -e .deb -p $APT_REPO_DIR
-    completed $? "download 7.4-1 rpms"
+function download_pve_debs(){
+    local pve_version
+    pve_version="7.4"
+    mkdir -p $APT_REPO_DIR/$pve_version
+    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives/$pve_version -e .deb -p $APT_REPO_DIR/$pve_version
+    completed $? "download $pve_version debs"
+    pve_version="8.1"
+    mkdir -p $APT_REPO_DIR/$pve_version
+    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives/$pve_version -e .deb -p $APT_REPO_DIR/$pve_version
+    completed $? "download $pve_version debs"
 }
 
 function make_apt_source(){
     mkdir -p $APT_REPO_DIR
-    python3 download_alist_dir.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives deb.txt $APT_REPO_DIR
-    completed $? "download 8.1-2 rpms"
-    download_7_4_1_rpms
+    download_pve_debs
+    completed $? "download pve debs"
+
+    local pve_version
+    pve_version="7.4"
     docker rm -f build_apt_sources
-    docker run -d --name build_apt_sources -v $APT_REPO_DIR:/tmp/apt -w /tmp/apt debian:dpkg-dev sleep 1d
+    docker run -d --name build_apt_sources -v $APT_REPO_DIR/$pve_version:/tmp/apt -w /tmp/apt debian:dpkg-dev sleep 1d
     docker exec build_apt_sources bash /generate_apt_source.sh
-    completed $? "make apt source"
+    completed $? "make $pve_version apt source"
+    pve_version="8.1"
+    docker rm -f build_apt_sources
+    docker run -d --name build_apt_sources -v $APT_REPO_DIR/$pve_version:/tmp/apt -w /tmp/apt debian:dpkg-dev sleep 1d
+    docker exec build_apt_sources bash /generate_apt_source.sh
+    completed $? "make $pve_version apt source"
 }
 
 function download_cc_aio(){
