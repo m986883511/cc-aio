@@ -10,7 +10,7 @@ CURRENT_SCRIPT_PATH=
 DEST_SCRIPT_DIR="/usr/local/bin"
 DEST_SCRIPT_NAME="report_public_ip_if_changed_robot.sh"
 LOG_DIR="/var/log/$AUTHOR_NAME"
-mdkir -p $LOG_DIR
+mkdir -p $LOG_DIR
 LOG_PATH="$LOG_DIR/$DEST_SCRIPT_NAME.log"
 DEST_SCRIPT_PATH="$DEST_SCRIPT_DIR/$DEST_SCRIPT_NAME"
 AIO_CONF_NAME='aio.conf'
