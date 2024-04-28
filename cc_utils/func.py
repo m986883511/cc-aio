@@ -328,15 +328,3 @@ def get_public_ipv6_from_list(ips):
         for flag in public_flags:
             if ip.startswith(flag):
                 return ip
-
-
-def get_current_node_public_ipv6():
-    host_ipv6=[]
-    ips=socket.getaddrinfo(socket.gethostname(),80)
-    for ip in ips:
-        if ip[4][0].startswith('240'):
-            host_ipv6.append(ip[4][0])
-    if len(host_ipv6) > 1:
-        LOG.warning(f'get multi public ip, ips={host_ipv6}')
-    if host_ipv6:
-        return host_ipv6[0]

@@ -569,6 +569,10 @@ def get_pve_main_bridge_nics():
     value = business.NetworkEndPoint().get_pve_main_bridge_nics(ctxt={})
     click.secho(value, fg='green')
 
+@network.command()
+def get_public_ip():
+    value = business.NetworkEndPoint().get_public_ip(ctxt={})
+    click.secho(value, fg='green')
 
 @network.command()
 @click.argument('host', type=click.STRING)

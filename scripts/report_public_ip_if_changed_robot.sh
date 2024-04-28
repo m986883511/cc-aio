@@ -104,11 +104,15 @@ function send_change_public_ip(){
 }
 
 function get_public_ip(){
-    if [ "$IPV4_OR_IPV6" = "ipv4"  ];then
-        get_public_ipv4
-    else
-        get_public_ipv6
-    fi
+    # if [ "$IPV4_OR_IPV6" = "ipv4"  ];then
+    #     get_public_ipv4
+    # else
+    #     get_public_ipv6
+    # fi
+    cc-hostcli network get-public-ip
+    completed $? "cc-hostcli network get-public-ip"
+    PUBLIC_IP=$(crudini --get $AIO_CONF_PATH public_ip address)
+    completed $? "read public_ip via crudini"
 }
 
 function check_public_changed(){

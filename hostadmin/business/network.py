@@ -6,7 +6,7 @@ import traceback
 
 from oslo_config import cfg
 
-from cc_utils import execute, func, file, _
+from cc_utils import execute, func, file, _, Author, AIO_CONF_NAME
 from hostadmin.files import FilesDir
 
 CONF = cfg.CONF
@@ -70,6 +70,28 @@ class NetworkEndPoint(object):
         flag, content = execute.execute_command(cmd)
         execute.completed(flag, f'check network connection to {host}', content)
         return flag==0
+
+    def get_public_ip(self, ctxt):
+        flag, ipv4_or_ipv6 = execute.crudini_get_config(f'/etc/{Author.name}/{AIO_CONF_NAME}', 'public_ip', 'ipv4_or_ipv6')
+        execute.completed(flag, 'get ipv4_or_ipv6')
+        if ipv4_or_ipv6 == 'ipv4':
+            ip = func.get_public_ipv4() or ""
+        elif ipv4_or_ipv6 == 'ipv6':
+            network_dict = self.get_pve_main_bridge_nics(ctxt=ctxt)
+            ipv6_list = network_dict.get('ipv6') or []
+            ipv6s = [i.get('ip') for i in ipv6_list if 'ip' in i]
+            ipv6 = func.get_public_ipv6_from_list(ipv6s)
+            if '/' in ipv6:
+                ipv6 = func.get_string_split_list(ipv6, split_flag='/')[0]
+            ip = ipv6
+        else:
+            execute.completed(1, f'not support ipv4_or_ipv6={ipv4_or_ipv6}')
+        ip = ip.strip()
+        if not ip:
+            execute.completed(1, f"get {ipv4_or_ipv6} public_ip is empty, so is")
+        flag, content = execute.crudini_set_config(f'/etc/{Author.name}/{AIO_CONF_NAME}', 'public_ip', 'address', ip)
+        execute.completed(flag, f'set public_ip as {ip}')
+        return ip
 
     def check_kolla_interface_exist(self, ctxt, host):
         flag, content = execute.execute_command(f"nmcli device show {Bond.vm}")
