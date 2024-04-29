@@ -229,6 +229,7 @@ class ServiceEndPoint(object):
                 execute.completed(flag, 'install wireguard')
         else:
             if os.path.exists(self.wireguard_params_path):
+                flag, content = execute.execute_command(f'rm -rf /etc/{Author.name}/wireguard')
                 cmd = f"export MENU_OPTION=4 && export REMOVE=y && bash {self.wireguard_script_path}"
                 flag = execute.execute_command_in_popen(cmd)
                 execute.completed(flag, 'uninstall wireguard')

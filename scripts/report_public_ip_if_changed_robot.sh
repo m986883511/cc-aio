@@ -11,7 +11,7 @@ DEST_SCRIPT_DIR="/usr/local/bin"
 DEST_SCRIPT_NAME="report_public_ip_if_changed_robot.sh"
 LOG_DIR="/var/log/$AUTHOR_NAME"
 mkdir -p $LOG_DIR
-LOG_PATH="$LOG_DIR/$DEST_SCRIPT_NAME.log"
+LOG_PATH="$LOG_DIR/cron.log"
 DEST_SCRIPT_PATH="$DEST_SCRIPT_DIR/$DEST_SCRIPT_NAME"
 AIO_CONF_NAME='aio.conf'
 AIO_CONF_PATH="/etc/$AUTHOR_NAME/$AIO_CONF_NAME"

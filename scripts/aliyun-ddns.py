@@ -148,7 +148,7 @@ def parse_arguments():
 
 
 if __name__ == '__main__':
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/ddns.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/cron.log')
     args = parse_arguments()
     args_dict = args.__dict__
     for key, value in args_dict.items():
