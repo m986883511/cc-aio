@@ -1,6 +1,6 @@
 #!/bin/bash
 . /etc/profile
-. ~/.bash_profile
+. ~/.bashrc
 AUTHOR_NAME="cc"
 WHO_AM_I="$(hostname)"
 RUN_AS_SOURCE_FLAG=
