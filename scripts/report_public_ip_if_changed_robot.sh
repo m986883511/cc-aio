@@ -132,25 +132,22 @@ function check_public_changed(){
 }
 
 function run_directly(){
-    start_log
+    echo "--------- $DEST_SCRIPT_NAME start ---------"
     echo "enter function name: ${FUNCNAME[0]}"
     echo "Script is being run directly, $CURRENT_SCRIPT_PATH run at $(date)"
     check_public_changed
     write_public_ip
     copy_this_cripts_to_usr_local_bin
     set_crontab
-}
-
-function start_log(){
-    printf '#%.0s' {1..50}
-    echo -e '\n'
+    echo "--------- $DEST_SCRIPT_NAME end ---------"
 }
 
 function run_as_source(){
-    start_log
+    echo "--------- $DEST_SCRIPT_NAME start ---------"
     echo "enter function name: ${FUNCNAME[0]}"
     echo "Script is being sourced, $CURRENT_SCRIPT_PATH run at $(date)"
     echo "not run any func"
+    echo "--------- $DEST_SCRIPT_NAME end ---------"
 }
 
 function with_logs_piped() {

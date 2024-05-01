@@ -57,24 +57,21 @@ function set_crontab(){
 }
 
 function run_directly(){
-    start_log
+    echo "--------- $DEST_SCRIPT_NAME start ---------"
     echo "enter function name: ${FUNCNAME[0]}"
     echo "Script is being run directly, $CURRENT_SCRIPT_PATH run at $(date)"
     pvesh set /nodes/localhost/dns --search localdomain --dns1 $DNS1 --dns2 $DNS2 --dns3 $DNS3
     copy_this_cripts_to_usr_local_bin
     set_crontab
-}
-
-function start_log(){
-    printf '#%.0s' {1..50}
-    echo -e '\n'
+    echo "--------- $DEST_SCRIPT_NAME end ---------"
 }
 
 function run_as_source(){
-    start_log
+    echo "--------- $DEST_SCRIPT_NAME start ---------"
     echo "enter function name: ${FUNCNAME[0]}"
     echo "Script is being sourced, $CURRENT_SCRIPT_PATH run at $(date)"
     echo "not run any func"
+    echo "--------- $DEST_SCRIPT_NAME end ---------"
 }
 
 function with_logs_piped() {
