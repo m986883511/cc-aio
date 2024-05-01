@@ -13,7 +13,7 @@ DEST_SCRIPT_DIR="/usr/local/bin"
 DEST_SCRIPT_NAME="report_public_ip_if_changed_robot.sh"
 LOG_DIR="/var/log/$AUTHOR_NAME"
 mkdir -p $LOG_DIR
-LOG_PATH="$LOG_DIR/cron.log"
+LOG_PATH="$LOG_DIR/script.log"
 DEST_SCRIPT_PATH="$DEST_SCRIPT_DIR/$DEST_SCRIPT_NAME"
 AIO_CONF_NAME='aio.conf'
 AIO_CONF_PATH="/etc/$AUTHOR_NAME/$AIO_CONF_NAME"
@@ -123,6 +123,8 @@ function check_public_changed(){
     if [ "$PUBLIC_IP" == "$PUBLIC_IP_READ_CONTENT" ]; then
         echo "public ip is $PUBLIC_IP not change"
     else
+        # python3 /usr/local/cc/scripts/set-ip6tables.py
+        # completed $? "update ip6tables"
         echo "public ip change to $PUBLIC_IP"
         cc-hostcli service update-wireguard-service
         send_change_public_ip

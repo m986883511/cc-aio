@@ -43,7 +43,7 @@ class SetNtpTask:
 
 if __name__ == "__main__":
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/set_ntp.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/script.log')
     LOG.info('--------- set_ntp start ---------')
     SetNtpTask().run()
     LOG.info('--------- set_ntp end ---------')

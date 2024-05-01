@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 @click.group()
 def cli():
     os.environ['IN_CLICK'] = 'True'
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/hostcli.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/aio.log')
     LOG.info('--------- command start ---------')
 
 

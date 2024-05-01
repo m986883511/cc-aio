@@ -17,7 +17,7 @@ core_opts = [
                default='/var/lib/hostadmin',
                help="Top-level directory for maintaining cinder's state"),
     cfg.IntOpt('json_rpc_server_port',
-               default=10004,
+               default=8004,
                help="json_rpc_port"),
     cfg.StrOpt('package_name',
                default='hostadmin',

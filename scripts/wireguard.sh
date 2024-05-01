@@ -220,11 +220,15 @@ PostUp = iptables -I FORWARD -i ${SERVER_WG_NIC} -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -o ${SERVER_PUB_NIC} -j MASQUERADE
 PostUp = ip6tables -I FORWARD -i ${SERVER_WG_NIC} -j ACCEPT
 PostUp = ip6tables -t nat -A POSTROUTING -o ${SERVER_PUB_NIC} -j MASQUERADE
+PostUp = ip6tables -A INPUT -i ${SERVER_PUB_NIC} -p tcp -m multiport --dports 1:10000 -j DROP
+PostUp = ip6tables -A INPUT -i ${SERVER_PUB_NIC} -p udp -m multiport --dports 1:10000 -j DROP
 PostDown = iptables -D INPUT -p udp --dport ${SERVER_PORT} -j ACCEPT
 PostDown = iptables -D FORWARD -i ${SERVER_PUB_NIC} -o ${SERVER_WG_NIC} -j ACCEPT
 PostDown = iptables -D FORWARD -i ${SERVER_WG_NIC} -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o ${SERVER_PUB_NIC} -j MASQUERADE
 PostDown = ip6tables -D FORWARD -i ${SERVER_WG_NIC} -j ACCEPT
+PostDown = ip6tables -D INPUT -i ${SERVER_PUB_NIC} -p tcp -m multiport --dports 1:10000 -j DROP
+PostDown = ip6tables -D INPUT -i ${SERVER_PUB_NIC} -p udp -m multiport --dports 1:10000 -j DROP
 PostDown = ip6tables -t nat -D POSTROUTING -o ${SERVER_PUB_NIC} -j MASQUERADE" >>"/etc/wireguard/${SERVER_WG_NIC}.conf"
  fi
 

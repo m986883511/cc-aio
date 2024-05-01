@@ -56,14 +56,13 @@ class CreateLocalAlistStorage():
 
 
 if __name__ == '__main__':
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/create-local-alist-storage.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/script.log')
     args = parse_arguments()
     args_dict = args.__dict__
     LOG.info(args_dict)
     for key, value in args_dict.items():
         if not value:
             raise Exception(f'please set {key} value')
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/create-local-alist-storage.log')
     LOG.info('--------- create-local-alist-storage start ---------')
     CreateLocalAlistStorage(args_dict).run()
     LOG.info('--------- create-local-alist-storage end ---------')

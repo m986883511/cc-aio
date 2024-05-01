@@ -8,7 +8,7 @@ from hostadmin import depends
 
 
 def main():
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/hostrpc.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/aio.log')
     func.create_conf_file(HOSTRPC_CONF_PATH)
     depends.chmod_ssh_key_path()
     depends.chmod_scripts_path()

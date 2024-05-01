@@ -148,13 +148,12 @@ def parse_arguments():
 
 
 if __name__ == '__main__':
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/cron.log')
+    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/script.log')
     args = parse_arguments()
     args_dict = args.__dict__
     for key, value in args_dict.items():
         if not value:
             raise Exception(f'please set {key} value')
-    func.set_simple_log(f'/var/log/{AUTHOR_NAME}/ddns.log')
     LOG.info('--------- ddns start ---------')
     DynamicDNS(args_dict).run()
     LOG.info('--------- ddns end ---------')

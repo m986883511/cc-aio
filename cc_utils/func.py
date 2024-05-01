@@ -328,3 +328,11 @@ def get_public_ipv6_from_list(ips):
         for flag in public_flags:
             if ip.startswith(flag):
                 return ip
+
+
+def get_fe80_ipv6_from_list(ips):
+    for ip in ips:
+        if not ip:
+            continue
+        if ip.startswith('fe80'):
+            return ip
