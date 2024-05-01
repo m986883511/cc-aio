@@ -206,6 +206,7 @@ def set_simple_log(log_path):
     # LOG = logging.getLogger(__name__)
     # LOG.info(f'set_simple_log={log_path} ok')
     # 创建 RotatingFileHandler，设置最大存储3个备份，每个日志最大容量10M
+    from logging.handlers import RotatingFileHandler
     handler = RotatingFileHandler(log_path, maxBytes=10*1024*1024, backupCount=3)
     # 设置日志级别
     handler.setLevel(logging.INFO)
