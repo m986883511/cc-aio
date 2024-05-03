@@ -32,8 +32,8 @@ package_name=$(ls dist |grep "^$package_base_name.*\.tar\.gz$")
 package_new_name=$package_base_name-$PBR_VERSION.tar.gz
 /bin/cp dist/$package_name $package_new_name
 
-IDENTITY=wc@192.168.1.4
-FILEDIR=/smb/4t/fileserver/OneDev/projects/$PROJECT_NAME/$GIT_BRANCH
+IDENTITY=samba@192.168.1.4
+FILEDIR=/smb/ata-WDC_WD40EJRX-89AKWY0_WD-WX72D71J52XA/fileserver/OneDev/projects/$PROJECT_NAME/$GIT_BRANCH
 echo "FILEDIR is $FILEDIR"
 md5sum $package_new_name > $package_new_name.md5
 ssh $IDENTITY mkdir -p $FILEDIR/$BUILD_NUMBER

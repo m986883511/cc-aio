@@ -50,7 +50,7 @@ function make_apt_source(){
     for pve_version in $pve_versions
     do
         mkdir -p $APT_REPO_DIR/$pve_version
-        python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/debian/archives/$pve_version -e .deb -p $APT_REPO_DIR/$pve_version
+        python3 download_alist.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/fileserver/debian/archives/$pve_version -e .deb -p $APT_REPO_DIR/$pve_version
         completed $? "download $pve_version debs"
         docker rm -f build_apt_sources
         docker run -d --name build_apt_sources -v $APT_REPO_DIR/$pve_version:/tmp/apt -w /tmp/apt debian:dpkg-dev sleep 1d
@@ -61,13 +61,13 @@ function make_apt_source(){
 }
 
 function download_cc_aio(){
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/fileserver/OneDev/projects/cc-aio/master/latest -s cc-aio -e tar.gz -p $PIP_REPO_DIR
+    python3 download_alist.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/fileserver/OneDev/projects/cc-aio/master/latest -s cc-aio -e tar.gz -p $PIP_REPO_DIR
     completed $? "download cc-aio package"
 }
 
 function make_pip_source(){
     mkdir -p $PIP_REPO_DIR
-    python3 download_alist_dir.py $MY_ALIST_ADDRESS/4t/fileserver/pypi pypi.txt $PIP_REPO_DIR
+    python3 download_alist_dir.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/fileserver/pypi pypi.txt $PIP_REPO_DIR
     download_cc_aio
     docker run --rm --privileged -v $PIP_REPO_DIR:/pypi -w /pypi create-source dir2pi .
     completed $? "make pip source"
@@ -76,25 +76,25 @@ function make_pip_source(){
 
 function download_files(){
     mkdir -p $OTHER_FILES_DIR
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/soft/linux/alist -s alist-linux-musl-amd64.tar.gz -p $OTHER_FILES_DIR
+    python3 download_alist.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/soft/linux/alist -s alist-linux-musl-amd64.tar.gz -p $OTHER_FILES_DIR
     completed $? "download alist tar.gz"
 }
 
 function download_cc_gift(){
     mkdir -p $CHAOGE_GIFT_DIR
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/work/cc-aio/$GIFT_DIR_NAME -p $CHAOGE_GIFT_DIR
+    python3 download_alist.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/work/cc-aio/$GIFT_DIR_NAME -p $CHAOGE_GIFT_DIR
     completed $? "download cc-aio gift"
 }
 
 function download_bin(){
     mkdir -p $REPO_BIN_DIR
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/work/cc-aio/bin -p $REPO_BIN_DIR
+    python3 download_alist.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/work/cc-aio/bin -p $REPO_BIN_DIR
     completed $? "download cc-aio bin"
 }
 
 function download_rom(){
     mkdir -p $REPO_ROM_DIR
-    python3 download_alist.py $MY_ALIST_ADDRESS/4t/work/cc-aio/rom -p $REPO_ROM_DIR
+    python3 download_alist.py ${MY_ALIST_ADDRESS}${ALIST_HDD_PATH}/work/cc-aio/rom -p $REPO_ROM_DIR
     completed $? "download cc-aio rom"
 }
 

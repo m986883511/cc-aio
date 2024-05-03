@@ -27,6 +27,8 @@ env
 __pycache__/
 *.py[cod]
 *$py.class
+*.gz
+*.md5
 
 # the files generated from tox command.
 .stestr/

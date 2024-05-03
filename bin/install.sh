@@ -4,7 +4,7 @@ cd $WORK_DIR
 source ./utils.sh
 LOG_DIR="/var/log/$AUTHOR_NAME"
 mkdir -p $LOG_DIR
-LOG_PATH="$LOG_DIR/$PROJECT_NAME.log"
+LOG_PATH="$LOG_DIR/aio.log"
 
 function main(){
   startTime=$(current_time)

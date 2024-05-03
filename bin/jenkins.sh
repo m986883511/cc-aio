@@ -25,8 +25,8 @@ export PBR_VERSION
 
 package_new_name="$PROJECT_NAME-$PBR_VERSION.bin"
 
-IDENTITY=wc@192.168.1.4
-FILEDIR=/smb/4t/fileserver/OneDev/projects/$PROJECT_NAME/$GIT_BRANCH
+IDENTITY=samba@192.168.1.4
+FILEDIR=/smb/ata-WDC_WD40EJRX-89AKWY0_WD-WX72D71J52XA/fileserver/OneDev/projects/$PROJECT_NAME/$GIT_BRANCH
 md5sum $package_new_name >> ${package_new_name}.md5
 ssh $IDENTITY mkdir -p $FILEDIR/$BUILD_NUMBER
 scp $package_new_name ${package_new_name}.md5 $IDENTITY:$FILEDIR/$BUILD_NUMBER/
