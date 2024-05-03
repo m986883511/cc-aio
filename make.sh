@@ -25,8 +25,9 @@ SMALL_NUMBER=$BRANCH_FLAG
 PBR_VERSION=$BIG_NUMBER.$SMALL_NUMBER.$BUILD_NUMBER
 export PBR_VERSION
 
-git log --pretty=format:"%h %ad %s" --date=short -30 > ChangeLog
-openssl enc -aes-256-cbc -salt -in ChangeLog -out doc/ChangeLog -pass pass:password -md sha256
+git log --pretty=format:"%h %ad %an %s" --date=short -50 > doc/ChangeLog
+completed $? "generate ChangeLog"
+# openssl enc -aes-256-cbc -salt -in ChangeLog -out doc/ChangeLog -pass pass:password -md sha256
 
 rm -rf dist
 python setup.py sdist

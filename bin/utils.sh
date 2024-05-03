@@ -276,10 +276,10 @@ function write_etc_hosts(){
 function generate_changelog() {
   echo "enter function name: ${FUNCNAME[0]}"
   local est_path=$1
-  git log --pretty=format:"%h %ad %s" --date=short -30 >ChangeLog
+  git log --pretty=format:"%h %ad %an %s" --date=short -30 > doc/ChangeLog
   completed $? "generate ChangeLog"
-  openssl enc -aes-256-cbc -salt -in ChangeLog -out $est_path -pass pass:password -md sha256
-  completed $? "enc Changelog"
+#   openssl enc -aes-256-cbc -salt -in ChangeLog -out $est_path -pass pass:password -md sha256
+#   completed $? "enc Changelog"
 }
 
 function check_if_ssh_is_passwordless() {

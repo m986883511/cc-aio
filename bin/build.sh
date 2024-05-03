@@ -105,7 +105,6 @@ function run_directly(){
   print_script_executed_path          $@
   cp ./install.sh $CACHE_DIR
   cp ./utils.sh $CACHE_DIR
-  cp -r doc $CACHE_DIR
   make_apt_source
   make_pip_source
   download_files

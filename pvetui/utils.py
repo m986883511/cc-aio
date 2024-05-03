@@ -39,7 +39,7 @@ def install_new_master_cs_pve_package(auto_install_flag=False):
 
 def show_cs_pve_commit_msg():
     file_path = f'/usr/local/{AUTHOR_NAME}/doc/ChangeLog'
-    cmd = f'openssl enc -d -aes-256-cbc -in {file_path} -pass pass:password -md sha256'
+    cmd = f'cat {file_path}'
     if os.path.exists(file_path):
         flag = execute.execute_command_in_popen(cmd)
         print('')
