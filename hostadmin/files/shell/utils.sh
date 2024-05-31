@@ -110,7 +110,11 @@ EOF
 }
 
 function blacklist_driver(){
-    cat > /etc/modprobe.d/pve-blacklist.conf << EOF
+    local need_blacklist_flag
+    need_blacklist_flag=$(crudini --get /etc/cc/aio.conf base_env need_blacklist_flag)
+    completed $? "get base_env need_blacklist_flag"
+    if [ "$need_blacklist_flag" = True ]; then
+       cat > /etc/modprobe.d/pve-blacklist.conf << EOF
 blacklist nvidiafb
 blacklist nvidia
 blacklist radeon
@@ -120,6 +124,9 @@ blacklist nouveau
 blacklist snd_hda_intel
 options vfio_iommu_type1 allow_unsafe_interrupts=1
 EOF
+    else
+        rm -f /etc/modprobe.d/pve-blacklist.conf
+    fi
 }
 
 function set_and_update_grub(){
