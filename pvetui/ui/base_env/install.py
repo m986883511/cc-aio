@@ -61,12 +61,15 @@ class InstallBaseEnvView(base_view.BaseConfigView):
         self.show()
 
     def start_install_env(self, button: urwid.Button):
-        group, keys = 'base_env', ['installed_flag', 'root_min_space', 'need_reboot_flag']
+        group, keys = 'base_env', ['installed_flag', 'root_min_space', 'need_reboot_flag', 'need_blacklist_flag']
         self.save_CONF_group_keys(group, keys)
         InstallBaseEnvConsoleView(self)
     
     def reboot_flag_change(self, obj: urwid.CheckBox, value: bool):
         CONF.base_env.need_reboot_flag = value
+    
+    def blacklist_flag_change(self, obj: urwid.CheckBox, value: bool):
+        CONF.base_env.need_blacklist_flag = value
 
     def update_view(self):
         widget_list = []
@@ -74,6 +77,7 @@ class InstallBaseEnvView(base_view.BaseConfigView):
         for i, text in enumerate(self.text_list):
             widget_list.append(urwid.Padding(urwid.Text(f'{i+1}. {text}', align="left"), left=8, right=8))
         widget_list.append(urwid.Divider())
+        widget_list.append(urwid.Padding(urwid.AttrMap(urwid.CheckBox('是否屏蔽核显/显卡驱动', state=CONF.base_env.need_blacklist_flag, on_state_change=self.blacklist_flag_change), None, focus_map='buttn'), left=4, right=4, min_width=10))
         widget_list.append(urwid.Padding(urwid.AttrMap(urwid.CheckBox('安装成功后立即重启', state=CONF.base_env.need_reboot_flag, on_state_change=self.reboot_flag_change), None, focus_map='buttn'), left=4, right=4, min_width=10))
         widget_list.append(urwid.Divider())
         self.pile_view.widget_list = [*widget_list]

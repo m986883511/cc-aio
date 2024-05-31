@@ -57,6 +57,7 @@ base_env_opts = [
     cfg.IntOpt('root_min_space', default=20, help="root_min_space"),
     cfg.BoolOpt('installed_flag', default=False, help="installed_flag"),
     cfg.BoolOpt('need_reboot_flag', default=True, help="need_reboot_flag"),
+    cfg.BoolOpt('need_blacklist_flag', default=False, help="need_blacklist_flag"),
 ]
 
 samba_opts = [
